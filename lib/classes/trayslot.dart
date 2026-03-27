@@ -37,22 +37,28 @@ class TraySlot {
 
   factory TraySlot.fromJson(Map<String, dynamic> json) {
     return TraySlot(
-      id: json['id'] as int,
-      trayColor: json['tray_color'] as String,
-      trayType: json['tray_type'] as String,
-      traySubBrands: json['tray_sub_brands'] as String,
-      trayIdName: json['tray_id_name'] as String,
-      trayInfoIdx: json['tray_info_idx'] as String,
-      remain: json['remain'] as int,
-      k: (json['k'] as num).toDouble(),
-      caliIdx: json['cali_idx'] as int,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+
+      trayColor: json['tray_color'] as String? ?? "",
+      trayType: json['tray_type'] as String? ?? "",
+      traySubBrands: json['tray_sub_brands'] as String? ?? "",
+      trayIdName: json['tray_id_name'] as String? ?? "",
+      trayInfoIdx: json['tray_info_idx'] as String? ?? "",
+
+      remain: (json['remain'] as num?)?.toInt() ?? -1,
+      k: (json['k'] as num?)?.toDouble() ?? 0.0,
+      caliIdx: (json['cali_idx'] as num?)?.toInt() ?? -1,
+
       tagUid: json['tag_uid'] as String?,
       trayUuid: json['tray_uuid'] as String?,
-      nozzleTempMin: json['nozzle_temp_min'] as int,
-      nozzleTempMax: json['nozzle_temp_max'] as int,
-      dryingTemp: json['drying_temp'] as int?,
-      dryingTime: json['drying_time'] as int?,
-      state: json['state'] as int,
+
+      nozzleTempMin: (json['nozzle_temp_min'] as num?)?.toInt() ?? 0,
+      nozzleTempMax: (json['nozzle_temp_max'] as num?)?.toInt() ?? 0,
+
+      dryingTemp: (json['drying_temp'] as num?)?.toInt(),
+      dryingTime: (json['drying_time'] as num?)?.toInt(),
+
+      state: (json['state'] as num?)?.toInt() ?? 0,
     );
   }
 }

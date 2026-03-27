@@ -1,5 +1,8 @@
+import 'package:bambuscanner/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
+import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bambuscanner/modals/qrscan_modal.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +52,19 @@ class _AmsModalState extends State<AmsModal> {
                         Column(
                           children: [
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return QrscanModal(
+                                      printerid: widget.printerid.toString(),
+                                      amsid: ams.id.toString(),
+                                      trayid: tray.id.toString(),
+                                    );
+                                    ;
+                                  },
+                                );
+                              },
                               child: Text(tray.id.toString()),
                             ),
                           ],

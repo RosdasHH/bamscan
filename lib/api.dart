@@ -15,10 +15,39 @@ Future<Spool> getSpoolById(id) async {
   return spool;
 }
 
+Future<void> setSlotToSpoolId(
+  String printerid,
+  String amsid,
+  String trayid,
+  String spoolid,
+) async {
+  await apiPost("/inventory/assignments", {
+    "spool_id": int.parse(spoolid),
+    "printer_id": int.parse(printerid),
+    "ams_id": int.parse(amsid),
+    "tray_id": int.parse(trayid),
+  });
+}
+
 Future<http.Response> apiReq(String apiEndpoint) async {
   http.Response res = await http.get(
     Uri.parse(bambuddyurl + apiurl + apiEndpoint),
     headers: headers,
   );
+  print(res.body);
+  return res;
+}
+
+Future<http.Response> apiPost(
+  String apiEndpoint,
+  Map<String, dynamic> data,
+) async {
+  http.Response res = await http.post(
+    Uri.parse(bambuddyurl + apiurl + apiEndpoint),
+    headers: {...headers, 'Content-Type': 'application/json'},
+    body: jsonEncode(data),
+  );
+
+  print(res.body);
   return res;
 }
