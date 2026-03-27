@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QrScan extends StatefulWidget {
-  const QrScan({super.key, required this.enabled});
+  const QrScan({
+    super.key,
+    required this.enabled,
+    required this.scanDataCallback,
+  });
   final bool enabled;
+  final Function(String?) scanDataCallback;
 
   @override
   State<QrScan> createState() => _QrScanState();
@@ -38,10 +43,7 @@ class _QrScanState extends State<QrScan> with WidgetsBindingObserver {
     }
   }
 
-  void _handleBarcode(BarcodeCapture capture) {
-    final barcode = capture.barcodes.first;
-    print(barcode.rawValue);
-  }
+  void _handleBarcode(BarcodeCapture capture) {}
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -78,7 +80,7 @@ class _QrScanState extends State<QrScan> with WidgetsBindingObserver {
     return MobileScanner(
       controller: controller,
       onDetect: (capture) {
-        print(capture.barcodes.first.rawValue);
+        widget.scanDataCallback(capture.barcodes.first.rawValue);
       },
     );
   }
