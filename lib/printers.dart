@@ -1,4 +1,5 @@
 import 'package:bambuscanner/classes/printer.dart';
+import 'package:bambuscanner/globals.dart';
 import 'package:bambuscanner/modals/ams_modal.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:flutter/material.dart';
@@ -13,38 +14,49 @@ class Printers extends StatelessWidget {
     repo.fetchPrinters();
     print("Fetching");
 
-    return Expanded(
-      child: FutureBuilder<void>(
-        future: repo.fetchPrinters(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Fehler: ${snapshot.error}');
-          }
+    return FutureBuilder<void>(
+      future: repo.fetchPrinters(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Fehler: ${snapshot.error}');
+        }
 
-          final printers = context.watch<AvailablePrinters>().printers;
+        final printers = context.watch<AvailablePrinters>().printers;
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                for (Printer printer in printers)
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AmsModal(printerid: printer.id.toString());
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              for (Printer printer in printers)
+                Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Image.network(
+                          "${Globals.bambuddyurl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
+                        ),
+                        title: Text(printer.name),
+                        subtitle: Text(printer.serialNumber),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: const RouteSettings(name: "ams"),
+                              builder: (context) =>
+                                  AmsModal(printerid: printer.id.toString()),
+                            ),
+                          );
                         },
-                      );
-                    },
-                    child: Row(children: [Text(printer.name)]),
+                      ),
+                    ],
                   ),
-              ],
-            ),
-          );
-        },
-      ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -8,7 +8,7 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (_) => AvailablePrinters(),
-      child: MaterialApp(home: const MyApp()),
+      child: MaterialApp(title:"BamScan",home: const MyApp()),
     ),
   );
 }
@@ -28,7 +28,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: Column(children: [Printers()])),
+      body: SafeArea(
+        child: Navigator(
+          onGenerateRoute: (_) => MaterialPageRoute(builder: (_) => Printers()),
+        ),
+      ),
       //showDialog(
       //  context: context,
       //  builder: (BuildContext context) {

@@ -2,8 +2,10 @@ import 'package:bambuscanner/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bambuscanner/modals/filament__scanned_modal.dart';
 import 'package:bambuscanner/modals/qrscan_modal.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
+import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,9 +33,9 @@ class _AmsModalState extends State<AmsModal> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Ams selection"),
-      content: FutureBuilder<List<Ams>>(
+    return Scaffold(
+      appBar: AppBar(title: const Text("Ams selection")),
+      body: FutureBuilder<List<Ams>>(
         future: _amsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -43,40 +45,93 @@ class _AmsModalState extends State<AmsModal> {
           } else {
             final List<Ams> amslist = snapshot.data ?? [];
 
-            return Column(
-              children: [
-                for (Ams ams in amslist)
-                  Row(
-                    children: [
-                      for (TraySlot tray in ams.tray)
-                        Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return QrscanModal(
-                                      printerid: widget.printerid.toString(),
-                                      amsid: ams.id.toString(),
-                                      trayid: tray.id.toString(),
-                                    );
-                                    ;
-                                  },
-                                );
-                              },
-                              child: Text(tray.id.toString()),
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (Ams ams in amslist)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Überschrift für jedes AMS
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "AMS ${ams.id}",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
+                          ),
+                        ),
+
+                        Row(
+                          children: [
+                            for (TraySlot tray in ams.tray)
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: toFlutterColor(tray.trayColor),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        //final Spool spool = await getSpoolById(
+                                        //  11,
+                                        //);
+                                        //Navigator.push(
+                                        //  context,
+                                        //  MaterialPageRoute(
+                                        //    builder: (context) =>
+                                        //        FilamentScannedModal(
+                                        //          scannedSpool: spool,
+                                        //          printerid: widget.printerid,
+                                        //          amsid: ams.id.toString(),
+                                        //          trayid: tray.id.toString(),
+                                        //        ),
+                                        //  ),
+                                        //);
+                                        //return;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => QrscanModal(
+                                              printerid: widget.printerid,
+                                              amsid: ams.id.toString(),
+                                              trayid: tray.id.toString(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: SizedBox(
+                                        height: 100,
+                                        child: Center(
+                                          child: Text(
+                                            "Tray ${tray.id}",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
-                    ],
-                  ),
-              ],
+
+                        SizedBox(height: 20), // Abstand zwischen AMS-Gruppen
+                      ],
+                    ),
+                ],
+              ),
             );
           }
         },
       ),
-      actions: [],
     );
   }
 }

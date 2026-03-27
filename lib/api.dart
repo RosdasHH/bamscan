@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/globals.dart';
 import 'package:http/http.dart' as http;
 
-String bambuddyurl = "http://192.168.125.100:8076";
-String apiurl = "/api/v1";
-String xapikey = "bb_YimOj_xLFFdv5fzc_2UKcimwi8KUiTRceCkuRjRopiw";
-Map<String, String> headers = {'X-API-Key': xapikey};
+
+Map<String, String> headers = {'X-API-Key': Globals.xapikey};
 
 void test() async {}
 
@@ -15,26 +14,28 @@ Future<Spool> getSpoolById(id) async {
   return spool;
 }
 
-Future<void> setSlotToSpoolId(
+Future<bool> setSlotToSpoolId(
   String printerid,
   String amsid,
   String trayid,
   String spoolid,
 ) async {
-  await apiPost("/inventory/assignments", {
+  final res = await apiPost("/inventory/assignments", {
     "spool_id": int.parse(spoolid),
     "printer_id": int.parse(printerid),
     "ams_id": int.parse(amsid),
     "tray_id": int.parse(trayid),
   });
+  final Map<String, dynamic> json = jsonDecode(res.body);
+  bool configured = json["configured"];
+  return configured;
 }
 
 Future<http.Response> apiReq(String apiEndpoint) async {
   http.Response res = await http.get(
-    Uri.parse(bambuddyurl + apiurl + apiEndpoint),
+    Uri.parse(Globals.bambuddyurl + Globals.apinamespace + apiEndpoint),
     headers: headers,
   );
-  print(res.body);
   return res;
 }
 
@@ -43,11 +44,10 @@ Future<http.Response> apiPost(
   Map<String, dynamic> data,
 ) async {
   http.Response res = await http.post(
-    Uri.parse(bambuddyurl + apiurl + apiEndpoint),
+    Uri.parse(Globals.bambuddyurl + Globals.apinamespace + apiEndpoint),
     headers: {...headers, 'Content-Type': 'application/json'},
     body: jsonEncode(data),
   );
 
-  print(res.body);
   return res;
 }

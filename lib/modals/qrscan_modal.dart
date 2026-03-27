@@ -1,4 +1,6 @@
 import 'package:bambuscanner/api.dart';
+import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/modals/filament__scanned_modal.dart';
 import 'package:bambuscanner/qrscan.dart';
 import 'package:flutter/material.dart';
 
@@ -19,29 +21,34 @@ class QrscanModal extends StatefulWidget {
 }
 
 class _QrscanModalState extends State<QrscanModal> {
+  bool scanenabled = true;
   @override
   Widget build(BuildContext context) {
-    bool scanenabled = true;
-    String? spoolid;
-    return AlertDialog(
-      title: const Text("Ams selection"),
-      content: QrScan(
+    return Scaffold(
+      appBar: AppBar(title: const Text("Scan QR-Code")),
+      body: QrScan(
         enabled: scanenabled,
-        scanDataCallback: (spoolid) {
+        scanDataCallback: (spoolid) async {
           spoolid = spoolid.toString();
           setState(() {
             scanenabled = false;
           });
-          setSlotToSpoolId(
-            widget.printerid,
-            widget.amsid,
-            widget.trayid,
-            spoolid,
+          final Spool spool = await getSpoolById(spoolid);
+
+          if (!context.mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FilamentScannedModal(
+                scannedSpool: spool,
+                printerid: widget.printerid,
+                amsid: widget.amsid,
+                trayid: widget.trayid,
+              ),
+            ),
           );
-          Navigator.pop(context);
         },
       ),
-      actions: [],
     );
   }
 }
