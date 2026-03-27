@@ -31,10 +31,7 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: Text(scannerEnabled ? "Scanner AUS" : "Scanner AN"),
               ),
-              SizedBox(
-                height: 300,
-                child: QrScan(enabled: scannerEnabled),
-              ),
+              SizedBox(height: 300, child: QrScan(enabled: scannerEnabled)),
             ],
           ),
         ),

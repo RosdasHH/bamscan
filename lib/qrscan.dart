@@ -32,7 +32,10 @@ class _QrScanState extends State<QrScan> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _subscription = controller.barcodes.listen(_handleBarcode);
-    controller.start();
+
+    if (widget.enabled) {
+      controller.start();
+    }
   }
 
   void _handleBarcode(BarcodeCapture capture) {
