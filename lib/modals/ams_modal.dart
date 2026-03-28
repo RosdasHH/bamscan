@@ -1,4 +1,4 @@
-import 'package:bambuscanner/api.dart';
+import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
@@ -64,7 +64,6 @@ class _AmsModalState extends State<AmsModal> {
                             ),
                           ),
                         ),
-
                         Row(
                           children: [
                             for (TraySlot tray in ams.tray)
@@ -76,42 +75,32 @@ class _AmsModalState extends State<AmsModal> {
                                       color: toFlutterColor(tray.trayColor),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        //final Spool spool = await getSpoolById(
-                                        //  11,
-                                        //);
-                                        //Navigator.push(
-                                        //  context,
-                                        //  MaterialPageRoute(
-                                        //    builder: (context) =>
-                                        //        FilamentScannedModal(
-                                        //          scannedSpool: spool,
-                                        //          printerid: widget.printerid,
-                                        //          amsid: ams.id.toString(),
-                                        //          trayid: tray.id.toString(),
-                                        //        ),
-                                        //  ),
-                                        //);
-                                        //return;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => QrscanModal(
-                                              printerid: widget.printerid,
-                                              amsid: ams.id.toString(),
-                                              trayid: tray.id.toString(),
+                                    child: Material(
+                                      color: toFlutterColor(tray.trayColor),
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(15),
+                                        onTap: () async {
+                                          print("Puhsing");
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => QrscanModal(
+                                                printerid: widget.printerid,
+                                                amsid: ams.id.toString(),
+                                                trayid: tray.id.toString(),
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      child: SizedBox(
-                                        height: 100,
-                                        child: Center(
-                                          child: Text(
-                                            "Tray ${tray.id}",
-                                            style: TextStyle(
-                                              color: Colors.white,
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          height: 100,
+                                          child: Center(
+                                            child: Text(
+                                              (tray.id + 1).toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),

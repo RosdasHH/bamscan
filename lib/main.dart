@@ -3,6 +3,7 @@ import 'package:bambuscanner/printers.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/settings.dart';
+import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,11 @@ void main() {
         ChangeNotifierProvider(create: (_) => AvailablePrinters()),
         ChangeNotifierProvider(create: (_) => StorageService()),
       ],
-      child: MaterialApp(title: "BamScan", home: const MyApp()),
+      child: MaterialApp(
+        title: "BamScan",
+        theme: AppTheme().dark,
+        home: const MyApp(),
+      ),
     ),
   );
 }
@@ -39,7 +44,9 @@ class _MyAppState extends State<MyApp> {
     return Scaffold(
       appBar: AppBar(title: Text(titles[currentPageIndex])),
       bottomNavigationBar: NavigationBar(
+        height: 60,
         selectedIndex: currentPageIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;

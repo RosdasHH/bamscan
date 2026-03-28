@@ -1,5 +1,5 @@
 import 'package:bambuscanner/classes/printer.dart';
-import 'package:bambuscanner/globals.dart';
+import 'package:bambuscanner/services/globals.dart';
 import 'package:bambuscanner/modals/ams_modal.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/storage.dart';
@@ -43,36 +43,39 @@ class _PrintersState extends State<Printers> {
           final printers = context.watch<AvailablePrinters>().printers;
 
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                for (Printer printer in printers)
-                  if (printer.isActive)
-                    Card(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          ListTile(
-                            leading: Image.network(
-                              "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
-                            ),
-                            title: Text(printer.name),
-                            subtitle: Text(printer.serialNumber),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: const RouteSettings(name: "ams"),
-                                  builder: (context) => AmsModal(
-                                    printerid: printer.id.toString(),
+            child: Padding(
+              padding: EdgeInsetsGeometry.all(10),
+              child: Column(
+                children: [
+                  for (Printer printer in printers)
+                    if (printer.isActive)
+                      Card(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Image.network(
+                                "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
+                              ),
+                              title: Text(printer.name),
+                              subtitle: Text(printer.serialNumber),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    settings: const RouteSettings(name: "ams"),
+                                    builder: (context) => AmsModal(
+                                      printerid: printer.id.toString(),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-              ],
+                ],
+              ),
             ),
           );
         },

@@ -62,7 +62,6 @@ class _QrScanState extends State<QrScan> with WidgetsBindingObserver {
         controller.stop();
         break;
       case AppLifecycleState.hidden:
-        // TODO: Handle this case.
         throw UnimplementedError();
     }
   }

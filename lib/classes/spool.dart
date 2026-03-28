@@ -6,7 +6,7 @@ class Spool {
   final String brand;
   final int labelWeight;
   final int coreWeight;
-  final int coreWeightCatalogId;
+  final int? coreWeightCatalogId;
   final int weightUsed;
   final String slicerFilament;
   final String slicerFilamentName;
@@ -73,7 +73,9 @@ class Spool {
         brand: json['brand'] as String,
         labelWeight: (json['label_weight'] as num).toInt(),
         coreWeight: (json['core_weight'] as num).toInt(),
-        coreWeightCatalogId: json['core_weight_catalog_id'] as int,
+        coreWeightCatalogId: json['core_weight_catalog_id'] != null
+            ? (json['core_weight_catalog_id'] as num).toInt()
+            : null,
         weightUsed: (json['weight_used'] as num).toInt(),
         slicerFilament: json['slicer_filament'] as String,
         slicerFilamentName: json['slicer_filament_name'] as String,

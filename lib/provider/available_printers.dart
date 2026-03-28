@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bambuscanner/api.dart';
+import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/printer.dart';
 import 'package:flutter/material.dart';
