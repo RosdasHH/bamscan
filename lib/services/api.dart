@@ -32,7 +32,6 @@ Future<bool> setSlotToSpoolId(
 
 Future<List<AmsSpool>> getAllFilamentMappings() async {
   final res = await apiReq("/inventory/assignments");
-  print(res.body);
   final List<dynamic> data = jsonDecode(res.body);
   return data.map((e) => AmsSpool.fromJson(e as Map<String, dynamic>)).toList();
 }

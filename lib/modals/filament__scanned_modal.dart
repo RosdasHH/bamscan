@@ -1,4 +1,8 @@
+import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
+import 'package:bambuscanner/classes/printer.dart';
+import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/utils/color.dart';
@@ -25,6 +29,8 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
   List<AmsSpool>? mappings;
   AmsSpool? spoolAssignment;
   bool loadingAssignments = true;
+  //Waiting for spool to be loaded before assigning filament
+  bool? spoolLoaded;
 
   @override
   void initState() {
@@ -110,6 +116,31 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
+                        setState(() {
+                          spoolLoaded = false;
+                        });
+                        while (spoolLoaded == false) {
+                          AvailablePrinters printers = AvailablePrinters();
+                          final List<Ams> allams = await printers
+                              .getAmsByPrinterId(widget.printerid);
+                          for (Ams ams in allams) {
+                            if (ams.id.toString() == widget.amsid) {
+                              for (TraySlot tray in ams.tray) {
+                                if (tray.id.toString() == widget.trayid) {
+                                  if (tray.trayColor != "" &&
+                                      tray.trayType != "" &&
+                                      tray.trayInfoIdx != "") {
+                                    setState(() {
+                                      spoolLoaded = true;
+                                    });
+                                  }
+                                }
+                              }
+                            }
+                          }
+
+                          await Future.delayed(Duration(milliseconds: 500));
+                        }
                         bool configured = await setSlotToSpoolId(
                           widget.printerid,
                           widget.amsid,
@@ -133,6 +164,14 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
                       },
                       child: const Text("Apply"),
                     ),
+                  ],
+                ),
+              if (spoolLoaded == false)
+                Row(
+                  children: [
+                    Text("Waiting for spool to be loaded..."),
+                    SizedBox(width: 10),
+                    CircularProgressIndicator(),
                   ],
                 ),
             ],
