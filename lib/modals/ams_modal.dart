@@ -78,7 +78,7 @@ class _AmsModalState extends State<AmsModal> {
                         ),
                         Row(
                           children: [
-                            for (int i = 0; i < ams.tray.length; i++)
+                            for (TraySlot slot in ams.tray)
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(5),
@@ -89,7 +89,7 @@ class _AmsModalState extends State<AmsModal> {
                                         DecoratedBox(
                                           decoration: BoxDecoration(
                                             color: toFlutterColor(
-                                              ams.tray[i].trayColor,
+                                              slot.trayColor,
                                             ),
                                             borderRadius: BorderRadius.circular(
                                               15,
@@ -97,7 +97,7 @@ class _AmsModalState extends State<AmsModal> {
                                           ),
                                           child: Material(
                                             color: toFlutterColor(
-                                              ams.tray[i].trayColor,
+                                              slot.trayColor,
                                             ),
                                             borderRadius: BorderRadius.circular(
                                               15,
@@ -115,7 +115,7 @@ class _AmsModalState extends State<AmsModal> {
                                                               widget.printerid,
                                                           amsid: ams.id
                                                               .toString(),
-                                                          trayid: ams.tray[i].id
+                                                          trayid: slot.id
                                                               .toString(),
                                                         ),
                                                   ),
@@ -125,8 +125,7 @@ class _AmsModalState extends State<AmsModal> {
                                                 height: 100,
                                                 child: Center(
                                                   child: Text(
-                                                    (ams.tray[i].id + 1)
-                                                        .toString(),
+                                                    (slot.id + 1).toString(),
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                     ),
@@ -137,7 +136,9 @@ class _AmsModalState extends State<AmsModal> {
                                           ),
                                         ),
                                         SizedBox(height: 4),
-                                        if (!checkSpoolAssignment(i))
+                                        if (!checkSpoolAssignment(
+                                          ams.tray.indexOf(slot),
+                                        ))
                                           Row(
                                             children: [
                                               Expanded(
@@ -168,10 +169,11 @@ class _AmsModalState extends State<AmsModal> {
   }
 
   bool checkSpoolAssignment(int i) {
-    try {
-      return amsmapping?[i].spoolId != null;
-    } catch (e) {
-      return false;
+    for (AmsSpool spool in amsmapping!) {
+      if (spool.trayId == i) {
+        return true;
+      }
     }
+    return false;
   }
 }
