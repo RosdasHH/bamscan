@@ -1,3 +1,4 @@
+import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/spool.dart';
@@ -19,45 +20,56 @@ class AmsModal extends StatefulWidget {
 }
 
 class _AmsModalState extends State<AmsModal> {
-  late final Future<List<Ams>> _amsFuture;
+  List<Ams>? amsdata;
+  List<AmsSpool>? amsmapping;
 
   @override
   void initState() {
     super.initState();
+    loadAms();
+    refresh();
+  }
+
+  void refresh() async {
+    while (mounted) {
+      loadAms();
+      await Future.delayed(Duration(seconds: 1));
+    }
+  }
+
+  void loadAms() async {
     final availablePrinters = Provider.of<AvailablePrinters>(
       context,
       listen: false,
     );
-    _amsFuture = availablePrinters.getAmsByPrinterId(widget.printerid);
+    amsmapping = await getFilamentMappingForPrinter(
+      int.parse(widget.printerid),
+    );
+    amsdata = await availablePrinters.getAmsByPrinterId(widget.printerid);
+    setState(() {
+      amsdata = amsdata;
+      amsmapping = amsmapping;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Ams selection")),
-      body: FutureBuilder<List<Ams>>(
-        future: _amsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final List<Ams> amslist = snapshot.data ?? [];
-
-            return SingleChildScrollView(
+      body: amsdata == null
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (Ams ams in amslist)
+                  for (Ams ams in amsdata!)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Überschrift für jedes AMS
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "AMS ${ams.id}",
+                            "AMS ${ams.id + 1}",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -66,61 +78,100 @@ class _AmsModalState extends State<AmsModal> {
                         ),
                         Row(
                           children: [
-                            for (TraySlot tray in ams.tray)
+                            for (int i = 0; i < ams.tray.length; i++)
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(5),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: toFlutterColor(tray.trayColor),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Material(
-                                      color: toFlutterColor(tray.trayColor),
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(15),
-                                        onTap: () async {
-                                          print("Puhsing");
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => QrscanModal(
-                                                printerid: widget.printerid,
-                                                amsid: ams.id.toString(),
-                                                trayid: tray.id.toString(),
-                                              ),
+                                  child: SizedBox(
+                                    height: 140,
+                                    child: Column(
+                                      children: [
+                                        DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: toFlutterColor(
+                                              ams.tray[i].trayColor,
                                             ),
-                                          );
-                                        },
-                                        child: SizedBox(
-                                          height: 100,
-                                          child: Center(
-                                            child: Text(
-                                              (tray.id + 1).toString(),
-                                              style: TextStyle(
-                                                color: Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                          ),
+                                          child: Material(
+                                            color: toFlutterColor(
+                                              ams.tray[i].trayColor,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                            child: InkWell(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              onTap: () async {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        QrscanModal(
+                                                          printerid:
+                                                              widget.printerid,
+                                                          amsid: ams.id
+                                                              .toString(),
+                                                          trayid: ams.tray[i].id
+                                                              .toString(),
+                                                        ),
+                                                  ),
+                                                );
+                                              },
+                                              child: SizedBox(
+                                                height: 100,
+                                                child: Center(
+                                                  child: Text(
+                                                    (ams.tray[i].id + 1)
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
+                                        SizedBox(height: 4),
+                                        if (!checkSpoolAssignment(i))
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  "No Spool!",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
                           ],
                         ),
-
                         SizedBox(height: 20), // Abstand zwischen AMS-Gruppen
                       ],
                     ),
                 ],
               ),
-            );
-          }
-        },
-      ),
+            ),
     );
+  }
+
+  bool checkSpoolAssignment(int i) {
+    try {
+      return amsmapping?[i].spoolId != null;
+    } catch (e) {
+      return false;
+    }
   }
 }

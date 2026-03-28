@@ -5,9 +5,11 @@ import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/settings.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  //debugPaintSizeEnabled = true;
   runApp(
     MultiProvider(
       providers: [

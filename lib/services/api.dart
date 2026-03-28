@@ -36,6 +36,12 @@ Future<List<AmsSpool>> getAllFilamentMappings() async {
   return data.map((e) => AmsSpool.fromJson(e as Map<String, dynamic>)).toList();
 }
 
+Future<List<AmsSpool>> getFilamentMappingForPrinter(int printerId) async {
+  final res = await apiReq("/inventory/assignments?printer_id=$printerId");
+  final List<dynamic> data = jsonDecode(res.body);
+  return data.map((e) => AmsSpool.fromJson(e as Map<String, dynamic>)).toList();
+}
+
 Future<http.Response> apiReq(String apiEndpoint) async {
   http.Response res = await http.get(
     Uri.parse(
