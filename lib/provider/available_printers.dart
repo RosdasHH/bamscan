@@ -15,7 +15,6 @@ class AvailablePrinters extends ChangeNotifier {
     _printers
       ..clear()
       ..addAll(newList);
-    print("Printers set");
     notifyListeners();
   }
 

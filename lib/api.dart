@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/globals.dart';
+import 'package:bambuscanner/services/storage.dart';
 import 'package:http/http.dart' as http;
 
-
-Map<String, String> headers = {'X-API-Key': Globals.xapikey};
+Map<String, String> headers = {'X-API-Key': StorageService().xapitoken};
 
 void test() async {}
 
@@ -32,8 +32,15 @@ Future<bool> setSlotToSpoolId(
 }
 
 Future<http.Response> apiReq(String apiEndpoint) async {
+  print(
+    Uri.parse(
+      StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
+    ),
+  );
   http.Response res = await http.get(
-    Uri.parse(Globals.bambuddyurl + Globals.apinamespace + apiEndpoint),
+    Uri.parse(
+      StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
+    ),
     headers: headers,
   );
   return res;
@@ -44,7 +51,9 @@ Future<http.Response> apiPost(
   Map<String, dynamic> data,
 ) async {
   http.Response res = await http.post(
-    Uri.parse(Globals.bambuddyurl + Globals.apinamespace + apiEndpoint),
+    Uri.parse(
+      StorageService().bambuddyUrl! + Globals.apinamespace + apiEndpoint,
+    ),
     headers: {...headers, 'Content-Type': 'application/json'},
     body: jsonEncode(data),
   );
