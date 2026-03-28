@@ -39,6 +39,8 @@ dependencies:
   provider: ^6.1.5+1
   shared_preferences: ^2.5.5
   flutter_secure_storage: ^10.0.0
+  flutter_launcher_icons: ^0.14.4
+  rename_app: ^1.6.5
 
 dev_dependencies:
   flutter_test:
