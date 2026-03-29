@@ -62,10 +62,12 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
       return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
-          if (didPop) {
-            return;
-          }
-          Navigator.popUntil(context, (route) => route.settings.name == "ams");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.popUntil(
+              context,
+              (route) => route.settings.name == "ams",
+            );
+          });
         },
         child: Scaffold(
           appBar: AppBar(title: const Text("Scanned spool")),
