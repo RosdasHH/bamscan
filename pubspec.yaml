@@ -41,6 +41,7 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   flutter_launcher_icons: ^0.14.4
   rename_app: ^1.6.5
+  persistent_bottom_nav_bar: ^6.2.1
 
 dev_dependencies:
   flutter_test:

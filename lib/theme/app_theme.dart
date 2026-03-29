@@ -8,6 +8,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: false,
       scaffoldBackgroundColor: color.base1,
+      extensions: [color],
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: CupertinoPageTransitionsBuilder(),

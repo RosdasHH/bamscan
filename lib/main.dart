@@ -3,9 +3,11 @@ import 'package:bambuscanner/printers.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/settings.dart';
+import 'package:bambuscanner/theme/app_color.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -38,34 +40,84 @@ class _MyAppState extends State<MyApp> {
   Spool? scannedSpool;
   int currentPageIndex = 0;
 
-  final List<Widget> pages = [Printers(), Settings()];
+  final PersistentTabController _controller = PersistentTabController(
+    initialIndex: 0,
+  );
+
   final List<String> titles = ["Printers", "Settings"];
+
+  List<Widget> _buildScreens() {
+    final appColor = Theme.of(context).extension<AppColor>()!;
+    return [
+      Scaffold(backgroundColor: appColor.base1, body: const Printers()),
+      Scaffold(backgroundColor: appColor.base1, body: const Settings()),
+    ];
+  }
+
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: Icon(CupertinoIcons.home),
+        title: ("Home"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+          initialRoute: "/",
+          routes: {
+            "/first": (final context) => const Printers(),
+            "/second": (final context) => const Settings(),
+          },
+        ),
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(CupertinoIcons.settings),
+        title: ("Settings"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+          initialRoute: "/",
+          routes: {
+            "/first": (final context) => const Printers(),
+            "/second": (final context) => const Settings(),
+          },
+        ),
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final appColor = Theme.of(context).extension<AppColor>()!;
     return Scaffold(
-      appBar: AppBar(title: Text(titles[currentPageIndex])),
-      bottomNavigationBar: NavigationBar(
-        height: 60,
-        selectedIndex: currentPageIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        destinations: const <Widget>[
-          NavigationDestination(icon: Icon(Icons.print), label: "Printers"),
-          NavigationDestination(icon: Icon(Icons.settings), label: "Settings"),
-        ],
+      appBar: AppBar(title: Text("BamScan"), backgroundColor: appColor.base1),
+      body: PersistentTabView(
+        context,
+        controller: _controller,
+        screens: _buildScreens(),
+        items: _navBarsItems(),
+        handleAndroidBackButtonPress: true,
+        resizeToAvoidBottomInset: true,
+        stateManagement: true,
+        hideNavigationBarWhenKeyboardAppears: true,
+        //popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
+        padding: const EdgeInsets.only(top: 8),
+        backgroundColor: appColor.base2,
+        isVisible: true,
+        animationSettings: const NavBarAnimationSettings(
+          navBarItemAnimation: ItemAnimationSettings(
+            duration: Duration(milliseconds: 400),
+            curve: Curves.ease,
+          ),
+          screenTransitionAnimation: ScreenTransitionAnimationSettings(
+            animateTabTransition: true,
+            duration: Duration(milliseconds: 200),
+            screenTransitionAnimationType: ScreenTransitionAnimationType.fadeIn,
+          ),
+        ),
+        confineToSafeArea: true,
+        navBarHeight: kBottomNavigationBarHeight,
+        navBarStyle: NavBarStyle.style19,
       ),
-      body: SafeArea(child: pages[currentPageIndex]),
-      //showDialog(
-      //  context: context,
-      //  builder: (BuildContext context) {
-      //    return FilamentScannedModal(scannedSpool: scannedSpool!);
-      //  },
-      //);
     );
   }
 }
