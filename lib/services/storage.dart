@@ -14,7 +14,7 @@ class StorageService extends ChangeNotifier {
   String get bambuddyUrl => _bambuddyUrl;
   String get xapitoken => _xapitoken;
 
-  void loadFromStorage() async {
+  Future<void> loadFromStorage() async {
     _bambuddyUrl = await getBambuddyUrl();
     _xapitoken = await getToken();
     notifyListeners();

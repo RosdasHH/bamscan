@@ -35,18 +35,21 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          TextField(controller: _bambuddyUrlController),
-          TextField(controller: _xapiTokenController, obscureText: true),
-          ElevatedButton(
-            onPressed: () {
-              saveSettings();
-            },
-            child: const Text("Save"),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(title: Text("Settings")),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            TextField(controller: _bambuddyUrlController),
+            TextField(controller: _xapiTokenController, obscureText: true),
+            ElevatedButton(
+              onPressed: () {
+                saveSettings();
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        ),
       ),
     );
   }

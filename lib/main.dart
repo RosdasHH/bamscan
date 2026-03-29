@@ -1,4 +1,5 @@
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/onboarding.dart';
 import 'package:bambuscanner/printers.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/storage.dart';
@@ -20,7 +21,9 @@ void main() {
       ],
       child: MaterialApp(
         title: "BamScan",
-        theme: AppTheme().dark,
+        themeMode: ThemeMode.system,
+        theme: AppTheme().light,
+        darkTheme: AppTheme().dark,
         home: const MyApp(),
       ),
     ),
@@ -39,6 +42,8 @@ class _MyAppState extends State<MyApp> {
   String? scannedCode;
   Spool? scannedSpool;
   int currentPageIndex = 0;
+
+  bool storageLoaded = false;
 
   final PersistentTabController _controller = PersistentTabController(
     initialIndex: 0,
@@ -86,38 +91,60 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    getStorage();
+  }
+
+  void getStorage() async {
+    final StorageService storageService = StorageService();
+    await storageService.loadFromStorage();
+    setState(() {
+      storageLoaded = true;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appColor = Theme.of(context).extension<AppColor>()!;
-    return Scaffold(
-      appBar: AppBar(title: Text("BamScan"), backgroundColor: appColor.base1),
-      body: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(),
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true,
-        stateManagement: true,
-        hideNavigationBarWhenKeyboardAppears: true,
-        //popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
-        padding: const EdgeInsets.only(top: 8),
-        backgroundColor: appColor.base2,
-        isVisible: true,
-        animationSettings: const NavBarAnimationSettings(
-          navBarItemAnimation: ItemAnimationSettings(
-            duration: Duration(milliseconds: 400),
-            curve: Curves.ease,
+    final storage = context.watch<StorageService>();
+    if (storageLoaded == false) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (storage.bambuddyUrl == "" || storage.xapitoken == "") {
+      return Onboarding();
+    } else {
+      return Scaffold(
+        body: PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _buildScreens(),
+          items: _navBarsItems(),
+          handleAndroidBackButtonPress: true,
+          resizeToAvoidBottomInset: true,
+          stateManagement: true,
+          hideNavigationBarWhenKeyboardAppears: true,
+          popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+          padding: const EdgeInsets.only(top: 8),
+          backgroundColor: appColor.base2,
+          isVisible: true,
+          animationSettings: const NavBarAnimationSettings(
+            navBarItemAnimation: ItemAnimationSettings(
+              duration: Duration(milliseconds: 400),
+              curve: Curves.ease,
+            ),
+            screenTransitionAnimation: ScreenTransitionAnimationSettings(
+              animateTabTransition: true,
+              duration: Duration(milliseconds: 200),
+              screenTransitionAnimationType:
+                  ScreenTransitionAnimationType.fadeIn,
+            ),
           ),
-          screenTransitionAnimation: ScreenTransitionAnimationSettings(
-            animateTabTransition: true,
-            duration: Duration(milliseconds: 200),
-            screenTransitionAnimationType: ScreenTransitionAnimationType.fadeIn,
-          ),
+          confineToSafeArea: true,
+          navBarHeight: kBottomNavigationBarHeight,
+          navBarStyle: NavBarStyle.style19,
         ),
-        confineToSafeArea: true,
-        navBarHeight: kBottomNavigationBarHeight,
-        navBarStyle: NavBarStyle.style19,
-      ),
-    );
+      );
+    }
   }
 }

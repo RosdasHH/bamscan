@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   ThemeData get dark => _base(DarkColor());
+  ThemeData get light => _base(LightColor());
 
   ThemeData _base(AppColor color) {
     return ThemeData(

@@ -23,7 +23,11 @@ class _PrintersState extends State<Printers> {
 
   @override
   Widget build(BuildContext context) {
+    final printers = context.watch<AvailablePrinters>().printers;
     final storage = context.watch<StorageService>();
+
+    bool apiLoading = false;
+
     if (storage.bambuddyUrl == "") {
       return Text("Please enter the Bambuddy Url in the Settings tab.");
     } else if (storage.xapitoken == "") {
@@ -31,18 +35,12 @@ class _PrintersState extends State<Printers> {
     } else {
       final repo = Provider.of<AvailablePrinters>(context, listen: false);
       repo.fetchPrinters();
-      return FutureBuilder<void>(
-        future: repo.fetchPrinters(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Fehler: ${snapshot.error}');
-          }
-
-          final printers = context.watch<AvailablePrinters>().printers;
-
-          return SingleChildScrollView(
+      if (printers.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return Scaffold(
+          appBar: AppBar(title: Text("Printers")),
+          body: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsetsGeometry.all(10),
               child: Column(
@@ -77,9 +75,9 @@ class _PrintersState extends State<Printers> {
                 ],
               ),
             ),
-          );
-        },
-      );
+          ),
+        );
+      }
     }
   }
 }

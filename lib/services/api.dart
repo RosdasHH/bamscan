@@ -5,12 +5,31 @@ import 'package:bambuscanner/services/globals.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:http/http.dart' as http;
 
-Map<String, String> headers = {'X-API-Key': StorageService().xapitoken};
-
 Future<Spool> getSpoolById(id) async {
   http.Response res = await apiReq("/inventory/spools/$id");
   Spool spool = Spool.fromJson(jsonDecode(res.body));
   return spool;
+}
+
+Future<bool?> checkHealth(String url) async {
+  try {
+    http.Response res = await http.get(Uri.parse(url));
+    return res.statusCode == 200;
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<bool?> checkApiKey(String url, String apikey) async {
+  try {
+    http.Response res = await http.get(
+      Uri.parse("$url${Globals.apinamespace}/users"),
+      headers: {'X-API-Key': apikey},
+    );
+    if (res.statusCode == 401) return false;
+    if (res.statusCode == 200) return true;
+  } catch (e) {}
+  return null;
 }
 
 Future<bool> setSlotToSpoolId(
@@ -47,7 +66,7 @@ Future<http.Response> apiReq(String apiEndpoint) async {
     Uri.parse(
       StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
     ),
-    headers: headers,
+    headers: {"x-api-key": StorageService().xapitoken},
   );
   return res;
 }
@@ -60,7 +79,10 @@ Future<http.Response> apiPost(
     Uri.parse(
       StorageService().bambuddyUrl! + Globals.apinamespace + apiEndpoint,
     ),
-    headers: {...headers, 'Content-Type': 'application/json'},
+    headers: {
+      "x-api-key": StorageService().xapitoken,
+      'Content-Type': 'application/json',
+    },
     body: jsonEncode(data),
   );
 
