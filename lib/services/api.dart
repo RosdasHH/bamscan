@@ -60,6 +60,17 @@ Future<List<Spool>> getAllSpools() async {
   return data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList();
 }
 
+Future<List<Spool>> getSpoolsByQrCode(String qrcode) async {
+  final List<Spool> allSpools = await getAllSpools();
+  List<Spool> spools = [];
+  for (Spool spool in allSpools) {
+    if (spool.qrcode != null) {
+      spools.add(spool);
+    }
+  }
+  return spools;
+}
+
 Future<List<AmsSpool>> getAllFilamentMappings() async {
   final res = await apiReq("/inventory/assignments");
   final List<dynamic> data = jsonDecode(res.body);

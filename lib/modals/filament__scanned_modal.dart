@@ -39,6 +39,7 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
 
   Future<void> _loadMappings() async {
     mappings = await getAllFilamentMappings();
+    print("Scanned spool id: " + widget.scannedSpool.id.toString());
     if (mappings == null) return;
     //Slot data if spool is already assigned
     for (AmsSpool mapping in mappings!) {

@@ -47,6 +47,9 @@ class _FilamentTabState extends State<FilamentTab> {
                         builder: (context) => FilamentSettings(spool: filament),
                       ),
                     );
+                    setState(() {
+                      filaments = null;
+                    });
                     getFilaments();
                   },
                   child: ListTile(

@@ -28,19 +28,45 @@ class _QrscanModalState extends State<QrscanModal> {
       appBar: AppBar(title: const Text("Scan QR-Code")),
       body: QrScan(
         enabled: scanenabled,
-        scanDataCallback: (spoolid) async {
-          spoolid = spoolid.toString();
+        scanDataCallback: (qrcode) async {
+          qrcode = qrcode.toString();
           setState(() {
             scanenabled = false;
           });
-          final Spool spool = await getSpoolById(spoolid);
+          final List<Spool> spools = await getSpoolsByQrCode(qrcode);
 
           if (!context.mounted) return;
+          if (spools.length > 1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Multiple assignments: ${spools.map((s) => s.id)}",
+                ),
+                duration: Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+            Navigator.pop(context);
+            return;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: spools.isNotEmpty
+                  ? Text("Found Spool")
+                  : Text("No Spool found"),
+              duration: Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          if (spools.isEmpty) {
+            Navigator.pop(context);
+            return;
+          }
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => FilamentScannedModal(
-                scannedSpool: spool,
+                scannedSpool: spools[0],
                 printerid: widget.printerid,
                 amsid: widget.amsid,
                 trayid: widget.trayid,
