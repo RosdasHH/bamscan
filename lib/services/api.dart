@@ -64,7 +64,7 @@ Future<List<Spool>> getSpoolsByQrCode(String qrcode) async {
   final List<Spool> allSpools = await getAllSpools();
   List<Spool> spools = [];
   for (Spool spool in allSpools) {
-    if (spool.qrcode != null) {
+    if (spool.qrcode != null && spool.qrcode == qrcode) {
       spools.add(spool);
     }
   }
