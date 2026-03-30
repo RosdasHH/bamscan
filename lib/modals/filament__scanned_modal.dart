@@ -1,6 +1,5 @@
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
-import 'package:bambuscanner/classes/printer.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/api.dart';

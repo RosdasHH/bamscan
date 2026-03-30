@@ -42,7 +42,7 @@ class AppTheme {
         titleMedium: TextStyle(color: color.primaryText),
         titleSmall: TextStyle(color: color.primaryText),
         bodyLarge: TextStyle(color: color.primaryText),
-        bodyMedium: TextStyle(color: color.primaryText),
+        bodyMedium: TextStyle(color: color.primaryText,),
         bodySmall: TextStyle(color: color.primaryText),
         labelLarge: TextStyle(color: color.primaryText),
         labelMedium: TextStyle(color: color.primaryText),
@@ -63,6 +63,10 @@ class AppTheme {
           }
           return IconThemeData(color: color.primaryText);
         }),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: color.primary,
+        circularTrackColor: color.base1,
       ),
     );
   }

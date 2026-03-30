@@ -1,4 +1,5 @@
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/filaments.dart';
 import 'package:bambuscanner/onboarding.dart';
 import 'package:bambuscanner/printers.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
@@ -8,6 +9,8 @@ import 'package:bambuscanner/theme/app_color.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -55,38 +58,8 @@ class _MyAppState extends State<MyApp> {
     final appColor = Theme.of(context).extension<AppColor>()!;
     return [
       Scaffold(backgroundColor: appColor.base1, body: const Printers()),
+      Scaffold(backgroundColor: appColor.base1, body: const FilamentTab()),
       Scaffold(backgroundColor: appColor.base1, body: const Settings()),
-    ];
-  }
-
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.home),
-        title: ("Home"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-        routeAndNavigatorSettings: RouteAndNavigatorSettings(
-          initialRoute: "/",
-          routes: {
-            "/first": (final context) => const Printers(),
-            "/second": (final context) => const Settings(),
-          },
-        ),
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.settings),
-        title: ("Settings"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-        routeAndNavigatorSettings: RouteAndNavigatorSettings(
-          initialRoute: "/",
-          routes: {
-            "/first": (final context) => const Printers(),
-            "/second": (final context) => const Settings(),
-          },
-        ),
-      ),
     ];
   }
 
@@ -108,6 +81,51 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final appColor = Theme.of(context).extension<AppColor>()!;
     final storage = context.watch<StorageService>();
+
+    List<PersistentBottomNavBarItem> navBarsItems() {
+      return [
+        PersistentBottomNavBarItem(
+          icon: Icon(CupertinoIcons.home),
+          title: ("Home"),
+          activeColorPrimary: appColor.primary,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+            initialRoute: "/",
+            routes: {
+              "/first": (final context) => const Printers(),
+              "/second": (final context) => const Settings(),
+            },
+          ),
+        ),
+        PersistentBottomNavBarItem(
+          icon: Icon(MdiIcons.disc),
+          title: ("Filaments"),
+          activeColorPrimary: appColor.primary,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+            initialRoute: "/",
+            routes: {
+              "/first": (final context) => const Printers(),
+              "/second": (final context) => const Settings(),
+            },
+          ),
+        ),
+        PersistentBottomNavBarItem(
+          icon: Icon(CupertinoIcons.settings),
+          title: ("Settings"),
+          activeColorPrimary: appColor.primary,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+          routeAndNavigatorSettings: RouteAndNavigatorSettings(
+            initialRoute: "/",
+            routes: {
+              "/first": (final context) => const Printers(),
+              "/second": (final context) => const Settings(),
+            },
+          ),
+        ),
+      ];
+    }
+
     if (storageLoaded == false) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -119,7 +137,7 @@ class _MyAppState extends State<MyApp> {
           context,
           controller: _controller,
           screens: _buildScreens(),
-          items: _navBarsItems(),
+          items: navBarsItems(),
           handleAndroidBackButtonPress: true,
           resizeToAvoidBottomInset: true,
           stateManagement: true,

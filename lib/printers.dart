@@ -26,8 +26,6 @@ class _PrintersState extends State<Printers> {
     final printers = context.watch<AvailablePrinters>().printers;
     final storage = context.watch<StorageService>();
 
-    bool apiLoading = false;
-
     if (storage.bambuddyUrl == "") {
       return Text("Please enter the Bambuddy Url in the Settings tab.");
     } else if (storage.xapitoken == "") {

@@ -17,7 +17,7 @@ class Spool {
   final String? trayUuid;
   final String? dataOrigin;
   final String? tagType;
-  final double costPerKg;
+  final double? costPerKg;
   final bool weightLocked;
   final int? lastScaleWeight;
   final DateTime? lastWeighedAt;
@@ -86,7 +86,7 @@ class Spool {
         trayUuid: json['tray_uuid'] as String?,
         dataOrigin: json['data_origin'] as String?,
         tagType: json['tag_type'] as String?,
-        costPerKg: (json['cost_per_kg'] as num).toDouble(),
+        costPerKg: (json['cost_per_kg'] as num?)?.toDouble(),
         weightLocked: json['weight_locked'] as bool,
         lastScaleWeight: json['last_scale_weight'] as int?,
         lastWeighedAt: json['last_weighed_at'] != null
@@ -110,7 +110,7 @@ class Spool {
         kProfiles: json['k_profiles'] as List<dynamic>,
       );
     } catch (e) {
-      throw FormatException('Failed to load spooldata: $e');
+      throw (e);
     }
   }
 }
