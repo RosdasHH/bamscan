@@ -1,4 +1,6 @@
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/qrscan.dart';
+import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/theme/app_color.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/cupertino.dart';
@@ -73,6 +75,53 @@ class FilamentSettingsState extends State<FilamentSettings> {
                     (widget.spool.labelWeight - widget.spool.weightUsed) /
                     widget.spool.labelWeight,
               ),
+              InfoCard(
+                icon: Icons.qr_code,
+                title: "Assigned QR-Code:",
+                value: widget.spool.qrcode,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: const RouteSettings(name: "qrscanassign"),
+                      builder: (context) => QrScanAssignQrCode(
+                        scanDataCallback: (scannedqrid) async {
+                          String newNotes = widget.spool.note ?? "";
+                          if (widget.spool.qrcode != null) {
+                            newNotes = newNotes.replaceAll(
+                              RegExp(r'\[QR-CODE\]=>\[.*?\]'),
+                              '',
+                            );
+                          }
+                          newNotes = "[QR-CODE]=>[$scannedqrid]\n$newNotes";
+                          bool success = await patchSpool(
+                            widget.spool.id.toString(),
+                            newNotes,
+                          );
+                          if (success) print("Success");
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? "Successfully assigned QR-Code to this Spool!"
+                                    : "Could NOT assign this QR-Code to the spool!",
+                              ),
+                              backgroundColor: success == true
+                                  ? appColor.success
+                                  : appColor.error,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+                child: Text("QR"),
+              ),
             ],
           ),
         ),
@@ -92,7 +141,7 @@ class InfoCard extends StatefulWidget {
   });
   final IconData icon;
   final String title;
-  final String value;
+  final String? value;
   final double? progress;
   final Color? spoolColor;
 
@@ -104,6 +153,7 @@ class _InfoCardState extends State<InfoCard> {
   @override
   Widget build(BuildContext context) {
     final appColor = Theme.of(context).extension<AppColor>()!;
+    if (widget.value == null) return SizedBox.shrink(); //Nothing
     return Row(
       children: [
         Expanded(
@@ -157,7 +207,7 @@ class _InfoCardState extends State<InfoCard> {
                                 ),
                               ],
                             ),
-                            Text(widget.value),
+                            Text(widget.value!),
                           ],
                         ),
                       ),
@@ -169,6 +219,37 @@ class _InfoCardState extends State<InfoCard> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class QrScanAssignQrCode extends StatefulWidget {
+  const QrScanAssignQrCode({super.key, required this.scanDataCallback});
+  final Function(String) scanDataCallback;
+
+  @override
+  State<QrScanAssignQrCode> createState() => _QrScanAssignQrCode();
+}
+
+class _QrScanAssignQrCode extends State<QrScanAssignQrCode> {
+  bool scanenabled = true;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Scan QR-Code")),
+      body: QrScan(
+        enabled: scanenabled,
+        scanDataCallback: (spoolid) async {
+          if (spoolid != null) widget.scanDataCallback(spoolid);
+          setState(() {
+            scanenabled = false;
+          });
+
+          if (!context.mounted) return;
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }

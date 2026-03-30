@@ -39,14 +39,15 @@ class _FilamentTabState extends State<FilamentTab> {
             for (Spool filament in filaments!)
               Card(
                 child: InkWell(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         settings: const RouteSettings(name: "filamentdata"),
                         builder: (context) => FilamentSettings(spool: filament),
                       ),
                     );
+                    getFilaments();
                   },
                   child: ListTile(
                     title: Text(filament.slicerFilamentName),

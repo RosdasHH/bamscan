@@ -29,6 +29,7 @@ class Spool {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<dynamic> kProfiles;
+  final String? qrcode;
 
   const Spool({
     required this.material,
@@ -61,9 +62,11 @@ class Spool {
     required this.createdAt,
     required this.updatedAt,
     required this.kProfiles,
+    this.qrcode,
   });
 
   factory Spool.fromJson(Map<String, dynamic> json) {
+    final qrRegex = RegExp(r'\[QR-CODE\]=>\[(.*?)\]');
     try {
       return Spool(
         material: json['material'] as String,
@@ -108,6 +111,9 @@ class Spool {
         createdAt: DateTime.parse(json['created_at'] as String),
         updatedAt: DateTime.parse(json['updated_at'] as String),
         kProfiles: json['k_profiles'] as List<dynamic>,
+        qrcode: (json["note"] as String?) != null
+            ? qrRegex.firstMatch(json["note"]!)?.group(1)
+            : null,
       );
     } catch (e) {
       throw (e);

@@ -49,6 +49,11 @@ Future<bool> setSlotToSpoolId(
   return configured;
 }
 
+Future<bool> patchSpool(String id, String note) async {
+  final res = await apiPatch("/inventory/spools/$id", {"note": note});
+  return res.statusCode == 200;
+}
+
 Future<List<Spool>> getAllSpools() async {
   final res = await apiReq("/inventory/spools");
   final List<dynamic> data = jsonDecode(res.body);
@@ -82,6 +87,24 @@ Future<http.Response> apiPost(
   Map<String, dynamic> data,
 ) async {
   http.Response res = await http.post(
+    Uri.parse(
+      StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
+    ),
+    headers: {
+      "x-api-key": StorageService().xapitoken,
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(data),
+  );
+
+  return res;
+}
+
+Future<http.Response> apiPatch(
+  String apiEndpoint,
+  Map<String, dynamic> data,
+) async {
+  http.Response res = await http.patch(
     Uri.parse(
       StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
     ),
