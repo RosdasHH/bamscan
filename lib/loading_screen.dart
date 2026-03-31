@@ -1,6 +1,5 @@
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatelessWidget {

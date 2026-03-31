@@ -16,8 +16,8 @@ class Onboarding extends StatefulWidget {
 }
 
 class _OnboardingState extends State<Onboarding> {
-  TextEditingController _bambuddyUrlController = TextEditingController();
-  TextEditingController _bambuddyAPIKeyController = TextEditingController();
+  final TextEditingController _bambuddyUrlController = TextEditingController();
+  final TextEditingController _bambuddyAPIKeyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     List<PageViewModel> listPagesViewModel = [

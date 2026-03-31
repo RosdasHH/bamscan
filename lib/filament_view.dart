@@ -1,7 +1,6 @@
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/qrscan.dart';
-import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';

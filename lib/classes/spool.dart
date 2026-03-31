@@ -116,7 +116,7 @@ class Spool {
             : null,
       );
     } catch (e) {
-      throw (e);
+      rethrow;
     }
   }
 }

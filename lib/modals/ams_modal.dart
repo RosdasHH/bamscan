@@ -1,9 +1,8 @@
-import 'package:bambuscanner/classes/ams_spool.dart';
-import 'package:bambuscanner/provider/available_filaments.dart';
-import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
+import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
 import 'package:bambuscanner/modals/qrscan_modal.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';

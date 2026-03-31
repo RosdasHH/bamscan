@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/services/api.dart';
-import 'package:bambuscanner/classes/printer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

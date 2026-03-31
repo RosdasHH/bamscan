@@ -1,6 +1,4 @@
-import 'package:bambuscanner/theme/app_color.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TextInput extends StatefulWidget {
