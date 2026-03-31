@@ -1,8 +1,8 @@
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
-import 'package:bambuscanner/qrscan.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
+import 'package:bambuscanner/widgets/qrscan.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +99,6 @@ class FilamentViewState extends State<FilamentView> {
                           widget.spool.id.toString(),
                           newNotes,
                         );
-                        if (success) print("Success");
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

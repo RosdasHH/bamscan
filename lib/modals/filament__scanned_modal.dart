@@ -2,10 +2,10 @@ import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
-import 'package:bambuscanner/filament_view.dart';
-import 'package:bambuscanner/loading_screen.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
+import 'package:bambuscanner/widgets/filament_view.dart';
+import 'package:bambuscanner/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

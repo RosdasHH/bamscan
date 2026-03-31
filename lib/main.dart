@@ -1,11 +1,11 @@
 import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/filaments.dart';
 import 'package:bambuscanner/onboarding.dart';
-import 'package:bambuscanner/printers.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/storage.dart';
-import 'package:bambuscanner/settings.dart';
+import 'package:bambuscanner/tabs/filaments.dart';
+import 'package:bambuscanner/tabs/printers.dart';
+import 'package:bambuscanner/tabs/settings.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/filament_view.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/utils/color.dart';
+import 'package:bambuscanner/widgets/filament_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
