@@ -1,4 +1,5 @@
 import 'package:bambuscanner/classes/ams_spool.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
@@ -30,17 +31,21 @@ class _AmsModalState extends State<AmsModal> {
 
   void refresh() async {
     while (mounted) {
-      loadAms();
+      await loadAms();
       await Future.delayed(Duration(seconds: 1));
     }
   }
 
-  void loadAms() async {
+  Future<void> loadAms() async {
     final availablePrinters = Provider.of<AvailablePrinters>(
       context,
       listen: false,
     );
-    amsmapping = await getFilamentMappingForPrinter(
+    final availableFilaments = Provider.of<AvailableFilaments>(
+      context,
+      listen: false,
+    );
+    amsmapping = await availableFilaments.getFilamentMappingForPrinter(
       int.parse(widget.printerid),
     );
     amsdata = await availablePrinters.getAmsByPrinterId(widget.printerid);

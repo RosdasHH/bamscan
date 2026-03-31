@@ -1,8 +1,10 @@
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/modals/filament__scanned_modal.dart';
 import 'package:bambuscanner/qrscan.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class QrscanModal extends StatefulWidget {
   const QrscanModal({
@@ -22,8 +24,10 @@ class QrscanModal extends StatefulWidget {
 
 class _QrscanModalState extends State<QrscanModal> {
   bool scanenabled = true;
+
   @override
   Widget build(BuildContext context) {
+    final availableFilaments = context.watch<AvailableFilaments>();
     return Scaffold(
       appBar: AppBar(title: const Text("Scan QR-Code")),
       body: QrScan(
@@ -33,7 +37,9 @@ class _QrscanModalState extends State<QrscanModal> {
           setState(() {
             scanenabled = false;
           });
-          final List<Spool> spools = await getSpoolsByQrCode(qrcode);
+          final List<Spool> spools = await availableFilaments.getSpoolsByQrCode(
+            qrcode,
+          );
 
           if (!context.mounted) return;
           if (spools.length > 1) {

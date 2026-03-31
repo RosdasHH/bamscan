@@ -17,8 +17,14 @@ class _PrintersState extends State<Printers> {
   final storageservice = StorageService();
   @override
   void initState() {
-    storageservice.loadFromStorage();
     super.initState();
+    storageservice.loadFromStorage();
+
+    Future.microtask(() async {
+      if (!mounted) return;
+      final repo = context.read<AvailablePrinters>();
+      await repo.fetchPrinters();
+    });
   }
 
   @override
@@ -31,8 +37,6 @@ class _PrintersState extends State<Printers> {
     } else if (storage.xapitoken == "") {
       return Text("Please enter your Bambuddy API Token in the Settings tab.");
     } else {
-      final repo = Provider.of<AvailablePrinters>(context, listen: false);
-      repo.fetchPrinters();
       if (printers.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       } else {

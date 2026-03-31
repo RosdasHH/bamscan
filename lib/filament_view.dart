@@ -1,10 +1,12 @@
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/qrscan.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class FilamentView extends StatefulWidget {
   const FilamentView({super.key, required this.spool, required this.editable});
@@ -20,6 +22,7 @@ class FilamentViewState extends State<FilamentView> {
   Widget build(BuildContext context) {
     final Color filamentColor = toFlutterColor(widget.spool.rgba);
     final Color filamentConformTextColor = getContrastColor(filamentColor);
+    final availableFilaments = context.watch<AvailableFilaments>();
 
     return Padding(
       padding: EdgeInsetsGeometry.all(10),
@@ -93,7 +96,7 @@ class FilamentViewState extends State<FilamentView> {
                           );
                         }
                         newNotes = "[QR-CODE]=>[$scannedqrid]\n$newNotes";
-                        bool success = await patchSpool(
+                        bool success = await availableFilaments.patchSpool(
                           widget.spool.id.toString(),
                           newNotes,
                         );

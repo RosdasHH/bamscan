@@ -3,11 +3,13 @@ import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
 import 'package:bambuscanner/filament_view.dart';
 import 'package:bambuscanner/loading_screen.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FilamentScannedModal extends StatefulWidget {
   const FilamentScannedModal({
@@ -40,8 +42,11 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
   }
 
   Future<void> _loadMappings() async {
-    mappings = await getAllFilamentMappings();
-    print("Scanned spool id: " + widget.scannedSpool.id.toString());
+    final availableFilaments = Provider.of<AvailableFilaments>(
+      context,
+      listen: false,
+    );
+    mappings = await availableFilaments.getAllFilamentMappings();
     if (mappings == null) return;
     //Slot data if spool is already assigned
     for (AmsSpool mapping in mappings!) {
@@ -58,6 +63,7 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
 
   @override
   Widget build(BuildContext context) {
+    final availableFilaments = context.watch<AvailableFilaments>();
     if (loadingAssignments) {
       return const Center(child: CircularProgressIndicator());
     } else {
@@ -136,7 +142,7 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
 
                 await Future.delayed(Duration(milliseconds: 500));
               }
-              bool configured = await setSlotToSpoolId(
+              bool configured = await availableFilaments.setSlotToSpoolId(
                 widget.printerid,
                 widget.amsid,
                 widget.trayid,

@@ -1,8 +1,9 @@
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/filament_view.dart';
-import 'package:bambuscanner/services/api.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FilamentTab extends StatefulWidget {
   const FilamentTab({super.key});
@@ -12,8 +13,6 @@ class FilamentTab extends StatefulWidget {
 }
 
 class _FilamentTabState extends State<FilamentTab> {
-  List<Spool>? filaments;
-
   @override
   void initState() {
     super.initState();
@@ -21,86 +20,88 @@ class _FilamentTabState extends State<FilamentTab> {
   }
 
   void getFilaments() async {
-    filaments = await getAllSpools();
-    setState(() {
-      filaments = filaments;
-    });
+    if (!mounted) return;
+    final availableFilaments = Provider.of<AvailableFilaments>(
+      context,
+      listen: false,
+    );
+    await availableFilaments.getAllSpools();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (filaments == null) {
-      return Center(child: CircularProgressIndicator());
-    } else {
-      return Scaffold(
-        appBar: AppBar(title: Text("Filaments")),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: ListView(
-            children: [
-              for (Spool filament in filaments!)
-                Card(
-                  child: InkWell(
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: const RouteSettings(name: "filamentdata"),
-                          builder: (context) => FilamentViewScreen(
-                            spool: filament,
-                            editable: true,
-                            useScaffold: true,
-                          ),
-                        ),
-                      );
-                      setState(() {
-                        filaments = null;
-                      });
-                      getFilaments();
-                    },
-                    child: ListTile(
-                      title: Text(filament.slicerFilamentName),
-                      minLeadingWidth: 20,
-                      leading: SizedBox(
-                        width: 20,
-                        child: Center(
-                          child: SizedBox.square(
-                            dimension: 20,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: toFlutterColor(filament.rgba),
-                                shape: BoxShape.circle,
+    final filaments = context.watch<AvailableFilaments>().spools;
+
+    return Scaffold(
+      appBar: AppBar(title: Text("Filaments")),
+      body: filaments.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ListView(
+                children: [
+                  for (Spool filament in filaments)
+                    Card(
+                      child: InkWell(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: const RouteSettings(
+                                name: "filamentdata",
+                              ),
+                              builder: (context) => FilamentViewScreen(
+                                spool: filament,
+                                editable: true,
+                                useScaffold: true,
+                              ),
+                            ),
+                          );
+                          getFilaments();
+                        },
+                        child: ListTile(
+                          title: Text(filament.slicerFilamentName),
+                          minLeadingWidth: 20,
+                          leading: SizedBox(
+                            width: 20,
+                            child: Center(
+                              child: SizedBox.square(
+                                dimension: 20,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: toFlutterColor(filament.rgba),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
+                          subtitle: Text(filament.colorName),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (filament.qrcode != null)
+                                Padding(
+                                  padding: EdgeInsets.only(right: 20),
+                                  child: Icon(Icons.qr_code_2_rounded),
+                                )
+                              else
+                                SizedBox.shrink(),
+                              CircularProgressIndicator(
+                                value:
+                                    ((filament.labelWeight -
+                                                filament.weightUsed) /
+                                            filament.labelWeight)
+                                        .toDouble(),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      subtitle: Text(filament.colorName),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (filament.qrcode != null)
-                            Padding(
-                              padding: EdgeInsets.only(right: 20),
-                              child: Icon(Icons.qr_code_2_rounded),
-                            )
-                          else
-                            SizedBox.shrink(),
-                          CircularProgressIndicator(
-                            value:
-                                ((filament.labelWeight - filament.weightUsed) /
-                                        filament.labelWeight)
-                                    .toDouble(),
-                          ),
-                        ],
-                      ),
                     ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      );
-    }
+                ],
+              ),
+            ),
+    );
   }
 }

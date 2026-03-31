@@ -2,6 +2,7 @@ import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/filaments.dart';
 import 'package:bambuscanner/onboarding.dart';
 import 'package:bambuscanner/printers.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/settings.dart';
@@ -21,6 +22,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AvailablePrinters()),
         ChangeNotifierProvider(create: (_) => StorageService()),
+        ChangeNotifierProvider(create: (_) => AvailableFilaments()),
       ],
       child: MaterialApp(
         title: "BamScan",
@@ -52,12 +54,13 @@ class _MyAppState extends State<MyApp> {
     initialIndex: 0,
   );
 
-  final List<String> titles = ["Printers", "Settings"];
-
   List<Widget> _buildScreens() {
     return [
       Scaffold(backgroundColor: context.appColor.base1, body: const Printers()),
-      Scaffold(backgroundColor: context.appColor.base1, body: const FilamentTab()),
+      Scaffold(
+        backgroundColor: context.appColor.base1,
+        body: const FilamentTab(),
+      ),
       Scaffold(backgroundColor: context.appColor.base1, body: const Settings()),
     ];
   }
@@ -87,39 +90,18 @@ class _MyAppState extends State<MyApp> {
           title: ("Home"),
           activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
-          routeAndNavigatorSettings: RouteAndNavigatorSettings(
-            initialRoute: "/",
-            routes: {
-              "/first": (final context) => const Printers(),
-              "/second": (final context) => const Settings(),
-            },
-          ),
         ),
         PersistentBottomNavBarItem(
           icon: Icon(MdiIcons.disc),
           title: ("Filaments"),
           activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
-          routeAndNavigatorSettings: RouteAndNavigatorSettings(
-            initialRoute: "/",
-            routes: {
-              "/first": (final context) => const Printers(),
-              "/second": (final context) => const Settings(),
-            },
-          ),
         ),
         PersistentBottomNavBarItem(
           icon: Icon(CupertinoIcons.settings),
           title: ("Settings"),
           activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
-          routeAndNavigatorSettings: RouteAndNavigatorSettings(
-            initialRoute: "/",
-            routes: {
-              "/first": (final context) => const Printers(),
-              "/second": (final context) => const Settings(),
-            },
-          ),
         ),
       ];
     }
@@ -138,7 +120,7 @@ class _MyAppState extends State<MyApp> {
           items: navBarsItems(),
           handleAndroidBackButtonPress: true,
           resizeToAvoidBottomInset: true,
-          stateManagement: true,
+          stateManagement: false,
           hideNavigationBarWhenKeyboardAppears: true,
           popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
           padding: const EdgeInsets.only(top: 8),
