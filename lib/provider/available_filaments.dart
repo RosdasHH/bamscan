@@ -43,6 +43,17 @@ class AvailableFilaments extends ChangeNotifier {
 
   Future<bool> patchSpool(String id, String note) async {
     final res = await apiPatch("/inventory/spools/$id", {"note": note});
+    if (res.statusCode != 200) return false;
+
+    Spool updatedSpool = Spool.fromJson(jsonDecode(res.body));
+
+    final int index = _spools.indexWhere((s) => s.id.toString() == id);
+
+    if (index != -1) {
+      List<Spool> spoolsCopy = List.from(_spools);
+      spoolsCopy[index] = updatedSpool;
+      setFilaments(spoolsCopy);
+    }
     return res.statusCode == 200;
   }
 
@@ -51,6 +62,9 @@ class AvailableFilaments extends ChangeNotifier {
     final List<dynamic> data = jsonDecode(res.body);
     setFilaments(
       data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+    print(
+      "GET SPOOL ${data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList()[0].qrcode}",
     );
     return true;
   }

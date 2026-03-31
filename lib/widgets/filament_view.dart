@@ -23,12 +23,12 @@ class FilamentView extends StatefulWidget {
 class FilamentViewState extends State<FilamentView> {
   @override
   Widget build(BuildContext context) {
-    final spool = context.watch<AvailableFilaments>().spools.firstWhere(
+    final spools = context.watch<AvailableFilaments>();
+    final Spool spool = spools.spools.firstWhere(
       (s) => s.id == widget.spool.id,
     );
     final Color filamentColor = toFlutterColor(spool.rgba);
     final Color filamentConformTextColor = getContrastColor(filamentColor);
-
     return Padding(
       padding: EdgeInsetsGeometry.all(10),
       child: SingleChildScrollView(
@@ -353,14 +353,10 @@ class _QRCodeMoreState extends State<QRCodeMore> {
   }
 
   void unassignQrCode() async {
-    final availableFilaments = context.read<AvailableFilaments>();
     final bool res = await deleteQrCodeReq(context, widget.spool);
     if (res) print("Deleted successfully");
-    await availableFilaments.getAllSpools();
     if (!mounted) return;
     Navigator.pop(context);
-    //Reload
-    setState(() {});
   }
 
   void assignQrCode() async {
@@ -409,8 +405,5 @@ class _QRCodeMoreState extends State<QRCodeMore> {
         ),
       ),
     );
-    await availableFilaments.getAllSpools();
-    //Reload
-    setState(() {});
   }
 }

@@ -34,10 +34,7 @@ Future<bool> addQrCodeReq(
   return success;
 }
 
-Future<bool> deleteQrCodeReq(
-  BuildContext context,
-  Spool spool,
-) async {
+Future<bool> deleteQrCodeReq(BuildContext context, Spool spool) async {
   final availableFilaments = context.read<AvailableFilaments>();
   final newNotes = deleteQrCodeFromString(spool.note.toString());
   bool success = await availableFilaments.patchSpool(
