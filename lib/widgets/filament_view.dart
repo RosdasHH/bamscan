@@ -29,6 +29,7 @@ class FilamentViewState extends State<FilamentView> {
     );
     final Color filamentColor = toFlutterColor(spool.rgba);
     final Color filamentConformTextColor = getContrastColor(filamentColor);
+
     return Padding(
       padding: EdgeInsetsGeometry.all(10),
       child: SingleChildScrollView(
@@ -299,6 +300,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                                   data: widget.spool.qrcode!,
                                   version: QrVersions.auto,
                                   size: 250,
+                                  errorCorrectionLevel: QrErrorCorrectLevel.H,
                                   backgroundColor: Colors.transparent,
                                 ),
                               )

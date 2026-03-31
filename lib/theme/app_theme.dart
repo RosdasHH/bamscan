@@ -1,4 +1,5 @@
 import 'package:bambuscanner/theme/app_color.dart';
+import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -73,6 +74,7 @@ class AppTheme {
         strokeCap: StrokeCap.round,
       ),
       snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+      chipTheme: ChipThemeData(surfaceTintColor: getContrastColor(color.primary)),
     );
   }
 }

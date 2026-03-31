@@ -1,3 +1,4 @@
+import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/utils/color.dart';
@@ -13,6 +14,7 @@ class FilamentTab extends StatefulWidget {
 }
 
 class _FilamentTabState extends State<FilamentTab> {
+  List<AmsSpool> mappings = [];
   @override
   void initState() {
     super.initState();
@@ -23,6 +25,11 @@ class _FilamentTabState extends State<FilamentTab> {
     if (!mounted) return;
     final availableFilaments = context.read<AvailableFilaments>();
     await availableFilaments.getAllSpools();
+    mappings = await availableFilaments.getAllFilamentMappings();
+    if (!mounted) return;
+    setState(() {
+      mappings = mappings;
+    });
   }
 
   @override
@@ -74,7 +81,15 @@ class _FilamentTabState extends State<FilamentTab> {
                               ),
                             ),
                           ),
-                          subtitle: Text(filament.colorName),
+                          subtitle: Row(
+                            children: [
+                              Text("${filament.colorName}   "),
+                              Text(
+                                getPrinter(filament) ?? "",
+                                style: TextStyle(color: Colors.purple),
+                              ),
+                            ],
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -102,5 +117,23 @@ class _FilamentTabState extends State<FilamentTab> {
               ),
             ),
     );
+  }
+
+  String? getPrinter(Spool spool) {
+    for (AmsSpool mapping in mappings) {
+      if (mapping.spoolId == spool.id) {
+        return " ⋅ ${mapping.printerName} | ${amsIdToLetter(mapping.amsId)}${mapping.trayId + 1}";
+      }
+    }
+    return null;
+  }
+
+  String amsIdToLetter(int number) {
+    try {
+      const mapping = ["A", "B", "C", "D"];
+      return mapping[number];
+    } catch (e) {
+      return "X";
+    }
   }
 }
