@@ -20,7 +20,10 @@ class AppTheme {
         },
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(backgroundColor: color.primary),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color.primary,
+          foregroundColor: color.base3,
+        ),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: color.base1,

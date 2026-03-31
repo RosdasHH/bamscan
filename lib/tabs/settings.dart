@@ -1,4 +1,5 @@
 import 'package:bambuscanner/services/storage.dart';
+import 'package:bambuscanner/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SettingsState extends State<Settings> {
           children: [
             TextField(controller: _bambuddyUrlController),
             TextField(controller: _xapiTokenController, obscureText: true),
-            ElevatedButton(
+            Button(
               onPressed: () {
                 saveSettings();
               },

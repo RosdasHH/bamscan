@@ -276,43 +276,63 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     return Scaffold(
       appBar: AppBar(title: Text("QR-Code")),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (widget.spool.qrcode != null)
-                  QrImageView(
-                    data: widget.spool.qrcode!,
-                    version: QrVersions.auto,
-                    size: 320,
-                    backgroundColor: Colors.transparent,
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox.square(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: widget.spool.qrcode != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: QrImageView(
+                                  data: widget.spool.qrcode!,
+                                  version: QrVersions.auto,
+                                  size: 250,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                              )
+                            : SizedBox.square(dimension: 320),
+                      ),
+                    ),
                   ),
-              ],
-            ),
-            Row(
-              children: [
-                Button(
-                  onPressed: () {
-                    assignQrCode();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [Icon(Icons.add), Text("Assign QR-Code")],
+                ],
+              ),
+              SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Button(
+                    onPressed: () {
+                      assignQrCode();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [Icon(Icons.add), Text("Assign QR-Code")],
+                    ),
                   ),
-                ),
-                Button(
-                  onPressed: () {
-                    unassignQrCode();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [Icon(Icons.remove), Text("Unassign QR-Code")],
+                  Button(
+                    onPressed: () {
+                      unassignQrCode();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [Icon(Icons.remove), Text("Unassign QR-Code")],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
