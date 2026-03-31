@@ -63,9 +63,6 @@ class AvailableFilaments extends ChangeNotifier {
     setFilaments(
       data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList(),
     );
-    print(
-      "GET SPOOL ${data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList()[0].qrcode}",
-    );
     return true;
   }
 

@@ -322,28 +322,38 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                 ],
               ),
               SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Button(
-                    onPressed: () {
-                      assignQrCode();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [Icon(Icons.add), Text("Assign QR-Code")],
-                    ),
+              SizedBox(
+                width: double.infinity,
+                child: Button(
+                  onPressed: () {
+                    assignQrCode();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 8),
+                      Text("Assign QR-Code"),
+                    ],
                   ),
-                  Button(
-                    onPressed: () {
-                      unassignQrCode();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [Icon(Icons.remove), Text("Unassign QR-Code")],
-                    ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Button(
+                  onPressed: () {
+                    unassignQrCode();
+                  },
+                  color: Colors.transparent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.remove),
+                      SizedBox(width: 8),
+                      Text("Unassign QR-Code"),
+                    ],
                   ),
-                ],
+                ),
               ),
             ],
           ),

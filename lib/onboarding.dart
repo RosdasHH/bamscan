@@ -17,7 +17,8 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   final TextEditingController _bambuddyUrlController = TextEditingController();
-  final TextEditingController _bambuddyAPIKeyController = TextEditingController();
+  final TextEditingController _bambuddyAPIKeyController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     List<PageViewModel> listPagesViewModel = [
@@ -37,7 +38,10 @@ class _OnboardingState extends State<Onboarding> {
         image: SvgPicture.asset(
           "assets/lens.svg",
           height: 250.0,
-          colorFilter: ColorFilter.mode(context.appColor.primaryText, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(
+            context.appColor.primaryText,
+            BlendMode.srcIn,
+          ),
         ),
       ),
       PageViewModel(
@@ -102,6 +106,7 @@ class _OnboardingState extends State<Onboarding> {
             if (!await checkurl(context.appColor)) {
               return;
             }
+            if (!context.mounted) return;
             if (!await checkapikey(context.appColor)) {
               return;
             }
@@ -112,10 +117,14 @@ class _OnboardingState extends State<Onboarding> {
             StorageService().loadFromStorage();
           },
           nextStyle: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(context.appColor.primaryText),
+            foregroundColor: WidgetStateProperty.all(
+              context.appColor.primaryText,
+            ),
           ),
           doneStyle: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(context.appColor.primaryText),
+            foregroundColor: WidgetStateProperty.all(
+              context.appColor.primaryText,
+            ),
           ),
           dotsDecorator: DotsDecorator(
             activeColor: context.appColor.primaryText,
