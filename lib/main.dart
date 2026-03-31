@@ -55,11 +55,10 @@ class _MyAppState extends State<MyApp> {
   final List<String> titles = ["Printers", "Settings"];
 
   List<Widget> _buildScreens() {
-    final appColor = Theme.of(context).extension<AppColor>()!;
     return [
-      Scaffold(backgroundColor: appColor.base1, body: const Printers()),
-      Scaffold(backgroundColor: appColor.base1, body: const FilamentTab()),
-      Scaffold(backgroundColor: appColor.base1, body: const Settings()),
+      Scaffold(backgroundColor: context.appColor.base1, body: const Printers()),
+      Scaffold(backgroundColor: context.appColor.base1, body: const FilamentTab()),
+      Scaffold(backgroundColor: context.appColor.base1, body: const Settings()),
     ];
   }
 
@@ -79,7 +78,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final appColor = Theme.of(context).extension<AppColor>()!;
     final storage = context.watch<StorageService>();
 
     List<PersistentBottomNavBarItem> navBarsItems() {
@@ -87,7 +85,7 @@ class _MyAppState extends State<MyApp> {
         PersistentBottomNavBarItem(
           icon: Icon(CupertinoIcons.home),
           title: ("Home"),
-          activeColorPrimary: appColor.primary,
+          activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
           routeAndNavigatorSettings: RouteAndNavigatorSettings(
             initialRoute: "/",
@@ -100,7 +98,7 @@ class _MyAppState extends State<MyApp> {
         PersistentBottomNavBarItem(
           icon: Icon(MdiIcons.disc),
           title: ("Filaments"),
-          activeColorPrimary: appColor.primary,
+          activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
           routeAndNavigatorSettings: RouteAndNavigatorSettings(
             initialRoute: "/",
@@ -113,7 +111,7 @@ class _MyAppState extends State<MyApp> {
         PersistentBottomNavBarItem(
           icon: Icon(CupertinoIcons.settings),
           title: ("Settings"),
-          activeColorPrimary: appColor.primary,
+          activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
           routeAndNavigatorSettings: RouteAndNavigatorSettings(
             initialRoute: "/",
@@ -144,7 +142,7 @@ class _MyAppState extends State<MyApp> {
           hideNavigationBarWhenKeyboardAppears: true,
           popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
           padding: const EdgeInsets.only(top: 8),
-          backgroundColor: appColor.base2,
+          backgroundColor: context.appColor.base2,
           isVisible: true,
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(

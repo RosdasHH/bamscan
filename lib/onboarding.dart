@@ -1,6 +1,7 @@
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/theme/app_color.dart';
+import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/url.dart';
 import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
@@ -19,32 +20,31 @@ class _OnboardingState extends State<Onboarding> {
   TextEditingController _bambuddyAPIKeyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final appColor = Theme.of(context).extension<AppColor>()!;
     List<PageViewModel> listPagesViewModel = [
       PageViewModel(
         titleWidget: Text(
           "Welcome to BamScan",
           style: TextStyle(
-            color: appColor.primaryText,
+            color: context.appColor.primaryText,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
         bodyWidget: Text(
           "This is the onboarding of BamScan.",
-          style: TextStyle(color: appColor.primaryText, fontSize: 18),
+          style: TextStyle(color: context.appColor.primaryText, fontSize: 18),
         ),
         image: SvgPicture.asset(
           "assets/lens.svg",
           height: 250.0,
-          colorFilter: ColorFilter.mode(appColor.primaryText, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(context.appColor.primaryText, BlendMode.srcIn),
         ),
       ),
       PageViewModel(
         titleWidget: Text(
           "Connect Bambuddy",
           style: TextStyle(
-            color: appColor.primaryText,
+            color: context.appColor.primaryText,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
@@ -81,10 +81,10 @@ class _OnboardingState extends State<Onboarding> {
       ),
     ];
     return Scaffold(
-      backgroundColor: appColor.base1,
+      backgroundColor: context.appColor.base1,
       body: SafeArea(
         child: IntroductionScreen(
-          globalBackgroundColor: appColor.base1,
+          globalBackgroundColor: context.appColor.base1,
           pages: listPagesViewModel,
           next: const Text(
             "Next",
@@ -99,10 +99,10 @@ class _OnboardingState extends State<Onboarding> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onDone: () async {
-            if (!await checkurl(appColor)) {
+            if (!await checkurl(context.appColor)) {
               return;
             }
-            if (!await checkapikey(appColor)) {
+            if (!await checkapikey(context.appColor)) {
               return;
             }
             StorageService.setBambuddyUrl(
@@ -112,13 +112,13 @@ class _OnboardingState extends State<Onboarding> {
             StorageService().loadFromStorage();
           },
           nextStyle: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(appColor.primaryText),
+            foregroundColor: WidgetStateProperty.all(context.appColor.primaryText),
           ),
           doneStyle: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(appColor.primaryText),
+            foregroundColor: WidgetStateProperty.all(context.appColor.primaryText),
           ),
           dotsDecorator: DotsDecorator(
-            activeColor: appColor.primaryText,
+            activeColor: context.appColor.primaryText,
             color: Colors.grey,
           ),
         ),

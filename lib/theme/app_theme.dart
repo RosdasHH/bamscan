@@ -7,7 +7,7 @@ class AppTheme {
 
   ThemeData _base(AppColor color) {
     return ThemeData(
-      useMaterial3: false,
+      useMaterial3: true,
       scaffoldBackgroundColor: color.base1,
       extensions: [color],
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -42,7 +42,7 @@ class AppTheme {
         titleMedium: TextStyle(color: color.primaryText),
         titleSmall: TextStyle(color: color.primaryText),
         bodyLarge: TextStyle(color: color.primaryText),
-        bodyMedium: TextStyle(color: color.primaryText,),
+        bodyMedium: TextStyle(color: color.primaryText),
         bodySmall: TextStyle(color: color.primaryText),
         labelLarge: TextStyle(color: color.primaryText),
         labelMedium: TextStyle(color: color.primaryText),
@@ -67,7 +67,12 @@ class AppTheme {
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: color.primary,
         circularTrackColor: color.base1,
+        strokeCap: StrokeCap.round,
       ),
     );
   }
+}
+
+extension AppColorBuildContext on BuildContext {
+  AppColor get appColor => Theme.of(this).extension<AppColor>()!;
 }

@@ -1,6 +1,8 @@
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bambuscanner/filament_view.dart';
+import 'package:bambuscanner/loading_screen.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/classes/spool.dart';
@@ -70,113 +72,93 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
           });
         },
         child: Scaffold(
-          appBar: AppBar(title: const Text("Scanned spool")),
-          body: Column(
-            children: [
-              Row(
-                children: [Text("Material: ${widget.scannedSpool.material}")],
-              ),
-              Row(children: [Text("Subtype: ${widget.scannedSpool.subtype}")]),
-              Row(
-                children: [
-                  Text("Color Name: ${widget.scannedSpool.colorName}"),
-                ],
-              ),
-              Row(children: [Text("Brand: ${widget.scannedSpool.brand}")]),
-              Row(
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: toFlutterColor(widget.scannedSpool.rgba),
+          appBar: AppBar(title: const Text("Assigning Spool to Slot")),
+          body: LoadingScreen(
+            loading: spoolLoaded == false,
+            loadingMessage: "Waiting for spool insertion...",
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilamentViewScreen(spool: widget.scannedSpool),
                     ),
-                    child: SizedBox.square(dimension: 20),
+                  ],
+                ),
+                if (spoolAssignment != null)
+                  Row(
+                    children: [
+                      if (spoolAssignment?.trayId.toString() == widget.trayid &&
+                          spoolAssignment?.printerId.toString() ==
+                              widget.printerid &&
+                          spoolAssignment?.amsId.toString() == widget.amsid)
+                        Text(
+                          "This spool is already assigned to this Slot.",
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(color: Colors.red),
+                        )
+                      else
+                        Text(
+                          "This spool is alredy assigned on: ${spoolAssignment!.printerName}, AMS_ID: ${spoolAssignment!.amsId}, TRAY_ID: ${spoolAssignment!.trayId}",
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                    ],
                   ),
-                ],
-              ),
-              if (spoolAssignment != null)
-                Row(
-                  children: [
-                    if (spoolAssignment?.trayId.toString() == widget.trayid &&
-                        spoolAssignment?.printerId.toString() ==
-                            widget.printerid &&
-                        spoolAssignment?.amsId.toString() == widget.amsid)
-                      Text(
-                        "This spool is already assigned to this Slot.",
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(color: Colors.red),
-                      )
-                    else
-                      Text(
-                        "This spool is alredy assigned on: ${spoolAssignment!.printerName}, AMS_ID: ${spoolAssignment!.amsId}, TRAY_ID: ${spoolAssignment!.trayId}",
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(color: Colors.red),
-                      ),
-                  ],
-                )
-              else
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          spoolLoaded = false;
-                        });
-                        while (spoolLoaded == false) {
-                          AvailablePrinters printers = AvailablePrinters();
-                          final List<Ams> allams = await printers
-                              .getAmsByPrinterId(widget.printerid);
-                          for (Ams ams in allams) {
-                            if (ams.id.toString() == widget.amsid) {
-                              for (TraySlot tray in ams.tray) {
-                                if (tray.id.toString() == widget.trayid) {
-                                  if (tray.trayColor != "" &&
-                                      tray.trayType != "" &&
-                                      tray.trayInfoIdx != "") {
-                                    setState(() {
-                                      spoolLoaded = true;
-                                    });
-                                  }
-                                }
-                              }
-                            }
-                          }
-
-                          await Future.delayed(Duration(milliseconds: 500));
+              ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              setState(() {
+                spoolLoaded = false;
+              });
+              while (spoolLoaded == false) {
+                AvailablePrinters printers = AvailablePrinters();
+                final List<Ams> allams = await printers.getAmsByPrinterId(
+                  widget.printerid,
+                );
+                for (Ams ams in allams) {
+                  if (ams.id.toString() == widget.amsid) {
+                    for (TraySlot tray in ams.tray) {
+                      if (tray.id.toString() == widget.trayid) {
+                        if (tray.trayColor != "" &&
+                            tray.trayType != "" &&
+                            tray.trayInfoIdx != "") {
+                          setState(() {
+                            spoolLoaded = true;
+                          });
                         }
-                        bool configured = await setSlotToSpoolId(
-                          widget.printerid,
-                          widget.amsid,
-                          widget.trayid,
-                          widget.scannedSpool.id.toString(),
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: configured
-                                ? Text("Spool assigned")
-                                : Text("Spool NOT assigned"),
-                            duration: Duration(seconds: 3),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                        Navigator.popUntil(
-                          context,
-                          (route) => route.settings.name == "ams",
-                        );
-                      },
-                      child: const Text("Apply"),
-                    ),
-                  ],
+                      }
+                    }
+                  }
+                }
+
+                await Future.delayed(Duration(milliseconds: 500));
+              }
+              bool configured = await setSlotToSpoolId(
+                widget.printerid,
+                widget.amsid,
+                widget.trayid,
+                widget.scannedSpool.id.toString(),
+              );
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: configured
+                      ? Text("Spool assigned")
+                      : Text("Spool NOT assigned"),
+                  duration: Duration(seconds: 3),
+                  behavior: SnackBarBehavior.floating,
                 ),
-              if (spoolLoaded == false)
-                Row(
-                  children: [
-                    Text("Waiting for spool to be loaded..."),
-                    SizedBox(width: 10),
-                    CircularProgressIndicator(),
-                  ],
-                ),
-            ],
+              );
+              Navigator.popUntil(
+                context,
+                (route) => route.settings.name == "ams",
+              );
+            },
+            shape: const CircleBorder(),
+            child: const Icon(Icons.check),
           ),
         ),
       );

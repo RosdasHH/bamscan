@@ -1,5 +1,5 @@
 import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/filamentsettings.dart';
+import 'package:bambuscanner/filament_view.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
@@ -46,8 +46,11 @@ class _FilamentTabState extends State<FilamentTab> {
                         context,
                         MaterialPageRoute(
                           settings: const RouteSettings(name: "filamentdata"),
-                          builder: (context) =>
-                              FilamentSettings(spool: filament),
+                          builder: (context) => FilamentViewScreen(
+                            spool: filament,
+                            editable: true,
+                            useScaffold: true,
+                          ),
                         ),
                       );
                       setState(() {

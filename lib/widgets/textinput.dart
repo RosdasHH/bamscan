@@ -1,4 +1,5 @@
 import 'package:bambuscanner/theme/app_color.dart';
+import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,6 @@ class TextInput extends StatefulWidget {
 class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
-    final appColor = Theme.of(context).extension<AppColor>()!;
     return Padding(
       padding: EdgeInsetsGeometry.all(widget.margin),
       child: TextField(
@@ -32,16 +32,16 @@ class _TextInputState extends State<TextInput> {
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: widget.labeltext,
-          labelStyle: TextStyle(color: appColor.secondary),
+          labelStyle: TextStyle(color: context.appColor.secondary),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: appColor.secondary, width: 1),
+            borderSide: BorderSide(color: context.appColor.secondary, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey[200]!, width: 2),
           ),
         ),
         obscureText: widget.obscure,
-        style: TextStyle(color: appColor.secondary),
+        style: TextStyle(color: context.appColor.secondary),
         onChanged: widget.onchanged,
       ),
     );
