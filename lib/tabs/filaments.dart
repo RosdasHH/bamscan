@@ -37,6 +37,7 @@ class _FilamentTabState extends State<FilamentTab> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: ListView(
                 children: [
+                  SizedBox(height: 30),
                   for (Spool filament in filaments)
                     Card(
                       child: InkWell(
@@ -96,6 +97,7 @@ class _FilamentTabState extends State<FilamentTab> {
                         ),
                       ),
                     ),
+                  SizedBox(height: 30),
                 ],
               ),
             ),

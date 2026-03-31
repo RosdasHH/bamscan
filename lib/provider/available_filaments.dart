@@ -18,7 +18,7 @@ class AvailableFilaments extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Spool> getSpoolById(id) async {
+  Future<Spool> getSpoolById(String id) async {
     http.Response res = await apiReq("/inventory/spools/$id");
     Spool spool = Spool.fromJson(jsonDecode(res.body));
     return spool;

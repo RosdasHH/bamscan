@@ -23,11 +23,11 @@ class FilamentView extends StatefulWidget {
 class FilamentViewState extends State<FilamentView> {
   @override
   Widget build(BuildContext context) {
-    final Color filamentColor = toFlutterColor(widget.spool.rgba);
-    final Color filamentConformTextColor = getContrastColor(filamentColor);
     final spool = context.watch<AvailableFilaments>().spools.firstWhere(
       (s) => s.id == widget.spool.id,
     );
+    final Color filamentColor = toFlutterColor(spool.rgba);
+    final Color filamentConformTextColor = getContrastColor(filamentColor);
 
     return Padding(
       padding: EdgeInsetsGeometry.all(10),
@@ -359,6 +359,8 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     await availableFilaments.getAllSpools();
     if (!mounted) return;
     Navigator.pop(context);
+    //Reload
+    setState(() {});
   }
 
   void assignQrCode() async {
@@ -408,5 +410,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
       ),
     );
     await availableFilaments.getAllSpools();
+    //Reload
+    setState(() {});
   }
 }
