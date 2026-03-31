@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
@@ -301,7 +302,20 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                                   backgroundColor: Colors.transparent,
                                 ),
                               )
-                            : SizedBox.square(dimension: 320),
+                            : SizedBox.square(
+                                dimension: 250,
+                                child: Center(
+                                  child: AutoSizeText(
+                                    "No assigned QR-Code",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 100,
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -348,13 +362,29 @@ class _QRCodeMoreState extends State<QRCodeMore> {
   }
 
   void assignQrCode() async {
-    final availableFilaments = context.read<AvailableFilaments>();
+    final AvailableFilaments availableFilaments = context
+        .read<AvailableFilaments>();
     await Navigator.push(
       context,
       MaterialPageRoute(
         settings: const RouteSettings(name: "qrscanassign"),
         builder: (context) => QrScanAssignQrCode(
           scanDataCallback: (scannedqrid) async {
+            final List alreadyAssigned = await availableFilaments
+                .getSpoolsByQrCode(scannedqrid);
+            if (!context.mounted) return;
+            if (alreadyAssigned.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}",
+                  ),
+                  backgroundColor: context.appColor.error,
+                ),
+              );
+              return;
+            }
+            if (!context.mounted) return;
             final bool success = await addQrCodeReq(
               context,
               widget.spool,
@@ -371,7 +401,6 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                 backgroundColor: success == true
                     ? context.appColor.success
                     : context.appColor.error,
-                behavior: SnackBarBehavior.floating,
               ),
             );
           },

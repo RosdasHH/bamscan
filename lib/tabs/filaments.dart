@@ -28,7 +28,6 @@ class _FilamentTabState extends State<FilamentTab> {
   @override
   Widget build(BuildContext context) {
     final filaments = context.watch<AvailableFilaments>().spools;
-    print("Rebuilding");
 
     return Scaffold(
       appBar: AppBar(title: Text("Filaments")),

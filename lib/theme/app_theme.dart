@@ -72,6 +72,7 @@ class AppTheme {
         circularTrackColor: color.base1,
         strokeCap: StrokeCap.round,
       ),
+      snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
     );
   }
 }
