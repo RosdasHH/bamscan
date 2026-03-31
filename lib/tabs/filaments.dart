@@ -21,16 +21,14 @@ class _FilamentTabState extends State<FilamentTab> {
 
   void getFilaments() async {
     if (!mounted) return;
-    final availableFilaments = Provider.of<AvailableFilaments>(
-      context,
-      listen: false,
-    );
+    final availableFilaments = context.read<AvailableFilaments>();
     await availableFilaments.getAllSpools();
   }
 
   @override
   Widget build(BuildContext context) {
     final filaments = context.watch<AvailableFilaments>().spools;
+    print("Rebuilding");
 
     return Scaffold(
       appBar: AppBar(title: Text("Filaments")),

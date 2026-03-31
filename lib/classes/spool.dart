@@ -1,3 +1,5 @@
+import 'package:bambuscanner/utils/parse_note.dart';
+
 class Spool {
   final String material;
   final String subtype;
@@ -66,7 +68,6 @@ class Spool {
   });
 
   factory Spool.fromJson(Map<String, dynamic> json) {
-    final qrRegex = RegExp(r'\[QR-CODE\]=>\[(.*?)\]');
     try {
       return Spool(
         material: json['material'] as String,
@@ -112,7 +113,7 @@ class Spool {
         updatedAt: DateTime.parse(json['updated_at'] as String),
         kProfiles: json['k_profiles'] as List<dynamic>,
         qrcode: (json["note"] as String?) != null
-            ? qrRegex.firstMatch(json["note"]!)?.group(1)
+            ? parseQrCodeFromString(json["note"])
             : null,
       );
     } catch (e) {

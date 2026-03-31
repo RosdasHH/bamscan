@@ -26,7 +26,7 @@ class _QrscanModalState extends State<QrscanModal> {
 
   @override
   Widget build(BuildContext context) {
-    final availableFilaments = context.watch<AvailableFilaments>();
+    final availableFilaments = context.read<AvailableFilaments>();
     return Scaffold(
       appBar: AppBar(title: const Text("Scan QR-Code")),
       body: QrScan(

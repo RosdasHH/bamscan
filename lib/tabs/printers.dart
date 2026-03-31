@@ -1,7 +1,7 @@
 import 'package:bambuscanner/classes/printer.dart';
-import 'package:bambuscanner/services/globals.dart';
 import 'package:bambuscanner/modals/ams_modal.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
+import 'package:bambuscanner/services/globals.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,18 +19,20 @@ class _PrintersState extends State<Printers> {
   void initState() {
     super.initState();
     storageservice.loadFromStorage();
+    if (!mounted) return;
+    fetch();
+  }
 
-    Future.microtask(() async {
-      if (!mounted) return;
-      final repo = context.read<AvailablePrinters>();
-      await repo.fetchPrinters();
-    });
+  void fetch() async {
+    final AvailablePrinters availablePrinters = context
+        .read<AvailablePrinters>();
+    await availablePrinters.fetchPrinters();
   }
 
   @override
   Widget build(BuildContext context) {
     final printers = context.watch<AvailablePrinters>().printers;
-    final storage = context.watch<StorageService>();
+    final storage = context.read<StorageService>();
 
     if (storage.bambuddyUrl == "") {
       return Text("Please enter the Bambuddy Url in the Settings tab.");

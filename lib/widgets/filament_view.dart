@@ -2,10 +2,13 @@ import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
+import 'package:bambuscanner/utils/parse_note.dart';
+import 'package:bambuscanner/widgets/button.dart';
 import 'package:bambuscanner/widgets/qrscan.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class FilamentView extends StatefulWidget {
   const FilamentView({super.key, required this.spool, required this.editable});
@@ -21,7 +24,9 @@ class FilamentViewState extends State<FilamentView> {
   Widget build(BuildContext context) {
     final Color filamentColor = toFlutterColor(widget.spool.rgba);
     final Color filamentConformTextColor = getContrastColor(filamentColor);
-    final availableFilaments = context.watch<AvailableFilaments>();
+    final spool = context.watch<AvailableFilaments>().spools.firstWhere(
+      (s) => s.id == widget.spool.id,
+    );
 
     return Padding(
       padding: EdgeInsetsGeometry.all(10),
@@ -36,11 +41,11 @@ class FilamentViewState extends State<FilamentView> {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
-                        color: toFlutterColor(widget.spool.rgba),
+                        color: toFlutterColor(spool.rgba),
                       ),
                       child: Center(
                         child: Text(
-                          widget.spool.material,
+                          spool.material,
                           style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
@@ -57,68 +62,27 @@ class FilamentViewState extends State<FilamentView> {
             InfoCard(
               icon: Icons.abc,
               title: "Color Name:",
-              value: widget.spool.colorName,
+              value: spool.colorName,
             ),
             InfoCard(
               icon: Icons.precision_manufacturing,
               title: "Brand:",
-              value: widget.spool.brand,
+              value: spool.brand,
             ),
             InfoCard(
               icon: MdiIcons.weight,
               title: "Weight:",
               value:
-                  "${widget.spool.labelWeight - widget.spool.weightUsed}/${widget.spool.labelWeight}",
+                  "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
               spoolColor: context.appColor.primary,
               progress:
-                  (widget.spool.labelWeight - widget.spool.weightUsed) /
-                  widget.spool.labelWeight,
+                  (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
             ),
             InfoCard(
               icon: Icons.qr_code,
               title: "Assigned QR-Code:",
-              value: widget.spool.qrcode,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: const RouteSettings(name: "qrscanassign"),
-                    builder: (context) => QrScanAssignQrCode(
-                      scanDataCallback: (scannedqrid) async {
-                        String newNotes = widget.spool.note ?? "";
-                        if (widget.spool.qrcode != null) {
-                          newNotes = newNotes.replaceAll(
-                            RegExp(r'\[QR-CODE\]=>\[.*?\]'),
-                            '',
-                          );
-                        }
-                        newNotes = "[QR-CODE]=>[$scannedqrid]\n$newNotes";
-                        bool success = await availableFilaments.patchSpool(
-                          widget.spool.id.toString(),
-                          newNotes,
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              success
-                                  ? "Successfully assigned QR-Code to this Spool!"
-                                  : "Could NOT assign this QR-Code to the spool!",
-                            ),
-                            backgroundColor: success == true
-                                ? context.appColor.success
-                                : context.appColor.error,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
-              child: Text("QR"),
+              value: spool.qrcode ?? "None",
+              more: QRCodeMore(spool: spool),
             ),
           ],
         ),
@@ -164,12 +128,14 @@ class InfoCard extends StatefulWidget {
     required this.icon,
     this.progress,
     this.spoolColor,
+    this.more,
   });
   final IconData icon;
   final String title;
   final String? value;
   final double? progress;
   final Color? spoolColor;
+  final Widget? more;
 
   @override
   State<InfoCard> createState() => _InfoCardState();
@@ -185,59 +151,76 @@ class _InfoCardState extends State<InfoCard> {
           child: Padding(
             padding: EdgeInsets.only(top: 8),
             child: Card(
-              child: SizedBox(
-                height: 70,
-                child: Stack(
-                  children: [
-                    if (widget.progress != null && widget.spoolColor != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: FractionallySizedBox(
-                            widthFactor: widget.progress!.clamp(0.0, 1.0),
-                            child: SizedBox.expand(
-                              child: Container(
-                                color: widget.spoolColor!.withValues(
-                                  alpha: 0.3,
+              child: InkWell(
+                onTap: widget.more != null
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => widget.more!),
+                        );
+                      }
+                    : null,
+                borderRadius: BorderRadius.circular(16),
+                child: SizedBox(
+                  height: 70,
+                  child: Stack(
+                    children: [
+                      if (widget.progress != null && widget.spoolColor != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: FractionallySizedBox(
+                              widthFactor: widget.progress!.clamp(0.0, 1.0),
+                              child: SizedBox.expand(
+                                child: Container(
+                                  color: widget.spoolColor!.withValues(
+                                    alpha: 0.3,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    Padding(
-                      padding: EdgeInsetsGeometry.all(20),
-                      child: SizedBox(
-                        height: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 8),
-                                  child: Icon(
-                                    widget.icon,
-                                    color: context.appColor.primary,
+                      Padding(
+                        padding: EdgeInsetsGeometry.all(20),
+                        child: SizedBox(
+                          height: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 8),
+                                    child: Icon(
+                                      widget.icon,
+                                      color: context.appColor.primary,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  widget.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                  Text(
+                                    widget.title,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Text(widget.value!),
-                          ],
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(widget.value!),
+                                  if (widget.more != null)
+                                    Icon(Icons.chevron_right_rounded),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -276,5 +259,105 @@ class _QrScanAssignQrCode extends State<QrScanAssignQrCode> {
         },
       ),
     );
+  }
+}
+
+class QRCodeMore extends StatefulWidget {
+  const QRCodeMore({super.key, required this.spool});
+  final Spool spool;
+
+  @override
+  State<QRCodeMore> createState() => _QRCodeMoreState();
+}
+
+class _QRCodeMoreState extends State<QRCodeMore> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("QR-Code")),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (widget.spool.qrcode != null)
+                  QrImageView(
+                    data: widget.spool.qrcode!,
+                    version: QrVersions.auto,
+                    size: 320,
+                    backgroundColor: Colors.transparent,
+                  ),
+              ],
+            ),
+            Row(
+              children: [
+                Button(
+                  onPressed: () {
+                    assignQrCode();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [Icon(Icons.add), Text("Assign QR-Code")],
+                  ),
+                ),
+                Button(
+                  onPressed: () {
+                    unassignQrCode();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [Icon(Icons.remove), Text("Unassign QR-Code")],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void unassignQrCode() async {
+    final availableFilaments = context.read<AvailableFilaments>();
+    final bool res = await deleteQrCodeReq(context, widget.spool);
+    if (res) print("Deleted successfully");
+    await availableFilaments.getAllSpools();
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  void assignQrCode() async {
+    final availableFilaments = context.read<AvailableFilaments>();
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "qrscanassign"),
+        builder: (context) => QrScanAssignQrCode(
+          scanDataCallback: (scannedqrid) async {
+            final bool success = await addQrCodeReq(
+              context,
+              widget.spool,
+              scannedqrid,
+            );
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  success
+                      ? "Successfully assigned QR-Code to this Spool!"
+                      : "Could NOT assign this QR-Code to the spool!",
+                ),
+                backgroundColor: success == true
+                    ? context.appColor.success
+                    : context.appColor.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    await availableFilaments.getAllSpools();
   }
 }

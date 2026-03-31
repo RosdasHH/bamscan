@@ -61,7 +61,7 @@ class _FilamentScannedModalState extends State<FilamentScannedModal> {
 
   @override
   Widget build(BuildContext context) {
-    final availableFilaments = context.watch<AvailableFilaments>();
+    final availableFilaments = context.read<AvailableFilaments>();
     if (loadingAssignments) {
       return const Center(child: CircularProgressIndicator());
     } else {
