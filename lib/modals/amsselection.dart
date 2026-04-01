@@ -54,11 +54,6 @@ class _AmsSelectionState extends State<AmsSelection> {
       int.parse(widget.printerid),
     );
     amsdata = await availablePrinters.getAmsByPrinterId(widget.printerid);
-    if (amsdata != null && amsdata!.isNotEmpty) {
-      amsdata!.add(amsdata![0]);
-      amsdata!.add(amsdata![0]);
-      amsdata!.add(amsdata![0]);
-    }
 
     setState(() {
       amsdata = amsdata;
