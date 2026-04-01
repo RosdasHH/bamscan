@@ -9,8 +9,8 @@ import 'package:bambuscanner/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class FilamentScannedModal extends StatefulWidget {
-  const FilamentScannedModal({
+class FilamentScanned extends StatefulWidget {
+  const FilamentScanned({
     super.key,
     required this.scannedSpool,
     required this.printerid,
@@ -23,10 +23,10 @@ class FilamentScannedModal extends StatefulWidget {
   final String trayid;
 
   @override
-  State<FilamentScannedModal> createState() => _FilamentScannedModalState();
+  State<FilamentScanned> createState() => _FilamentScannedModal();
 }
 
-class _FilamentScannedModalState extends State<FilamentScannedModal> {
+class _FilamentScannedModal extends State<FilamentScanned> {
   List<AmsSpool>? mappings;
   AmsSpool? spoolAssignment;
   bool loadingAssignments = true;

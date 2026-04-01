@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bambuscanner/classes/ams_spool.dart';
+import 'package:bambuscanner/classes/slot_preset.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,14 @@ class AvailableFilaments extends ChangeNotifier {
     http.Response res = await apiReq("/inventory/spools/$id");
     Spool spool = Spool.fromJson(jsonDecode(res.body));
     return spool;
+  }
+
+  Future<SlotPreset> getPreset(String printerid, String amsid, String trayid) async {
+    http.Response res = await apiReq(
+      "/printers/$printerid/slot-presets/$amsid/$trayid",
+    );
+    SlotPreset preset = SlotPreset.fromJson(jsonDecode(res.body));
+    return preset;
   }
 
   Future<bool> setSlotToSpoolId(

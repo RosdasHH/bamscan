@@ -1,5 +1,5 @@
 import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/modals/filament__scanned_modal.dart';
+import 'package:bambuscanner/modals/filament__scanned.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/widgets/qrscan.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +70,7 @@ class _QrscanModalState extends State<QrscanModal> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FilamentScannedModal(
+              builder: (context) => FilamentScanned(
                 scannedSpool: spools[0],
                 printerid: widget.printerid,
                 amsid: widget.amsid,

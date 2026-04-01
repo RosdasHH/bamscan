@@ -41,7 +41,7 @@ class _FilamentTabState extends State<FilamentTab> {
       body: filaments.isEmpty
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: ListView(
                 children: [
                   SizedBox(height: 30),

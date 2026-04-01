@@ -9,7 +9,7 @@ String? parseQrCodeFromString(String string) {
 }
 
 String deleteQrCodeFromString(String string) {
-  return string.replaceAll(RegExp(r'\[QR-CODE\]=>\[.*?\]'), '');
+  return string.replaceAll(RegExp(r'\[QR-CODE\]=>\[.*?\]\n'), '');
 }
 
 String addQrCodeToString(String string, String id) {

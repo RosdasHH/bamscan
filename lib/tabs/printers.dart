@@ -1,5 +1,5 @@
 import 'package:bambuscanner/classes/printer.dart';
-import 'package:bambuscanner/modals/ams_modal.dart';
+import 'package:bambuscanner/modals/amsselection.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/services/globals.dart';
 import 'package:bambuscanner/services/storage.dart';
@@ -66,7 +66,7 @@ class _PrintersState extends State<Printers> {
                                   context,
                                   MaterialPageRoute(
                                     settings: const RouteSettings(name: "ams"),
-                                    builder: (context) => AmsModal(
+                                    builder: (context) => AmsSelection(
                                       printerid: printer.id.toString(),
                                     ),
                                   ),
