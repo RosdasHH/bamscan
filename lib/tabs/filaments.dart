@@ -1,8 +1,8 @@
-import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/tabs/offline.dart';
+import 'package:bambuscanner/utils/ams_number_letter.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:bambuscanner/widgets/filament_view.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,6 @@ class FilamentTab extends StatefulWidget {
 }
 
 class _FilamentTabState extends State<FilamentTab> {
-  List<AmsSpool> mappings = [];
   bool _isLoading = false;
   @override
   void initState() {
@@ -34,10 +33,8 @@ class _FilamentTabState extends State<FilamentTab> {
     }
     try {
       await availableFilaments.getAllSpools();
-      mappings = await availableFilaments.getAllFilamentMappings();
       if (!mounted) return;
       setState(() {
-        mappings = mappings;
         _isLoading = false;
       });
     } catch (_) {}
@@ -95,10 +92,12 @@ class _FilamentTabState extends State<FilamentTab> {
                     subtitle: Row(
                       children: [
                         Text("${filament.colorName}   "),
-                        Text(
-                          getPrinter(filament) ?? "",
-                          style: TextStyle(color: Colors.purple),
-                        ),
+                        filament.assignment != null
+                            ? Text(
+                                " ⋅ ${filament.assignment!.printerName} | ${amsIdToLetter(filament.assignment!.amsId)}${filament.assignment!.trayId + 1}",
+                                style: TextStyle(color: Colors.purple),
+                              )
+                            : SizedBox.shrink(),
                       ],
                     ),
                     trailing: Row(
@@ -127,23 +126,5 @@ class _FilamentTabState extends State<FilamentTab> {
         ),
       ),
     );
-  }
-
-  String? getPrinter(Spool spool) {
-    for (AmsSpool mapping in mappings) {
-      if (mapping.spoolId == spool.id) {
-        return " ⋅ ${mapping.printerName} | ${amsIdToLetter(mapping.amsId)}${mapping.trayId + 1}";
-      }
-    }
-    return null;
-  }
-
-  String amsIdToLetter(int number) {
-    try {
-      const mapping = ["A", "B", "C", "D"];
-      return mapping[number];
-    } catch (e) {
-      return "X";
-    }
   }
 }

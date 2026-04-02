@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
+import 'package:bambuscanner/utils/ams_number_letter.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:bambuscanner/utils/parse_note.dart';
 import 'package:bambuscanner/widgets/button.dart';
@@ -61,6 +62,13 @@ class FilamentViewState extends State<FilamentView> {
                 ),
               ],
             ),
+            if (spool.assignment != null)
+              Chip(
+                label: Text(
+                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId}",
+                ),
+                backgroundColor: Colors.purple.withValues(alpha: 0.3),
+              ),
 
             InfoCard(
               icon: Icons.abc,

@@ -32,8 +32,9 @@ class Spool {
   final DateTime updatedAt;
   final List<dynamic> kProfiles;
   final String? qrcode;
+  Assignment? assignment;
 
-  const Spool({
+  Spool({
     required this.material,
     required this.subtype,
     required this.colorName,
@@ -65,6 +66,7 @@ class Spool {
     required this.updatedAt,
     required this.kProfiles,
     this.qrcode,
+    this.assignment,
   });
 
   factory Spool.fromJson(Map<String, dynamic> json) {
@@ -119,5 +121,21 @@ class Spool {
     } catch (e) {
       rethrow;
     }
+  }
+}
+
+class Assignment {
+  final int amsId;
+  final int trayId;
+  final String printerName;
+
+  Assignment({
+    required this.amsId,
+    required this.trayId,
+    required this.printerName,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {"amsId": amsId, "trayId": trayId, "printerName": printerName};
   }
 }
