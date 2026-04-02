@@ -2,6 +2,7 @@ import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/onboarding.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
+import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/tabs/filaments.dart';
 import 'package:bambuscanner/tabs/printers.dart';
@@ -21,6 +22,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AvailablePrinters()),
         ChangeNotifierProvider(create: (_) => StorageService()),
         ChangeNotifierProvider(create: (_) => AvailableFilaments()),
+        ChangeNotifierProvider(create: (_) => ApiService()),
       ],
       child: MaterialApp(
         title: "BamScan",
@@ -80,7 +82,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final storage = context.watch<StorageService>();
-
     List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(

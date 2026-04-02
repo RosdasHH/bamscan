@@ -7,6 +7,7 @@ import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:provider/provider.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -110,10 +111,11 @@ class _OnboardingState extends State<Onboarding> {
             if (!await checkapikey(context.appColor)) {
               return;
             }
-            StorageService.setBambuddyUrl(
+            StorageService storageService = StorageService();
+            storageService.setBambuddyUrl(
               stripUrl(_bambuddyUrlController.text),
             );
-            StorageService.saveToken(_bambuddyAPIKeyController.text);
+            storageService.saveToken(_bambuddyAPIKeyController.text);
             StorageService().loadFromStorage();
           },
           nextStyle: ButtonStyle(
@@ -136,7 +138,8 @@ class _OnboardingState extends State<Onboarding> {
   }
 
   Future<bool> checkapikey(AppColor appColor) async {
-    bool? apikeystate = await checkApiKey(
+    ApiService apiService = context.read<ApiService>();
+    bool? apikeystate = await apiService.checkApiKey(
       _bambuddyUrlController.text,
       _bambuddyAPIKeyController.text,
     );
@@ -162,8 +165,9 @@ class _OnboardingState extends State<Onboarding> {
   }
 
   Future<bool> checkurl(AppColor appColor) async {
+    ApiService apiService = context.read<ApiService>();
     String url = _bambuddyUrlController.text;
-    bool? health = await checkHealth(stripUrl(url));
+    bool? health = await apiService.checkHealth(stripUrl(url));
     if (health == true) {
       return true;
     } else {

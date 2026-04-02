@@ -6,11 +6,13 @@ class Button extends StatefulWidget {
     required this.onPressed,
     required this.child,
     this.color,
+    this.expanded = false,
   });
 
   final Function() onPressed;
   final Widget child;
   final Color? color;
+  final bool expanded;
 
   @override
   State<Button> createState() => _ButtonState();
@@ -20,7 +22,7 @@ class _ButtonState extends State<Button> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: widget.expanded ? double.infinity : null,
       child: ElevatedButton(
         onPressed: widget.onPressed,
         style: ButtonStyle(

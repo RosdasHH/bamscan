@@ -220,6 +220,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                   onPressed: () {
                     assignQrCode();
                   },
+                  expanded: true,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -237,6 +238,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                     unassignQrCode();
                   },
                   color: Colors.transparent,
+                  expanded: true,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

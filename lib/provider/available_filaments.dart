@@ -9,24 +9,33 @@ import 'package:http/http.dart' as http;
 
 class AvailableFilaments extends ChangeNotifier {
   final List<Spool> _spools = [];
+  bool _filamentsSet = false;
 
   List<Spool> get spools => List.unmodifiable(_spools);
+  bool get filamentsSet => _filamentsSet;
 
   void setFilaments(List<Spool> newList) {
-    _spools
-      ..clear()
-      ..addAll(newList);
-    notifyListeners();
+    if (_spools != newList) {
+      _spools
+        ..clear()
+        ..addAll(newList);
+      _filamentsSet = true;
+      notifyListeners();
+    }
   }
 
   Future<Spool> getSpoolById(String id) async {
-    http.Response res = await apiReq("/inventory/spools/$id");
+    http.Response res = await ApiService().apiReq("/inventory/spools/$id");
     Spool spool = Spool.fromJson(jsonDecode(res.body));
     return spool;
   }
 
-  Future<SlotPreset> getPreset(String printerid, String amsid, String trayid) async {
-    http.Response res = await apiReq(
+  Future<SlotPreset> getPreset(
+    String printerid,
+    String amsid,
+    String trayid,
+  ) async {
+    http.Response res = await ApiService().apiReq(
       "/printers/$printerid/slot-presets/$amsid/$trayid",
     );
     SlotPreset preset = SlotPreset.fromJson(jsonDecode(res.body));
@@ -39,7 +48,7 @@ class AvailableFilaments extends ChangeNotifier {
     String trayid,
     String spoolid,
   ) async {
-    final res = await apiPost("/inventory/assignments", {
+    final res = await ApiService().apiPost("/inventory/assignments", {
       "spool_id": int.parse(spoolid),
       "printer_id": int.parse(printerid),
       "ams_id": int.parse(amsid),
@@ -51,7 +60,7 @@ class AvailableFilaments extends ChangeNotifier {
   }
 
   Future<bool> patchSpool(String id, String note) async {
-    final res = await apiPatch("/inventory/spools/$id", {"note": note});
+    final res = await ApiService().apiPatch("/inventory/spools/$id", {"note": note});
     if (res.statusCode != 200) return false;
 
     Spool updatedSpool = Spool.fromJson(jsonDecode(res.body));
@@ -67,7 +76,7 @@ class AvailableFilaments extends ChangeNotifier {
   }
 
   Future<bool?> getAllSpools() async {
-    final res = await apiReq("/inventory/spools");
+    final res = await ApiService().apiReq("/inventory/spools");
     final List<dynamic> data = jsonDecode(res.body);
     setFilaments(
       data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList(),
@@ -87,15 +96,19 @@ class AvailableFilaments extends ChangeNotifier {
   }
 
   Future<List<AmsSpool>> getAllFilamentMappings() async {
-    final res = await apiReq("/inventory/assignments");
-    final List<dynamic> data = jsonDecode(res.body);
-    return data
-        .map((e) => AmsSpool.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final res = await ApiService().apiReq("/inventory/assignments");
+      final List<dynamic> data = jsonDecode(res.body);
+      return data
+          .map((e) => AmsSpool.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<List<AmsSpool>> getFilamentMappingForPrinter(int printerId) async {
-    final res = await apiReq("/inventory/assignments?printer_id=$printerId");
+    final res = await ApiService().apiReq("/inventory/assignments?printer_id=$printerId");
     final List<dynamic> data = jsonDecode(res.body);
     return data
         .map((e) => AmsSpool.fromJson(e as Map<String, dynamic>))

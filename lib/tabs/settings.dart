@@ -47,6 +47,7 @@ class _SettingsState extends State<Settings> {
               onPressed: () {
                 saveSettings();
               },
+              expanded: true,
               child: const Text("Save"),
             ),
           ],
@@ -56,7 +57,8 @@ class _SettingsState extends State<Settings> {
   }
 
   void saveSettings() {
-    StorageService.setBambuddyUrl(_bambuddyUrlController.text);
-    StorageService.saveToken(_xapiTokenController.text);
+    StorageService storageService = StorageService();
+    storageService.setBambuddyUrl(_bambuddyUrlController.text);
+    storageService.saveToken(_xapiTokenController.text);
   }
 }

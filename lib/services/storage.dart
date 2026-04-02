@@ -20,8 +20,9 @@ class StorageService extends ChangeNotifier {
     notifyListeners();
   }
 
-  static Future<void> saveToken(String token) async {
+  Future<void> saveToken(String token) async {
     await _secureStorage.write(key: 'token', value: token);
+    await loadFromStorage();
   }
 
   static Future<String> getToken() async {
@@ -32,9 +33,10 @@ class StorageService extends ChangeNotifier {
   //  await _secureStorage.delete(key: 'token');
   //}
 
-  static Future<void> setBambuddyUrl(String url) async {
+  Future<void> setBambuddyUrl(String url) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString("bambuddyUrl", url);
+    await loadFromStorage();
   }
 
   static Future<String> getBambuddyUrl() async {
