@@ -1,3 +1,5 @@
+import 'package:bambuscanner/classes/printer_status.dart';
+
 class Printer {
   final String name;
   final String serialNumber;
@@ -18,8 +20,9 @@ class Printer {
   final String? plateDetectionRoi;
   final DateTime createdAt;
   final DateTime updatedAt;
+  PrinterStatus? status;
 
-  const Printer({
+  Printer({
     required this.name,
     required this.serialNumber,
     required this.ipAddress,
@@ -39,6 +42,7 @@ class Printer {
     this.plateDetectionRoi,
     required this.createdAt,
     required this.updatedAt,
+    this.status,
   });
 
   factory Printer.fromJson(Map<String, dynamic> json) {
