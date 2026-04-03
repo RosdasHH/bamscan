@@ -9,7 +9,7 @@ class Button extends StatefulWidget {
     this.expanded = false,
   });
 
-  final Function() onPressed;
+  final Function()? onPressed;
   final Widget child;
   final Color? color;
   final bool expanded;

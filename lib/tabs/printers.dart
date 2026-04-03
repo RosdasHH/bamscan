@@ -32,7 +32,7 @@ class _PrintersState extends State<Printers> {
   void refresh() async {
     while (mounted) {
       await fetch();
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 5));
     }
   }
 
