@@ -73,7 +73,9 @@ class _FilamentTabState extends State<FilamentTab> {
                     getFilaments();
                   },
                   child: ListTile(
-                    title: Text(filament.slicerFilamentName),
+                    title: Text(
+                      "${filament.slicerFilamentName.startsWith(filament.brand) ? "" : "${filament.brand} "}${filament.slicerFilamentName}",
+                    ),
                     minLeadingWidth: 20,
                     leading: SizedBox(
                       width: 20,
@@ -91,7 +93,7 @@ class _FilamentTabState extends State<FilamentTab> {
                     ),
                     subtitle: Row(
                       children: [
-                        Text("${filament.colorName}   "),
+                        Text(filament.colorName),
                         filament.assignment != null
                             ? Text(
                                 " ⋅ ${filament.assignment!.printerName} | ${amsIdToLetter(filament.assignment!.amsId)}${filament.assignment!.trayId + 1}",
@@ -100,22 +102,19 @@ class _FilamentTabState extends State<FilamentTab> {
                             : SizedBox.shrink(),
                       ],
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    trailing: Stack(
+                      alignment: AlignmentGeometry.center,
                       children: [
-                        if (filament.qrcode != null)
-                          Padding(
-                            padding: EdgeInsets.only(right: 20),
-                            child: Icon(Icons.qr_code_2_rounded),
-                          )
-                        else
-                          SizedBox.shrink(),
                         CircularProgressIndicator(
                           value:
                               ((filament.labelWeight - filament.weightUsed) /
                                       filament.labelWeight)
                                   .toDouble(),
                         ),
+                        if (filament.qrcode != null)
+                          Icon(Icons.qr_code_2_rounded)
+                        else
+                          SizedBox.shrink(),
                       ],
                     ),
                   ),
