@@ -214,7 +214,7 @@ class Temperatures {
       bedTarget: json["bed_target"] as double,
       nozzle: json["nozzle"] as double,
       nozzleTarget: json["nozzle_target"] as double,
-      nozzleHeating: json["nozzleHeating"] ?? false,
+      nozzleHeating: json["nozzle_heating"] as bool,
     );
   }
 }

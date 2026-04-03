@@ -26,10 +26,17 @@ class _PrintersState extends State<Printers> {
     super.initState();
     storageservice.loadFromStorage();
     if (!mounted) return;
-    fetch();
+    refresh();
   }
 
-  void fetch() async {
+  void refresh() async {
+    while (mounted) {
+      await fetch();
+      await Future.delayed(Duration(seconds: 3));
+    }
+  }
+
+  Future<void> fetch() async {
     final AvailablePrinters availablePrinters = context
         .read<AvailablePrinters>();
     if (!availablePrinters.printersSet) {
