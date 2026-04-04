@@ -29,7 +29,6 @@ class _AmsSelectionState extends State<AmsSelection> {
   @override
   void initState() {
     super.initState();
-    loadAms();
     refresh();
   }
 

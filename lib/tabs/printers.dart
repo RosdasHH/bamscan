@@ -8,7 +8,6 @@ import 'package:bambuscanner/tabs/offline.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/widgets/badgeCard.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 class Printers extends StatefulWidget {
@@ -91,26 +90,7 @@ class _PrintersState extends State<Printers> {
                     final Color connectedColor = status.connected
                         ? context.appColor.success
                         : context.appColor.error;
-                    final String nozzleTemp =
-                        "${status.temperatures.nozzle.round()}/${status.temperatures.nozzleTarget.round()}"
-                            .toString();
-                    final String bedTemp =
-                        "${status.temperatures.bed.round().toString()}/${status.temperatures.bedTarget.round().toString()}";
                     final double progress = status.progress / 100;
-                    final int amsCount = status.ams.length;
-                    final String nozzleDia1 = status.nozzles[0].nozzleDiameter
-                        .toString();
-                    final String nozzleDia2 =
-                        status.nozzles[1].nozzleDiameter.toString() != "0.0"
-                        ? status.nozzles[1].nozzleDiameter.toString()
-                        : "";
-                    final String firmware = status.firmwareVersion;
-                    final String layer =
-                        "${status.layerNum}/${status.totalLayers}";
-                    final String timeRemaining =
-                        "${status.remainingTime.toString()}min";
-                    final bool nozzleHeating =
-                        status.temperatures.nozzleHeating;
                     final String state = status.state;
                     return Card(
                       clipBehavior: Clip.hardEdge,
@@ -128,24 +108,39 @@ class _PrintersState extends State<Printers> {
                         },
                         child: Padding(
                           padding: EdgeInsets.all(10),
-                          child: Column(
+                          child: Row(
+                            spacing: 5,
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                padding: EdgeInsets.all(5),
+                                child: SizedBox.square(
+                                  dimension: 75,
+                                  child: Image.network(
+                                    "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            SizedBox.expand(),
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text(
+                                      printer.name,
+                                      overflow: TextOverflow.visible,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    Text(
+                                      printer.model,
+                                      style: TextStyle(fontSize: 15),
+                                    ),
                                     Row(
-                                      spacing: 5,
                                       children: [
-                                        Text(
-                                          printer.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                          ),
-                                        ),
                                         BadgeCard(
                                           text: connected,
                                           color: connectedColor,
@@ -156,210 +151,24 @@ class _PrintersState extends State<Printers> {
                                         ),
                                       ],
                                     ),
-                                    Stack(
-                                      alignment: AlignmentGeometry.center,
-                                      children: [
-                                        SizedBox.square(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 5,
-                                            value: progress,
-                                          ),
-                                        ),
-                                        Text(
-                                          "${(progress * 100).toInt()}%",
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 15),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.all(5),
-                                      child: SizedBox.square(
-                                        dimension: 100,
-                                        child: Image.network(
-                                          "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  SizedBox.expand(),
-                                        ),
-                                      ),
+                              Stack(
+                                alignment: AlignmentGeometry.center,
+                                children: [
+                                  SizedBox.square(
+                                    dimension: 50,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 7,
+                                      value: progress,
                                     ),
-                                    Flexible(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        spacing: 5,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  IconWithCicle(
-                                                    icon: Icons.thermostat,
-                                                    color: nozzleHeating
-                                                        ? Colors.orange
-                                                        : Colors.blue,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Text("Nozzle"),
-                                                ],
-                                              ),
-                                              Text("$nozzleTemp°C"),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  IconWithCicle(
-                                                    icon: Icons.thermostat,
-                                                    color: Colors.blue,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Text("Bed"),
-                                                ],
-                                              ),
-                                              Text("$bedTemp °C"),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  IconWithCicle(
-                                                    icon: Icons.layers,
-                                                    color: Colors.purple,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Text("Layer"),
-                                                ],
-                                              ),
-                                              Text(layer),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  IconWithCicle(
-                                                    icon: Icons.timelapse,
-                                                    color: Colors.green,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Text("Remaining"),
-                                                ],
-                                              ),
-                                              Text(timeRemaining),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    //Stack(
-                                    //  alignment: AlignmentGeometry.center,
-                                    //  children: [
-                                    //    SizedBox.square(
-                                    //      dimension: 100,
-                                    //      child: Padding(
-                                    //        padding: EdgeInsets.all(20),
-                                    //        child: CircularProgressIndicator(
-                                    //          strokeWidth: 10,
-                                    //          value: progress,
-                                    //        ),
-                                    //      ),
-                                    //    ),
-                                    //    Text("${(progress * 100).toInt()}%"),
-                                    //  ],
-                                    //),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Wrap(
-                                  spacing: 5,
-                                  runSpacing: 5,
-                                  alignment: WrapAlignment.start,
-                                  runAlignment: WrapAlignment.start,
-                                  children: [
-                                    CardWithoutMat(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconWithCicle(
-                                              color: Colors.blue,
-                                              icon: MdiIcons.cube,
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text("AMS"),
-                                                Text(amsCount.toString()),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    CardWithoutMat(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconWithCicle(
-                                              color: Colors.purple,
-                                              icon: MdiIcons.printer3DNozzle,
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text("Nozzle"),
-                                                Text(nozzleDia1.toString()),
-                                                if (nozzleDia2 != "")
-                                                  Text(nozzleDia2.toString()),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    CardWithoutMat(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconWithCicle(
-                                              color: Colors.orange,
-                                              icon: Icons.memory,
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text("Firmware"),
-                                                Text(firmware),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  Text(
+                                    "${(progress * 100).toInt()}%",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
