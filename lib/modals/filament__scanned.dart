@@ -82,13 +82,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
             loadingMessage: "Waiting for spool insertion...",
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilamentViewScreen(spool: widget.scannedSpool),
-                    ),
-                  ],
-                ),
+                Expanded(child: FilamentViewScreen(spool: widget.scannedSpool)),
                 if (spoolAssignment != null)
                   Row(
                     children: [

@@ -101,33 +101,11 @@ class _AmsSelectionState extends State<AmsSelection> {
                                       builder: (context) {
                                         AvailableFilaments availableFilaments =
                                             context.read<AvailableFilaments>();
-                                        TrayType traytype = checkSlotState(
-                                          amsdata!.indexOf(ams),
-                                          ams.tray.indexOf(tray),
-                                        );
-                                        String traytext;
-                                        Color traycolor = toFlutterColor(
+                                        double usage = 0.0;
+                                        Color color = toFlutterColor(
                                           tray.trayColor,
                                         );
-                                        Color fontcolor = getContrastColor(
-                                          toFlutterColor(tray.trayColor),
-                                        );
-                                        Color bordercolor = Colors.grey;
-                                        double usage = 0.0;
-                                        switch (traytype) {
-                                          case TrayType.spoolLoaded:
-                                            traytext = (tray.id + 1).toString();
-                                            break;
-                                          case TrayType.noSpool:
-                                            traytext = "No Spool!";
-                                            fontcolor = context.appColor.error;
-                                            bordercolor =
-                                                context.appColor.error;
-                                            break;
-                                          case TrayType.noFilament:
-                                            traytext = "X";
-                                            break;
-                                        }
+
                                         if (amsmapping != null) {
                                           for (AmsSpool amsmapping
                                               in amsmapping!) {
@@ -141,10 +119,38 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                       (spool.labelWeight -
                                                           spool.weightUsed) /
                                                       spool.labelWeight;
+                                                  color = toFlutterColor(
+                                                    spool.rgba,
+                                                  );
                                                 }
                                               }
                                             }
                                           }
+                                        }
+
+                                        TrayType traytype = checkSlotState(
+                                          amsdata!.indexOf(ams),
+                                          ams.tray.indexOf(tray),
+                                        );
+                                        String traytext;
+                                        Color traycolor = color;
+                                        Color fontcolor = getContrastColor(
+                                          color,
+                                        );
+                                        Color bordercolor = Colors.grey;
+                                        switch (traytype) {
+                                          case TrayType.spoolLoaded:
+                                            traytext = (tray.id + 1).toString();
+                                            break;
+                                          case TrayType.noSpool:
+                                            traytext = "No Spool!";
+                                            fontcolor = context.appColor.error;
+                                            bordercolor =
+                                                context.appColor.error;
+                                            break;
+                                          case TrayType.noFilament:
+                                            traytext = "X";
+                                            break;
                                         }
                                         return Expanded(
                                           child: Padding(
