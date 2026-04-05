@@ -218,7 +218,8 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                   context: context,
                                                   builder: (BuildContext context) {
                                                     return Dialog(
-                                                      insetPadding: EdgeInsets.all(20),
+                                                      insetPadding:
+                                                          EdgeInsets.all(20),
                                                       child: Padding(
                                                         padding: EdgeInsets.all(
                                                           20,
@@ -249,7 +250,9 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                             Padding(
                                                               padding:
                                                                   EdgeInsets.symmetric(
-                                                                    horizontal: 15, vertical: 5
+                                                                    horizontal:
+                                                                        15,
+                                                                    vertical: 5,
                                                                   ),
                                                               child: Divider(),
                                                             ),
@@ -276,7 +279,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                               icon: MdiIcons
                                                                   .cursorDefault,
                                                               onTap: () async {
-                                                                final String
+                                                                final String?
                                                                 spoolId = await showDialog(
                                                                   context:
                                                                       context,
@@ -293,8 +296,25 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                             padding: EdgeInsets.all(
                                                                               20,
                                                                             ),
-                                                                            child: FilamentList(
-                                                                              selection: true,
+                                                                            child: Column(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Select Spool for Slot ${tray.id + 1}",
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 20,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  height: 15,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  child: FilamentList(
+                                                                                    selection: true,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
                                                                             ),
                                                                           ),
                                                                         );
@@ -302,6 +322,10 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 );
                                                                 if (!context
                                                                     .mounted) {
+                                                                  return;
+                                                                }
+                                                                if (spoolId ==
+                                                                    null) {
                                                                   return;
                                                                 }
                                                                 Navigator.pop(

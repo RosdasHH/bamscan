@@ -6,7 +6,9 @@ import 'package:bambuscanner/tabs/offline.dart';
 import 'package:bambuscanner/utils/ams_number_letter.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:bambuscanner/widgets/filament_view.dart';
+import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
+import 'package:fuzzy/fuzzy.dart';
 import 'package:provider/provider.dart';
 
 class FilamentTab extends StatefulWidget {
@@ -39,6 +41,8 @@ class FilamentList extends StatefulWidget {
 
 class FilamentListState extends State<FilamentList> {
   bool _isLoading = false;
+  List<Spool>? sortedSpools;
+  final TextEditingController _searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -63,12 +67,49 @@ class FilamentListState extends State<FilamentList> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final filaments = context.watch<AvailableFilaments>().spools;
     final storage = context.read<StorageService>();
     final ApiService apiService = context.watch<ApiService>();
+    final List<Spool> iterationList;
+
     String? configerror;
     if (!apiService.reachable) return Offline();
+    final fuse = Fuzzy(
+      filaments,
+      options: FuzzyOptions(
+        threshold: 0.5,
+        keys: [
+          WeightedKey(name: "brand", getter: (Spool u) => u.brand, weight: 1),
+          WeightedKey(
+            name: "slicerFilamentName",
+            getter: (Spool u) => u.slicerFilamentName,
+            weight: 1,
+          ),
+          WeightedKey(
+            name: "colorName",
+            getter: (Spool u) => u.colorName,
+            weight: 1,
+          ),
+        ],
+      ),
+    );
+    void fuzzySearch(List<Spool> filaments, String term) {
+      final res = fuse.search(term);
+      setState(() {
+        if (term == "") {
+          sortedSpools = null;
+        } else {
+          sortedSpools = res.map((r) => r.item).toList();
+        }
+      });
+    }
 
     if (storage.bambuddyUrl == "") {
       configerror = "Please enter the Bambuddy Url in the Settings tab.";
@@ -82,15 +123,39 @@ class FilamentListState extends State<FilamentList> {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+    if (sortedSpools != null) {
+      iterationList = sortedSpools!;
+    } else {
+      iterationList = filaments;
+    }
 
     return ListView(
       children: [
-        SizedBox(height: 30),
-        if (filaments.isEmpty) Center(child: Text("No filaments available.")),
-        for (Spool filament in filaments)
-          if (widget.selection && filament.assignment == null ||
-              !widget.selection)
-            FilamentCard(filament: filament, selection: widget.selection),
+        if (filaments.isEmpty)
+          Center(child: Text("No filaments available."))
+        else ...[
+          Row(
+            children: [
+              Flexible(
+                child: TextInput(
+                  controller: _searchController,
+                  labeltext: "Test",
+                  onchanged: (term) {
+                    fuzzySearch(filaments, term);
+                  },
+                ),
+              ),
+              IconButton(onPressed: () {}, icon: Icon(Icons.qr_code)),
+            ],
+          ),
+          SizedBox(height: 10),
+          if (sortedSpools != null)
+            Text("Search results:", style: TextStyle(fontSize: 20)),
+          for (Spool filament in iterationList)
+            if (widget.selection && filament.assignment == null ||
+                !widget.selection)
+              FilamentCard(filament: filament, selection: widget.selection),
+        ],
         SizedBox(height: 30),
       ],
     );

@@ -1,4 +1,3 @@
-import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class TextInput extends StatefulWidget {
@@ -26,21 +25,27 @@ class _TextInputState extends State<TextInput> {
     return Padding(
       padding: EdgeInsetsGeometry.all(widget.margin),
       child: TextField(
+        onTapOutside: (_) {
+          FocusScope.of(context).unfocus();
+        },
         controller: widget.controller,
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: widget.labeltext,
-          labelStyle: TextStyle(color: context.appColor.secondary),
+          isDense: true,
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: context.appColor.secondary, width: 1),
+            borderSide: BorderSide(color: Colors.grey),
+            borderRadius: BorderRadius.circular(999),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey[200]!, width: 2),
+            borderSide: BorderSide(color: Colors.grey, width: 2),
+            borderRadius: BorderRadius.circular(999),
           ),
+          filled: true,
+          hint: Text("Search"),
         ),
+
         obscureText: widget.obscure,
-        style: TextStyle(color: context.appColor.secondary),
         onChanged: widget.onchanged,
+        autocorrect: false,
       ),
     );
   }

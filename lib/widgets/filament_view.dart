@@ -67,7 +67,7 @@ class FilamentViewState extends State<FilamentView> {
             if (spool.assignment != null)
               Chip(
                 label: Text(
-                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId}",
+                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId+1}",
                 ),
                 backgroundColor: Colors.purple.withValues(alpha: 0.3),
               ),
