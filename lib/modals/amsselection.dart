@@ -7,10 +7,12 @@ import 'package:bambuscanner/classes/trayslot.dart';
 import 'package:bambuscanner/modals/qrscan_modal.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
+import 'package:bambuscanner/tabs/filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:bambuscanner/widgets/infocard.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 class AmsSelection extends StatefulWidget {
@@ -104,28 +106,31 @@ class _AmsSelectionState extends State<AmsSelection> {
                                         Color color = toFlutterColor(
                                           tray.trayColor,
                                         );
+                                        Spool? spool;
 
                                         if (amsmapping != null) {
                                           for (AmsSpool amsmapping
                                               in amsmapping!) {
                                             if (amsmapping.trayId == tray.id) {
-                                              for (Spool spool
+                                              for (Spool filament
                                                   in availableFilaments
                                                       .spools) {
                                                 if (amsmapping.spoolId ==
-                                                    spool.id) {
-                                                  usage =
-                                                      (spool.labelWeight -
-                                                          spool.weightUsed) /
-                                                      spool.labelWeight;
-                                                  color = toFlutterColor(
-                                                    spool.rgba,
-                                                  );
+                                                    filament.id) {
+                                                  spool = filament;
                                                 }
                                               }
                                             }
                                           }
                                         }
+                                        if (spool == null) {
+                                          return SizedBox.shrink();
+                                        }
+                                        usage =
+                                            (spool.labelWeight -
+                                                spool.weightUsed) /
+                                            spool.labelWeight;
+                                        color = toFlutterColor(spool.rgba);
 
                                         TrayType traytype = checkSlotState(
                                           amsdata!.indexOf(ams),
@@ -209,7 +214,117 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                 ),
                                               ),
                                               onTap: () {
-                                                scanFilament(ams, tray);
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(
+                                                          10,
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsets.all(
+                                                                    10,
+                                                                  ),
+                                                              child: Text(
+                                                                "Select Spool for Slot ${tray.id + 1}",
+                                                                style: TextStyle(
+                                                                  fontSize: 24,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            FilamentCard(
+                                                              filament: spool!,
+                                                              selection: null,
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsets.symmetric(
+                                                                    horizontal: 15, vertical: 5
+                                                                  ),
+                                                              child: Divider(),
+                                                            ),
+                                                            InfoCard(
+                                                              title:
+                                                                  "Scan QR-Code",
+                                                              value: "",
+                                                              icon:
+                                                                  Icons.qr_code,
+                                                              onTap: () {
+                                                                scanFilament(
+                                                                  ams,
+                                                                  tray,
+                                                                );
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                              },
+                                                            ),
+                                                            InfoCard(
+                                                              title:
+                                                                  "Select Manually",
+                                                              value: "",
+                                                              icon: MdiIcons
+                                                                  .cursorDefault,
+                                                              onTap: () async {
+                                                                final String
+                                                                spoolId = await showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (
+                                                                        BuildContext
+                                                                        context,
+                                                                      ) {
+                                                                        return Dialog(
+                                                                          insetPadding: EdgeInsets.all(
+                                                                            20,
+                                                                          ),
+                                                                          child: Padding(
+                                                                            padding: EdgeInsets.all(
+                                                                              20,
+                                                                            ),
+                                                                            child: FilamentList(
+                                                                              selection: true,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                );
+                                                                if (!context
+                                                                    .mounted) {
+                                                                  return;
+                                                                }
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                                bool
+                                                                configured = await availableFilaments.setSlotToSpoolId(
+                                                                  widget
+                                                                      .printerid,
+                                                                  ams.id
+                                                                      .toString(),
+                                                                  tray.id
+                                                                      .toString(),
+                                                                  spoolId
+                                                                      .toString(),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
                                               },
                                               onLongPress: () async {
                                                 AvailableFilaments

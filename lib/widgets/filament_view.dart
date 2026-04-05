@@ -37,6 +37,7 @@ class FilamentViewState extends State<FilamentView> {
       padding: EdgeInsetsGeometry.all(10),
       child: SingleChildScrollView(
         child: Column(
+          spacing: 8,
           children: [
             Row(
               children: [
