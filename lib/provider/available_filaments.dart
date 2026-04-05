@@ -59,10 +59,8 @@ class AvailableFilaments extends ChangeNotifier {
     return configured;
   }
 
-  Future<bool> patchSpool(String id, String note) async {
-    final res = await ApiService().apiPatch("/inventory/spools/$id", {
-      "note": note,
-    });
+  Future<bool> patchSpool(String id, Map<String, dynamic> content) async {
+    final res = await ApiService().apiPatch("/inventory/spools/$id", content);
     if (res.statusCode != 200) return false;
 
     Spool updatedSpool = Spool.fromJson(jsonDecode(res.body));
@@ -75,6 +73,23 @@ class AvailableFilaments extends ChangeNotifier {
       setFilaments(spoolsCopy);
     }
     return res.statusCode == 200;
+  }
+
+  Future<void> archive(String id) async {
+    try {
+      final res = await ApiService().apiPost(
+        "/inventory/spools/$id/archive",
+        {},
+      );
+      removeSpoolByRes(res);
+    } catch (_) {}
+  }
+
+  Future<void> removeSpoolByRes(http.Response res) async {
+    List<Spool> spoolsCopy = List.from(_spools);
+    Spool archivedSpool = Spool.fromJson(jsonDecode(res.body));
+    spoolsCopy.remove(archivedSpool);
+    setFilaments(spoolsCopy);
   }
 
   Future<bool?> getAllSpools() async {

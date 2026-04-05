@@ -140,6 +140,7 @@ class _PrintersState extends State<Printers> {
                                       style: TextStyle(fontSize: 15),
                                     ),
                                     Row(
+                                      spacing: 10,
                                       children: [
                                         BadgeCard(
                                           text: connected,

@@ -26,8 +26,9 @@ class FilamentViewState extends State<FilamentView> {
   @override
   Widget build(BuildContext context) {
     final spools = context.watch<AvailableFilaments>();
-    final Spool spool = spools.spools.firstWhere(
+    final spool = spools.spools.firstWhere(
       (s) => s.id == widget.spool.id,
+      orElse: () => widget.spool,
     );
     final Color filamentColor = toFlutterColor(spool.rgba);
     final Color filamentConformTextColor = getContrastColor(filamentColor);
@@ -95,6 +96,55 @@ class FilamentViewState extends State<FilamentView> {
               value: spool.qrcode ?? "None",
               more: QRCodeMore(spool: spool),
             ),
+            if (spool.assignment == null)
+              Button(
+                onPressed: () async {
+                  Future<void> archive() async {
+                    AvailableFilaments availableFilaments = context
+                        .read<AvailableFilaments>();
+                    await availableFilaments.archive(spool.id.toString());
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                  if (spool.labelWeight - spool.weightUsed <= 50) {
+                    archive();
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Archive?"),
+                          content: const Text(
+                            "Do you really want to archive this Spool? It has more than 50g available.",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await archive();
+                              },
+                              child: const Text("Archive"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                expanded: true,
+                backgroundColor: context.appColor.base3,
+                borderColor: context.appColor.error,
+                child: Text(
+                  "Archive Spool",
+                  style: TextStyle(color: context.appColor.error),
+                ),
+              ),
           ],
         ),
       ),
@@ -245,7 +295,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                   onPressed: () {
                     unassignQrCode();
                   },
-                  color: Colors.transparent,
+                  backgroundColor: Colors.transparent,
                   expanded: true,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
