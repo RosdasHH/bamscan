@@ -35,8 +35,7 @@ class AvailablePrinters extends ChangeNotifier {
         printer.status = await getPrinterStatus(printer.id);
       }
       setPrinters(printers);
-    } catch (e) {
-      rethrow;
+    } catch (_) {
     }
   }
 

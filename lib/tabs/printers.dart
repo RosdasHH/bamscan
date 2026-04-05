@@ -18,6 +18,23 @@ class Printers extends StatefulWidget {
 }
 
 class _PrintersState extends State<Printers> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Printers")),
+      body: PrinterList(),
+    );
+  }
+}
+
+class PrinterList extends StatefulWidget {
+  const PrinterList({super.key});
+
+  @override
+  State<PrinterList> createState() => _PrinterListState();
+}
+
+class _PrinterListState extends State<PrinterList> {
   final storageservice = StorageService();
   bool _isLoading = false;
   @override
@@ -49,138 +66,137 @@ class _PrintersState extends State<Printers> {
       setState(() {
         _isLoading = false;
       });
-    } catch (_) {}
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final printers = context.watch<AvailablePrinters>().printers;
     final storage = context.read<StorageService>();
-    final bool reachable = context.watch<ApiService>().reachable;
+    final ApiService apiService = context.watch<ApiService>();
     String? configerror;
-    if (!reachable) return Offline();
+    if (!apiService.reachable) return Offline();
 
     if (storage.bambuddyUrl == "") {
       configerror = "Please enter the Bambuddy Url in the Settings tab.";
     } else if (storage.xapitoken == "") {
       configerror = "Please enter your Bambuddy API Token in the Settings tab.";
     }
-    if (configerror != null) return Text(configerror);
+    if (configerror != null) return Center(child: Text(configerror));
+    if (apiService.error != null) {
+      return Center(child: Text(apiService.error.toString()));
+    }
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Scaffold(
-      appBar: AppBar(title: Text("Printers")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsetsGeometry.all(10),
-          child: Column(
-            children: [
-              if (printers.isEmpty)
-                Center(child: Text("No printers available.")),
-              for (Printer printer in printers)
-                Builder(
-                  builder: (BuildContext context) {
-                    final status = printer.status;
-                    if (status == null) return SizedBox.shrink();
-                    final String connected = status.connected
-                        ? "Connected"
-                        : "Not connected";
-                    final Color connectedColor = status.connected
-                        ? context.appColor.success
-                        : context.appColor.error;
-                    final double progress = status.progress / 100;
-                    final String state = status.state;
-                    return Card(
-                      clipBehavior: Clip.hardEdge,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: const RouteSettings(name: "ams"),
-                              builder: (context) => AmsSelection(
-                                printerid: printer.id.toString(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsetsGeometry.all(10),
+        child: Column(
+          children: [
+            if (printers.isEmpty) Center(child: Text("No printers available.")),
+            for (Printer printer in printers)
+              Builder(
+                builder: (BuildContext context) {
+                  final status = printer.status;
+                  if (status == null) return SizedBox.shrink();
+                  final String connected = status.connected
+                      ? "Connected"
+                      : "Not connected";
+                  final Color connectedColor = status.connected
+                      ? context.appColor.success
+                      : context.appColor.error;
+                  final double progress = status.progress / 100;
+                  final String state = status.state;
+                  return Card(
+                    clipBehavior: Clip.hardEdge,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: const RouteSettings(name: "ams"),
+                            builder: (context) =>
+                                AmsSelection(printerid: printer.id.toString()),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          spacing: 5,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(5),
+                              child: SizedBox.square(
+                                dimension: 75,
+                                child: Image.network(
+                                  "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      SizedBox.expand(),
+                                ),
                               ),
                             ),
-                          );
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            spacing: 5,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(5),
-                                child: SizedBox.square(
-                                  dimension: 75,
-                                  child: Image.network(
-                                    "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            SizedBox.expand(),
-                                  ),
-                                ),
-                              ),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      printer.name,
-                                      overflow: TextOverflow.visible,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    Text(
-                                      printer.model,
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                    Row(
-                                      spacing: 10,
-                                      children: [
-                                        BadgeCard(
-                                          text: connected,
-                                          color: connectedColor,
-                                        ),
-                                        BadgeCard(
-                                          text: state,
-                                          color: Colors.blue,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Stack(
-                                alignment: AlignmentGeometry.center,
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox.square(
-                                    dimension: 50,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 7,
-                                      value: progress,
+                                  Text(
+                                    printer.name,
+                                    overflow: TextOverflow.visible,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
                                     ),
                                   ),
                                   Text(
-                                    "${(progress * 100).toInt()}%",
+                                    printer.model,
                                     style: TextStyle(fontSize: 15),
+                                  ),
+                                  Row(
+                                    spacing: 10,
+                                    children: [
+                                      BadgeCard(
+                                        text: connected,
+                                        color: connectedColor,
+                                      ),
+                                      BadgeCard(
+                                        text: state,
+                                        color: Colors.blue,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                            Stack(
+                              alignment: AlignmentGeometry.center,
+                              children: [
+                                SizedBox.square(
+                                  dimension: 50,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 7,
+                                    value: progress,
+                                  ),
+                                ),
+                                Text(
+                                  "${(progress * 100).toInt()}%",
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              SizedBox(height: 30),
-            ],
-          ),
+                    ),
+                  );
+                },
+              ),
+            SizedBox(height: 30),
+          ],
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/api.dart';
+import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/tabs/offline.dart';
 import 'package:bambuscanner/utils/ams_number_letter.dart';
 import 'package:bambuscanner/utils/color.dart';
@@ -64,9 +65,23 @@ class FilamentListState extends State<FilamentList> {
   @override
   Widget build(BuildContext context) {
     final filaments = context.watch<AvailableFilaments>().spools;
-    final bool reachable = context.watch<ApiService>().reachable;
-    if (!reachable) return Offline();
-    if (_isLoading) return Center(child: CircularProgressIndicator());
+    final storage = context.read<StorageService>();
+    final ApiService apiService = context.watch<ApiService>();
+    String? configerror;
+    if (!apiService.reachable) return Offline();
+
+    if (storage.bambuddyUrl == "") {
+      configerror = "Please enter the Bambuddy Url in the Settings tab.";
+    } else if (storage.xapitoken == "") {
+      configerror = "Please enter your Bambuddy API Token in the Settings tab.";
+    }
+    if (configerror != null) return Center(child: Text(configerror));
+    if (apiService.error != null) {
+      return Center(child: Text(apiService.error.toString()));
+    }
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return ListView(
       children: [

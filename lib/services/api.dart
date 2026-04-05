@@ -7,8 +7,10 @@ import 'package:http/http.dart' as http;
 
 class ApiService extends ChangeNotifier {
   bool _reachable = true;
+  String? _error;
 
   bool get reachable => _reachable;
+  String? get error => _error;
 
   static final ApiService _instance = ApiService._internal();
   factory ApiService() {
@@ -22,6 +24,8 @@ class ApiService extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void _setError(String value) {}
 
   Future<bool?> checkHealth([String? url]) async {
     url ??= StorageService().bambuddyUrl;
@@ -70,6 +74,7 @@ class ApiService extends ChangeNotifier {
             headers: {"x-api-key": StorageService().xapitoken},
           )
           .timeout(Duration(seconds: 1));
+      setError(res);
       _setReachable(true);
       return res;
     } catch (e) {
@@ -95,11 +100,26 @@ class ApiService extends ChangeNotifier {
             body: jsonEncode(data),
           )
           .timeout(Duration(seconds: 1));
+      setError(res);
       _setReachable(true);
       return res;
     } catch (e) {
       _setReachable(false);
       rethrow;
+    }
+  }
+
+  void setError(http.Response res) {
+    final json = jsonDecode(res.body);
+    final String? value;
+    if (res.statusCode == 200) {
+      value = null;
+    } else {
+      value = res.statusCode.toString() + json["detail"];
+    }
+    if (_error != value) {
+      _error = value;
+      notifyListeners();
     }
   }
 
@@ -120,6 +140,7 @@ class ApiService extends ChangeNotifier {
             body: jsonEncode(data),
           )
           .timeout(Duration(seconds: 1));
+      setError(res);
       _setReachable(true);
       return res;
     } catch (e) {

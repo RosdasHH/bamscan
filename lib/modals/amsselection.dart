@@ -218,9 +218,10 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                   context: context,
                                                   builder: (BuildContext context) {
                                                     return Dialog(
+                                                      insetPadding: EdgeInsets.all(20),
                                                       child: Padding(
                                                         padding: EdgeInsets.all(
-                                                          10,
+                                                          20,
                                                         ),
                                                         child: Column(
                                                           mainAxisSize:
