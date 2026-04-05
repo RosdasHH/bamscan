@@ -9,6 +9,7 @@ import 'package:bambuscanner/widgets/filament_view.dart';
 import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
 class FilamentTab extends StatefulWidget {
@@ -145,7 +146,47 @@ class FilamentListState extends State<FilamentList> {
                   },
                 ),
               ),
-              IconButton(onPressed: () {}, icon: Icon(Icons.qr_code)),
+              IconButton(
+                onPressed: () async {
+                  Spool? spool;
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return MobileScanner(
+                          onDetect: (scannedCode) {
+                            if (scannedCode.barcodes.first.rawValue == null ||
+                                spool != null) {
+                              return;
+                            }
+                            spool = filaments
+                                .where(
+                                  (x) =>
+                                      x.qrcode ==
+                                      scannedCode.barcodes.first.rawValue,
+                                )
+                                .first;
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+                  );
+                  if (!context.mounted) return;
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return Scaffold(
+                          appBar: AppBar(title: Text("Spool")),
+                          body: FilamentView(spool: spool!, editable: true),
+                        );
+                      },
+                    ),
+                  );
+                },
+                icon: Icon(Icons.qr_code),
+              ),
             ],
           ),
           SizedBox(height: 10),
