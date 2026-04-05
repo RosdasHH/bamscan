@@ -111,6 +111,11 @@ class _PrinterListState extends State<PrinterList> {
                       : context.appColor.error;
                   final double progress = status.progress / 100;
                   final String state = status.state;
+                  final stateColor = state == "FAILED"
+                      ? context.appColor.error
+                      : state == "FINISH"
+                      ? context.appColor.success
+                      : Colors.blue;
                   return Card(
                     clipBehavior: Clip.hardEdge,
                     child: InkWell(
@@ -163,30 +168,30 @@ class _PrinterListState extends State<PrinterList> {
                                         text: connected,
                                         color: connectedColor,
                                       ),
-                                      BadgeCard(
-                                        text: state,
-                                        color: Colors.blue,
-                                      ),
+                                      BadgeCard(text: state, color: stateColor),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
-                            Stack(
-                              alignment: AlignmentGeometry.center,
-                              children: [
-                                SizedBox.square(
-                                  dimension: 50,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 7,
-                                    value: progress,
+                            Padding(
+                              padding: EdgeInsets.only(right: 15),
+                              child: Stack(
+                                alignment: AlignmentGeometry.center,
+                                children: [
+                                  SizedBox.square(
+                                    dimension: 50,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 7,
+                                      value: progress,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  "${(progress * 100).toInt()}%",
-                                  style: TextStyle(fontSize: 15),
-                                ),
-                              ],
+                                  Text(
+                                    "${(progress * 100).toInt()}%",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
