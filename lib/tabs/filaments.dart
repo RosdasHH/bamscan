@@ -272,7 +272,13 @@ class FilamentCardState extends State<FilamentCard> {
           ),
           subtitle: Row(
             children: [
-              Text(widget.filament.colorName),
+              Flexible(
+                child: Text(
+                  widget.filament.colorName,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                ),
+              ),
               widget.filament.assignment != null && widget.selection != null
                   ? Text(
                       " ⋅ ${widget.filament.assignment!.printerName} | ${amsIdToLetter(widget.filament.assignment!.amsId)}${widget.filament.assignment!.trayId + 1}",
