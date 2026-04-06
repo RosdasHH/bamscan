@@ -146,47 +146,48 @@ class FilamentListState extends State<FilamentList> {
                   },
                 ),
               ),
-              IconButton(
-                onPressed: () async {
-                  Spool? spool;
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return MobileScanner(
-                          onDetect: (scannedCode) {
-                            if (scannedCode.barcodes.first.rawValue == null ||
-                                spool != null) {
-                              return;
-                            }
-                            spool = filaments
-                                .where(
-                                  (x) =>
-                                      x.qrcode ==
-                                      scannedCode.barcodes.first.rawValue,
-                                )
-                                .first;
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    ),
-                  );
-                  if (!context.mounted) return;
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return Scaffold(
-                          appBar: AppBar(title: Text("Spool")),
-                          body: FilamentView(spool: spool!, editable: true),
-                        );
-                      },
-                    ),
-                  );
-                },
-                icon: Icon(Icons.qr_code),
-              ),
+              if (widget.selection == false)
+                IconButton(
+                  onPressed: () async {
+                    Spool? spool;
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return MobileScanner(
+                            onDetect: (scannedCode) {
+                              if (scannedCode.barcodes.first.rawValue == null ||
+                                  spool != null) {
+                                return;
+                              }
+                              spool = filaments
+                                  .where(
+                                    (x) =>
+                                        x.qrcode ==
+                                        scannedCode.barcodes.first.rawValue,
+                                  )
+                                  .first;
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      ),
+                    );
+                    if (!context.mounted) return;
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return Scaffold(
+                            appBar: AppBar(title: Text("Spool")),
+                            body: FilamentView(spool: spool!, editable: true),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.qr_code),
+                ),
             ],
           ),
           SizedBox(height: 10),

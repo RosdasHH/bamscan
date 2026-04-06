@@ -67,7 +67,7 @@ class FilamentViewState extends State<FilamentView> {
             if (spool.assignment != null)
               Chip(
                 label: Text(
-                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId+1}",
+                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}",
                 ),
                 backgroundColor: Colors.purple.withValues(alpha: 0.3),
               ),
@@ -97,7 +97,7 @@ class FilamentViewState extends State<FilamentView> {
               value: spool.qrcode ?? "None",
               more: QRCodeMore(spool: spool),
             ),
-            if (spool.assignment == null)
+            if (spool.assignment == null && widget.editable)
               Button(
                 onPressed: () async {
                   Future<void> archive() async {
@@ -108,6 +108,7 @@ class FilamentViewState extends State<FilamentView> {
                       Navigator.pop(context);
                     }
                   }
+
                   if (spool.labelWeight - spool.weightUsed <= 50) {
                     archive();
                   } else {
