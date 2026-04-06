@@ -55,7 +55,7 @@ class _AmsSelectionState extends State<AmsSelection> {
       int.parse(widget.printerid),
     );
     amsdata = await availablePrinters.getAmsByPrinterId(widget.printerid);
-
+    if (!mounted) return;
     setState(() {
       amsdata = amsdata;
       amsmapping = amsmapping;
@@ -246,8 +246,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                             if (spool !=
                                                                 null) ...[
                                                               FilamentCard(
-                                                                filament:
-                                                                    spool,
+                                                                filament: spool,
                                                                 selection: null,
                                                               ),
                                                               Padding(

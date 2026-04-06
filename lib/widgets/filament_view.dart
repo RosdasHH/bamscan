@@ -328,5 +328,6 @@ class _QRCodeMoreState extends State<QRCodeMore> {
           : "Could NOT assign this QR-Code to the spool!",
       success == true ? context.appColor.success : context.appColor.error,
     );
+    Navigator.pop(context);
   }
 }
