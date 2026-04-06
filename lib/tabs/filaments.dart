@@ -239,7 +239,7 @@ class FilamentCardState extends State<FilamentCard> {
             : null,
         child: ListTile(
           title: Text(
-            "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName}",
+            "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype}",
           ),
           minLeadingWidth: 20,
           leading: SizedBox(

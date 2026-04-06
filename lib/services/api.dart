@@ -25,8 +25,6 @@ class ApiService extends ChangeNotifier {
     }
   }
 
-  void _setError(String value) {}
-
   Future<bool?> checkHealth([String? url]) async {
     url ??= StorageService().bambuddyUrl;
     try {
