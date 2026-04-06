@@ -10,6 +10,7 @@ class AppColor extends ThemeExtension<AppColor> {
   final Color base3;
   final Color error;
   final Color success;
+  final Color info;
 
   AppColor({
     required this.primary,
@@ -21,6 +22,7 @@ class AppColor extends ThemeExtension<AppColor> {
     required this.base3,
     required this.error,
     required this.success,
+    required this.info,
   });
 
   @override
@@ -45,6 +47,7 @@ class DarkColor extends AppColor {
         base3: Colors.grey[700]!,
         error: Colors.red,
         success: Colors.green,
+        info: Colors.blue,
       );
 }
 
@@ -60,5 +63,6 @@ class LightColor extends AppColor {
         base3: Colors.grey[100]!,
         error: Colors.red,
         success: Colors.green,
+        info: Colors.blue,
       );
 }

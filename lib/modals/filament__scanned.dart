@@ -2,6 +2,7 @@ import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bambuscanner/helper/showsnackbar.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/widgets/filament_view.dart';
@@ -141,14 +142,10 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                 widget.scannedSpool.id.toString(),
               );
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: configured
-                      ? Text("Spool assigned")
-                      : Text("Spool NOT assigned"),
-                  duration: Duration(seconds: 3),
-                  behavior: SnackBarBehavior.floating,
-                ),
+              showSnackbar(
+                context,
+                configured ? "Spool assigned" : "Spool NOT assigned",
+                null,
               );
               Navigator.popUntil(
                 context,

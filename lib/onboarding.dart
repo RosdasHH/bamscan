@@ -1,3 +1,4 @@
+import 'package:bambuscanner/helper/showSnackbar.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/theme/app_color.dart';
@@ -147,18 +148,12 @@ class _OnboardingState extends State<Onboarding> {
       return true;
     } else {
       if (!mounted) return false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            apikeystate == false
-                ? "API Key is invalid!"
-                : "Error while checking API Key!",
-          ),
-          backgroundColor: apikeystate == true
-              ? appColor.success
-              : appColor.error,
-          behavior: SnackBarBehavior.floating,
-        ),
+      showSnackbar(
+        context,
+        apikeystate == false
+            ? "API Key is invalid!"
+            : "Error while checking API Key!",
+        apikeystate == true ? appColor.success : appColor.error,
       );
       return false;
     }
@@ -172,13 +167,7 @@ class _OnboardingState extends State<Onboarding> {
       return true;
     } else {
       if (!mounted) return false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("No Bambuddy Server found!"),
-          backgroundColor: health == true ? appColor.success : appColor.error,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showSnackbar(context, "No Bambuddy Server found!", health == true ? appColor.success : appColor.error);
       return false;
     }
   }

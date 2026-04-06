@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/helper/showsnackbar.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/ams_number_letter.dart';
@@ -310,30 +311,22 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     );
     if (!mounted) return;
     if (alreadyAssigned.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}",
-          ),
-          backgroundColor: context.appColor.error,
-        ),
+      showSnackbar(
+        context,
+        "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}",
+        context.appColor.error,
       );
       return;
     }
     if (!mounted) return;
     final bool success = await addQrCodeReq(context, widget.spool, res);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? "Successfully assigned QR-Code to this Spool!"
-              : "Could NOT assign this QR-Code to the spool!",
-        ),
-        backgroundColor: success == true
-            ? context.appColor.success
-            : context.appColor.error,
-      ),
+    showSnackbar(
+      context,
+      success
+          ? "Successfully assigned QR-Code to this Spool!"
+          : "Could NOT assign this QR-Code to the spool!",
+      success == true ? context.appColor.success : context.appColor.error,
     );
   }
 }

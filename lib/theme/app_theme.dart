@@ -72,8 +72,16 @@ class AppTheme {
         circularTrackColor: color.base1,
         strokeCap: StrokeCap.round,
       ),
-      snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(20),
+        ),
+      ),
       dialogTheme: DialogThemeData(backgroundColor: color.base2),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: color.primary),
+      ),
     );
   }
 }
