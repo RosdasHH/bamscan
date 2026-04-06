@@ -1,86 +1,136 @@
-import 'dart:async';
+import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class QrScan extends StatefulWidget {
-  const QrScan({
-    super.key,
-    required this.enabled,
-    required this.scanDataCallback,
-  });
-  final bool enabled;
-  final Function(String?) scanDataCallback;
+class Qrscan extends StatefulWidget {
+  const Qrscan({super.key, this.spools});
+  final List<Spool>? spools;
 
   @override
-  State<QrScan> createState() => _QrScanState();
+  State<Qrscan> createState() => _QrscanState();
 }
 
-class _QrScanState extends State<QrScan> with WidgetsBindingObserver {
-  final MobileScannerController controller = MobileScannerController(
-    autoStart: false,
-  );
-  StreamSubscription<BarcodeCapture>? _subscription;
-
-  @override
-  void didUpdateWidget(covariant QrScan oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.enabled && !oldWidget.enabled) {
-      controller.start();
-    } else if (!widget.enabled && oldWidget.enabled) {
-      controller.stop();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _subscription = controller.barcodes.listen(_handleBarcode);
-
-    if (widget.enabled) {
-      controller.start();
-    }
-  }
-
-  void _handleBarcode(BarcodeCapture capture) {}
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (!controller.value.hasCameraPermission) return;
-
-    switch (state) {
-      case AppLifecycleState.resumed:
-        _subscription = controller.barcodes.listen(_handleBarcode);
-        controller.start();
-        break;
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
-      case AppLifecycleState.detached:
-        _subscription?.cancel();
-        _subscription = null;
-        controller.stop();
-        break;
-      case AppLifecycleState.hidden:
-        throw UnimplementedError();
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _subscription?.cancel();
-    controller.dispose();
-    super.dispose();
-  }
-
+class _QrscanState extends State<Qrscan> {
   @override
   Widget build(BuildContext context) {
+    bool found = false;
     return MobileScanner(
-      controller: controller,
-      onDetect: (capture) {
-        widget.scanDataCallback(capture.barcodes.first.rawValue);
+      overlayBuilder: (context, constraints) {
+        return Stack(
+          children: [
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Colors.black.withValues(alpha: 0.6),
+                BlendMode.srcOut,
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: SizedBox.square(
+                      dimension: 300,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: context.appColor.base1,
+                            width: 10,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Center(child: CornerBorder(size: 300)),
+          ],
+        );
+      },
+      onDetect: (scannedCode) {
+        if (scannedCode.barcodes.first.rawValue == null || found == true) {
+          return;
+        }
+        if (widget.spools == null) {
+          found = true;
+          Navigator.pop(context, scannedCode.barcodes.first.rawValue);
+        } else {
+          found = true;
+          final List<Spool> spools = widget.spools!
+              .where((x) => x.qrcode == scannedCode.barcodes.first.rawValue)
+              .toList();
+          if (spools.length > 1) {
+            print("Multiple Assignments!");
+            Navigator.pop(context);
+          }
+          Navigator.pop(context, spools.first);
+        }
       },
     );
   }
+}
+
+class CornerBorder extends StatelessWidget {
+  final double size;
+
+  const CornerBorder({super.key, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size.square(size),
+      painter: _CornerPainter(context.appColor.base1),
+    );
+  }
+}
+
+class _CornerPainter extends CustomPainter {
+  final Color color;
+
+  _CornerPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 8
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    const cornerLength = 40.0;
+    final r = 30.0;
+
+    final path = Path();
+
+    path.moveTo(0, r + cornerLength);
+    path.lineTo(0, r);
+    path.quadraticBezierTo(0, 0, r, 0);
+    path.lineTo(r + cornerLength, 0);
+
+    path.moveTo(size.width - r - cornerLength, 0);
+    path.lineTo(size.width - r, 0);
+    path.quadraticBezierTo(size.width, 0, size.width, r);
+    path.lineTo(size.width, r + cornerLength);
+
+    path.moveTo(size.width, size.height - r - cornerLength);
+    path.lineTo(size.width, size.height - r);
+    path.quadraticBezierTo(
+      size.width,
+      size.height,
+      size.width - r,
+      size.height,
+    );
+    path.lineTo(size.width - r - cornerLength, size.height);
+
+    path.moveTo(r + cornerLength, size.height);
+    path.lineTo(r, size.height);
+    path.quadraticBezierTo(0, size.height, 0, size.height - r);
+    path.lineTo(0, size.height - r - cornerLength);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

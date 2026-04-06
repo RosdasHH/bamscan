@@ -4,13 +4,14 @@ import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/slot_preset.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
-import 'package:bambuscanner/modals/qrscan_modal.dart';
+import 'package:bambuscanner/modals/filament__scanned.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
 import 'package:bambuscanner/tabs/filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:bambuscanner/widgets/infocard.dart';
+import 'package:bambuscanner/widgets/qrscan.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -266,6 +267,8 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 scanFilament(
                                                                   ams,
                                                                   tray,
+                                                                  availableFilaments
+                                                                      .spools,
                                                                 );
                                                                 Navigator.pop(
                                                                   context,
@@ -433,11 +436,18 @@ class _AmsSelectionState extends State<AmsSelection> {
     );
   }
 
-  void scanFilament(Ams ams, TraySlot slot) {
+  void scanFilament(Ams ams, TraySlot slot, List<Spool> spools) async {
+    final res = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Qrscan(spools: spools)),
+    );
+    if (res == null) return;
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => QrscanModal(
+        builder: (context) => FilamentScanned(
+          scannedSpool: res,
           printerid: widget.printerid,
           amsid: ams.id.toString(),
           trayid: slot.id.toString(),

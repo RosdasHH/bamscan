@@ -183,37 +183,6 @@ class FilamentViewScreenState extends State<FilamentViewScreen> {
   }
 }
 
-class QrScanAssignQrCode extends StatefulWidget {
-  const QrScanAssignQrCode({super.key, required this.scanDataCallback});
-  final Function(String) scanDataCallback;
-
-  @override
-  State<QrScanAssignQrCode> createState() => _QrScanAssignQrCode();
-}
-
-class _QrScanAssignQrCode extends State<QrScanAssignQrCode> {
-  bool scanenabled = true;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Scan QR-Code")),
-      body: QrScan(
-        enabled: scanenabled,
-        scanDataCallback: (spoolid) async {
-          if (spoolid != null) widget.scanDataCallback(spoolid);
-          setState(() {
-            scanenabled = false;
-          });
-
-          if (!context.mounted) return;
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-}
-
 class QRCodeMore extends StatefulWidget {
   const QRCodeMore({super.key, required this.spool});
   final Spool spool;
@@ -277,7 +246,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
               SizedBox(
                 width: double.infinity,
                 child: Button(
-                  onPressed: () {
+                  onPressed: () async {
                     assignQrCode();
                   },
                   expanded: true,
@@ -324,49 +293,46 @@ class _QRCodeMoreState extends State<QRCodeMore> {
   }
 
   void assignQrCode() async {
-    final AvailableFilaments availableFilaments = context
-        .read<AvailableFilaments>();
-    await Navigator.push(
+    final res = await Navigator.push(
       context,
       MaterialPageRoute(
-        settings: const RouteSettings(name: "qrscanassign"),
-        builder: (context) => QrScanAssignQrCode(
-          scanDataCallback: (scannedqrid) async {
-            final List alreadyAssigned = await availableFilaments
-                .getSpoolsByQrCode(scannedqrid);
-            if (!context.mounted) return;
-            if (alreadyAssigned.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}",
-                  ),
-                  backgroundColor: context.appColor.error,
-                ),
-              );
-              return;
-            }
-            if (!context.mounted) return;
-            final bool success = await addQrCodeReq(
-              context,
-              widget.spool,
-              scannedqrid,
-            );
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  success
-                      ? "Successfully assigned QR-Code to this Spool!"
-                      : "Could NOT assign this QR-Code to the spool!",
-                ),
-                backgroundColor: success == true
-                    ? context.appColor.success
-                    : context.appColor.error,
-              ),
-            );
-          },
+        builder: (BuildContext context) {
+          return Qrscan();
+        },
+      ),
+    );
+    if (res == null) return;
+    if (!mounted) return;
+    final AvailableFilaments availableFilaments = context
+        .read<AvailableFilaments>();
+    final List alreadyAssigned = await availableFilaments.getSpoolsByQrCode(
+      res,
+    );
+    if (!mounted) return;
+    if (alreadyAssigned.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}",
+          ),
+          backgroundColor: context.appColor.error,
         ),
+      );
+      return;
+    }
+    if (!mounted) return;
+    final bool success = await addQrCodeReq(context, widget.spool, res);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? "Successfully assigned QR-Code to this Spool!"
+              : "Could NOT assign this QR-Code to the spool!",
+        ),
+        backgroundColor: success == true
+            ? context.appColor.success
+            : context.appColor.error,
       ),
     );
   }
