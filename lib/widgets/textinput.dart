@@ -1,3 +1,4 @@
+import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class TextInput extends StatefulWidget {
@@ -30,6 +31,7 @@ class _TextInputState extends State<TextInput> {
         },
         controller: widget.controller,
         decoration: InputDecoration(
+          fillColor: context.appColor.base2,
           isDense: true,
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey),

@@ -73,6 +73,7 @@ class AppTheme {
         strokeCap: StrokeCap.round,
       ),
       snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+      dialogTheme: DialogThemeData(backgroundColor: color.base2),
     );
   }
 }
