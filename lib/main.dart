@@ -10,7 +10,6 @@ import 'package:bambuscanner/tabs/settings.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -85,19 +84,19 @@ class _MyAppState extends State<MyApp> {
     List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(
-          icon: Icon(MdiIcons.disc),
+          icon: Icon(Icons.inventory_2_outlined),
           title: ("Filaments"),
           activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(CupertinoIcons.home),
+          icon: Icon(CupertinoIcons.printer),
           title: ("Home"),
           activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(CupertinoIcons.settings),
+          icon: Icon(Icons.settings_outlined),
           title: ("Settings"),
           activeColorPrimary: context.appColor.primary,
           inactiveColorPrimary: CupertinoColors.systemGrey,

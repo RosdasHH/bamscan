@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
-import 'package:bambuscanner/classes/slot_preset.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
 import 'package:bambuscanner/modals/filament__scanned.dart';
@@ -124,14 +123,14 @@ class _AmsSelectionState extends State<AmsSelection> {
                                             }
                                           }
                                         }
-                                        if (spool == null) {
-                                          return SizedBox.shrink();
+
+                                        if (spool != null) {
+                                          usage =
+                                              (spool.labelWeight -
+                                                  spool.weightUsed) /
+                                              spool.labelWeight;
+                                          color = toFlutterColor(spool.rgba);
                                         }
-                                        usage =
-                                            (spool.labelWeight -
-                                                spool.weightUsed) /
-                                            spool.labelWeight;
-                                        color = toFlutterColor(spool.rgba);
 
                                         TrayType traytype = checkSlotState(
                                           amsdata!.indexOf(ams),
@@ -244,19 +243,25 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            FilamentCard(
-                                                              filament: spool!,
-                                                              selection: null,
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        15,
-                                                                    vertical: 5,
-                                                                  ),
-                                                              child: Divider(),
-                                                            ),
+                                                            if (spool !=
+                                                                null) ...[
+                                                              FilamentCard(
+                                                                filament:
+                                                                    spool,
+                                                                selection: null,
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          15,
+                                                                      vertical:
+                                                                          5,
+                                                                    ),
+                                                                child:
+                                                                    Divider(),
+                                                              ),
+                                                            ],
                                                             InfoCard(
                                                               title:
                                                                   "Scan QR-Code",
@@ -348,69 +353,6 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                               },
                                                             ),
                                                           ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              onLongPress: () async {
-                                                AvailableFilaments
-                                                availableFilaments = context
-                                                    .read<AvailableFilaments>();
-                                                SlotPreset preset =
-                                                    await availableFilaments
-                                                        .getPreset(
-                                                          widget.printerid,
-                                                          ams.id.toString(),
-                                                          tray.id.toString(),
-                                                        );
-                                                if (!context.mounted) return;
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return Dialog(
-                                                      insetPadding:
-                                                          EdgeInsets.all(25),
-                                                      child: Padding(
-                                                        padding: EdgeInsets.all(
-                                                          10,
-                                                        ),
-                                                        child: SingleChildScrollView(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .stretch,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsets.all(
-                                                                      10,
-                                                                    ),
-                                                                child: Text(
-                                                                  "Tray Info",
-                                                                  style:
-                                                                      TextStyle(
-                                                                        fontSize:
-                                                                            22,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                              InfoCard(
-                                                                title: "Preset",
-                                                                value: preset
-                                                                    .presetName,
-                                                                icon: Icons.abc,
-                                                              ),
-                                                              InfoCard(
-                                                                title:
-                                                                    "Material",
-                                                                value: tray
-                                                                    .trayType,
-                                                                icon: Icons.abc,
-                                                              ),
-                                                            ],
-                                                          ),
                                                         ),
                                                       ),
                                                     );

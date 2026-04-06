@@ -115,6 +115,10 @@ class _PrinterListState extends State<PrinterList> {
                       ? context.appColor.error
                       : state == "FINISH"
                       ? context.appColor.success
+                      : state == "PREPARE"
+                      ? Colors.orange
+                      : state == "RUNNING"
+                      ? Colors.purple
                       : Colors.blue;
                   return Card(
                     clipBehavior: Clip.hardEdge,
