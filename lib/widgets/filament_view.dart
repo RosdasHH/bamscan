@@ -9,6 +9,7 @@ import 'package:bambuscanner/utils/parse_note.dart';
 import 'package:bambuscanner/widgets/button.dart';
 import 'package:bambuscanner/widgets/infocard.dart';
 import 'package:bambuscanner/widgets/qrscan.dart';
+import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -74,18 +75,36 @@ class FilamentViewState extends State<FilamentView> {
               ),
 
             InfoCard(
-              icon: Icons.abc,
-              title: "Color Name:",
+              icon: Icons.color_lens,
+              title: "Color Name",
               value: spool.colorName,
+              apiname: "color_name",
+              spool: spool,
             ),
             InfoCard(
-              icon: Icons.precision_manufacturing,
-              title: "Brand:",
+              icon: MdiIcons.printer3DNozzle,
+              title: "Material",
+              value: spool.material,
+              apiname: "material",
+              spool: spool,
+            ),
+            InfoCard(
+              icon: MdiIcons.factoryIcon,
+              title: "Brand",
               value: spool.brand,
+                            apiname: "brand",
+              spool: spool,
+            ),
+            InfoCard(
+              icon: MdiIcons.shape,
+              title: "Subtype",
+              value: spool.subtype,
+                            apiname: "subtype",
+              spool: spool,
             ),
             InfoCard(
               icon: MdiIcons.weight,
-              title: "Weight:",
+              title: "Weight",
               value:
                   "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
               spoolColor: context.appColor.primary,
@@ -94,7 +113,7 @@ class FilamentViewState extends State<FilamentView> {
             ),
             InfoCard(
               icon: Icons.qr_code,
-              title: "Assigned QR-Code:",
+              title: "Assigned QR-Code",
               value: spool.qrcode ?? "None",
               more: QRCodeMore(spool: spool),
             ),
@@ -329,5 +348,53 @@ class _QRCodeMoreState extends State<QRCodeMore> {
       success == true ? context.appColor.success : context.appColor.error,
     );
     Navigator.pop(context);
+  }
+}
+
+class ColorNameMore extends StatefulWidget {
+  const ColorNameMore({super.key, this.value});
+  final String? value;
+
+  @override
+  State<ColorNameMore> createState() => _ColorNameMoreState();
+}
+
+class _ColorNameMoreState extends State<ColorNameMore> {
+  final TextEditingController _colorNameController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _colorNameController.text = widget.value ?? "";
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _colorNameController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Color Name")),
+      body: Row(
+        children: [
+          Flexible(
+            child: TextInput(
+              controller: _colorNameController,
+              labeltext: "Color Name",
+            ),
+          ),
+          Button(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Save"),
+          ),
+        ],
+      ),
+    );
   }
 }
