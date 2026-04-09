@@ -78,9 +78,14 @@ class AppTheme {
           borderRadius: BorderRadiusGeometry.circular(20),
         ),
       ),
-      dialogTheme: DialogThemeData(backgroundColor: color.base2),
+      dialogTheme: DialogThemeData(backgroundColor: color.base2, insetPadding: EdgeInsets.all(20)),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(foregroundColor: color.primary),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: CircleBorder(),
+        backgroundColor: color.base3,
+        foregroundColor: color.primary,
       ),
     );
   }

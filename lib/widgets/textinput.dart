@@ -5,15 +5,17 @@ class TextInput extends StatefulWidget {
   const TextInput({
     super.key,
     required this.controller,
-    required this.labeltext,
+    this.labeltext = "",
     this.obscure = false,
     this.margin = 4.0,
     this.onchanged,
+    this.value = "",
   });
   final TextEditingController controller;
   final String labeltext;
   final bool obscure;
   final double margin;
+  final String value;
   final void Function(String)? onchanged;
 
   @override
@@ -42,7 +44,7 @@ class _TextInputState extends State<TextInput> {
             borderRadius: BorderRadius.circular(999),
           ),
           filled: true,
-          hint: Text("Search"),
+          hint: Text(widget.labeltext),
         ),
 
         obscureText: widget.obscure,

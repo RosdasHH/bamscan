@@ -218,8 +218,6 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                   context: context,
                                                   builder: (BuildContext context) {
                                                     return Dialog(
-                                                      insetPadding:
-                                                          EdgeInsets.all(20),
                                                       child: Padding(
                                                         padding: EdgeInsets.all(
                                                           20,
@@ -295,34 +293,25 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                         BuildContext
                                                                         context,
                                                                       ) {
-                                                                        return Dialog(
-                                                                          insetPadding: EdgeInsets.all(
-                                                                            20,
-                                                                          ),
-                                                                          child: Padding(
-                                                                            padding: EdgeInsets.all(
-                                                                              20,
-                                                                            ),
-                                                                            child: Column(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              children: [
-                                                                                Text(
-                                                                                  "Select Spool for Slot ${tray.id + 1}",
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 20,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                  ),
+                                                                        return AlertDialog(
+                                                                          content: Column(
+                                                                            children: [
+                                                                              Text(
+                                                                                "Select Spool for Slot ${tray.id + 1}",
+                                                                                style: TextStyle(
+                                                                                  fontSize: 20,
+                                                                                  fontWeight: FontWeight.bold,
                                                                                 ),
-                                                                                SizedBox(
-                                                                                  height: 15,
+                                                                              ),
+                                                                              SizedBox(
+                                                                                height: 15,
+                                                                              ),
+                                                                              Expanded(
+                                                                                child: FilamentList(
+                                                                                  selection: true,
                                                                                 ),
-                                                                                Expanded(
-                                                                                  child: FilamentList(
-                                                                                    selection: true,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         );
                                                                       },

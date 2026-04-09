@@ -22,12 +22,29 @@ class FilamentTab extends StatefulWidget {
 class _FilamentTabState extends State<FilamentTab> {
   @override
   Widget build(BuildContext context) {
+    //final ApiService apiService = context.watch<ApiService>();
+
     return Scaffold(
       appBar: AppBar(title: Text("Filaments")),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: FilamentList(),
       ),
+      //floatingActionButton: apiService.reachable
+      //    ? FloatingActionButton(
+      //        onPressed: () {
+      //          Navigator.push(
+      //            context,
+      //            MaterialPageRoute(
+      //              builder: (context) {
+      //                return SizedBox.shrink();
+      //              },
+      //            ),
+      //          );
+      //        },
+      //        child: Icon(Icons.add),
+      //      )
+      //    : null,
     );
   }
 }
@@ -77,7 +94,8 @@ class FilamentListState extends State<FilamentList> {
   Widget build(BuildContext context) {
     final filaments = context.watch<AvailableFilaments>().spools;
     final storage = context.read<StorageService>();
-    final ApiService apiService = context.watch<ApiService>();
+    //Read because FilamentTab rebuilds on change
+    final ApiService apiService = context.read<ApiService>();
     final List<Spool> iterationList;
 
     String? configerror;
@@ -140,7 +158,7 @@ class FilamentListState extends State<FilamentList> {
               Flexible(
                 child: TextInput(
                   controller: _searchController,
-                  labeltext: "Test",
+                  labeltext: "Search",
                   onchanged: (term) {
                     fuzzySearch(filaments, term);
                   },

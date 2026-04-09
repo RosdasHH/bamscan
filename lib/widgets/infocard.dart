@@ -1,5 +1,10 @@
+import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
+import 'package:bambuscanner/widgets/button.dart';
+import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class InfoCard extends StatefulWidget {
   const InfoCard({
@@ -11,6 +16,8 @@ class InfoCard extends StatefulWidget {
     this.spoolColor,
     this.more,
     this.onTap,
+    this.apiname,
+    this.spool,
   });
   final IconData icon;
   final String title;
@@ -19,12 +26,28 @@ class InfoCard extends StatefulWidget {
   final Color? spoolColor;
   final Widget? more;
   final Function? onTap;
+  final String? apiname;
+  final Spool? spool;
 
   @override
   State<InfoCard> createState() => _InfoCardState();
 }
 
 class _InfoCardState extends State<InfoCard> {
+  final TextEditingController textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    textEditingController.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    textEditingController.text = widget.value ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.value == null) return SizedBox.shrink(); //Nothing
@@ -33,7 +56,10 @@ class _InfoCardState extends State<InfoCard> {
         Expanded(
           child: Card(
             child: InkWell(
-              onTap: widget.more != null || widget.onTap != null
+              onTap:
+                  widget.more != null ||
+                      widget.onTap != null ||
+                      widget.apiname != null
                   ? () {
                       if (widget.onTap != null) {
                         widget.onTap!();
@@ -42,6 +68,70 @@ class _InfoCardState extends State<InfoCard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => widget.more!),
+                        );
+                      }
+                      if (widget.apiname != null) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      widget.title,
+                                      style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextInput(
+                                      controller: textEditingController,
+                                    ),
+                                    Row(
+                                      spacing: 10,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Button(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          backgroundColor: Colors.transparent,
+                                          child: Text("Cancel"),
+                                        ),
+                                        Button(
+                                          onPressed: () async {
+                                            if (widget.apiname != null &&
+                                                widget.spool != null) {
+                                              AvailableFilaments
+                                              availableFilaments = context
+                                                  .read<AvailableFilaments>();
+                                              await availableFilaments
+                                                  .patchSpool(
+                                                    widget.spool!.id.toString(),
+                                                    {
+                                                      widget.apiname!:
+                                                          textEditingController
+                                                              .text,
+                                                    },
+                                                  );
+                                            }
+                                            if (!context.mounted) {
+                                              return;
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Save"),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       }
                     }
@@ -86,7 +176,7 @@ class _InfoCardState extends State<InfoCard> {
                                   ),
                                 ),
                                 Text(
-                                  widget.title,
+                                  "${widget.title}:",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
