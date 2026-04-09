@@ -81,6 +81,25 @@ class ApiService extends ChangeNotifier {
     }
   }
 
+  Future<http.Response> apiDel(String apiEndpoint) async {
+    try {
+      http.Response res = await http
+          .delete(
+            Uri.parse(
+              StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
+            ),
+            headers: {"x-api-key": StorageService().xapitoken},
+          )
+          .timeout(Duration(seconds: 1));
+      setError(res);
+      _setReachable(true);
+      return res;
+    } catch (e) {
+      _setReachable(false);
+      rethrow;
+    }
+  }
+
   Future<http.Response> apiPost(
     String apiEndpoint,
     Map<String, dynamic> data,

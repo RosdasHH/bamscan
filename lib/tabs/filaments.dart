@@ -3,6 +3,7 @@ import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/tabs/offline.dart';
+import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:bambuscanner/utils/ams_number_letter.dart';
 import 'package:bambuscanner/utils/color.dart';
 import 'package:bambuscanner/widgets/filament_view.dart';
@@ -212,9 +213,13 @@ class FilamentCard extends StatefulWidget {
     super.key,
     required this.filament,
     required this.selection,
+    this.delete = false,
+    this.deleteCallback,
   });
   final Spool filament;
   final bool? selection;
+  final bool delete;
+  final VoidCallback? deleteCallback;
 
   @override
   State<FilamentCard> createState() => FilamentCardState();
@@ -294,6 +299,14 @@ class FilamentCardState extends State<FilamentCard> {
           trailing: Stack(
             alignment: AlignmentGeometry.center,
             children: [
+              if (widget.delete)
+                IconButton(
+                  onPressed: () => widget.deleteCallback?.call(),
+                  icon: Icon(
+                    Icons.cancel_outlined,
+                    color: context.appColor.error,
+                  ),
+                ),
               if (widget.selection != null)
                 CircularProgressIndicator(
                   value:

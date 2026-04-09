@@ -139,6 +139,17 @@ class AvailableFilaments extends ChangeNotifier {
     }
   }
 
+  Future<void> unassignSpool(
+    String printerId,
+    String amsId,
+    String trayId,
+  ) async {
+    await ApiService().apiDel(
+      "/inventory/assignments/$printerId/$amsId/$trayId",
+    );
+    return;
+  }
+
   Future<List<AmsSpool>> getFilamentMappingForPrinter(int printerId) async {
     final res = await ApiService().apiReq(
       "/inventory/assignments?printer_id=$printerId",

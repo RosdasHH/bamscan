@@ -131,10 +131,11 @@ class _AmsSelectionState extends State<AmsSelection> {
                                               spool.labelWeight;
                                           color = toFlutterColor(spool.rgba);
                                         }
-
+                                        int amsId = amsdata!.indexOf(ams);
+                                        int trayId = ams.tray.indexOf(tray);
                                         TrayType traytype = checkSlotState(
-                                          amsdata!.indexOf(ams),
-                                          ams.tray.indexOf(tray),
+                                          amsId,
+                                          trayId,
                                         );
                                         String traytext;
                                         Color traycolor = color;
@@ -246,6 +247,24 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                               FilamentCard(
                                                                 filament: spool,
                                                                 selection: null,
+                                                                delete: true,
+                                                                deleteCallback: () async {
+                                                                  await availableFilaments.unassignSpool(
+                                                                    widget
+                                                                        .printerid,
+                                                                    amsId
+                                                                        .toString(),
+                                                                    trayId
+                                                                        .toString(),
+                                                                  );
+                                                                  if (!context
+                                                                      .mounted) {
+                                                                    return;
+                                                                  }
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  );
+                                                                },
                                                               ),
                                                               Padding(
                                                                 padding:
@@ -293,25 +312,33 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                         BuildContext
                                                                         context,
                                                                       ) {
-                                                                        return AlertDialog(
-                                                                          content: Column(
-                                                                            children: [
-                                                                              Text(
-                                                                                "Select Spool for Slot ${tray.id + 1}",
-                                                                                style: TextStyle(
-                                                                                  fontSize: 20,
-                                                                                  fontWeight: FontWeight.bold,
+                                                                        return Dialog(
+                                                                          insetPadding: EdgeInsets.all(
+                                                                            20,
+                                                                          ),
+                                                                          child: Padding(
+                                                                            padding: EdgeInsets.all(
+                                                                              20,
+                                                                            ),
+                                                                            child: Column(
+                                                                              children: [
+                                                                                Text(
+                                                                                  "Select Spool for Slot ${tray.id + 1}",
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 20,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
                                                                                 ),
-                                                                              ),
-                                                                              SizedBox(
-                                                                                height: 15,
-                                                                              ),
-                                                                              Expanded(
-                                                                                child: FilamentList(
-                                                                                  selection: true,
+                                                                                SizedBox(
+                                                                                  height: 15,
                                                                                 ),
-                                                                              ),
-                                                                            ],
+                                                                                Expanded(
+                                                                                  child: FilamentList(
+                                                                                    selection: true,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
                                                                           ),
                                                                         );
                                                                       },
