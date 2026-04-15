@@ -384,7 +384,7 @@ class _ColorNameMoreState extends State<ColorNameMore> {
           Flexible(
             child: TextInput(
               controller: _colorNameController,
-              labeltext: "Color Name",
+              hinttext: "Color Name",
             ),
           ),
           Button(

@@ -12,7 +12,7 @@ class AppTheme {
       extensions: [color],
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
-          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
@@ -78,7 +78,10 @@ class AppTheme {
           borderRadius: BorderRadiusGeometry.circular(20),
         ),
       ),
-      dialogTheme: DialogThemeData(backgroundColor: color.base2, insetPadding: EdgeInsets.all(20)),
+      dialogTheme: DialogThemeData(
+        backgroundColor: color.base2,
+        insetPadding: EdgeInsets.all(20),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(foregroundColor: color.primary),
       ),

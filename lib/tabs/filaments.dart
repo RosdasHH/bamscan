@@ -159,7 +159,7 @@ class FilamentListState extends State<FilamentList> {
               Flexible(
                 child: TextInput(
                   controller: _searchController,
-                  labeltext: "Search",
+                  hinttext: "Search",
                   onchanged: (term) {
                     fuzzySearch(filaments, term);
                   },

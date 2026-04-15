@@ -176,7 +176,7 @@ class _InfoCardState extends State<InfoCard> {
                                   ),
                                 ),
                                 Text(
-                                  "${widget.title}:",
+                                  widget.title,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,

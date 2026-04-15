@@ -354,8 +354,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 Navigator.pop(
                                                                   context,
                                                                 );
-                                                                bool
-                                                                configured = await availableFilaments.setSlotToSpoolId(
+                                                                await availableFilaments.setSlotToSpoolId(
                                                                   widget
                                                                       .printerid,
                                                                   ams.id

@@ -65,7 +65,7 @@ class _OnboardingState extends State<Onboarding> {
                   Expanded(
                     child: TextInput(
                       controller: _bambuddyUrlController,
-                      labeltext: "Bambuddy URL",
+                      hinttext: "Bambuddy URL",
                     ),
                   ),
                 ],
@@ -75,7 +75,7 @@ class _OnboardingState extends State<Onboarding> {
                   Expanded(
                     child: TextInput(
                       controller: _bambuddyAPIKeyController,
-                      labeltext: "Bambuddy API Key",
+                      hinttext: "Bambuddy API Key",
                       obscure: true,
                     ),
                   ),
@@ -117,7 +117,10 @@ class _OnboardingState extends State<Onboarding> {
               stripUrl(_bambuddyUrlController.text),
             );
             storageService.saveToken(_bambuddyAPIKeyController.text);
+            storageService.setFirstUse(false);
             StorageService().loadFromStorage();
+            storageService = StorageService();
+            print(storageService.firstUse);
           },
           nextStyle: ButtonStyle(
             foregroundColor: WidgetStateProperty.all(
@@ -167,7 +170,11 @@ class _OnboardingState extends State<Onboarding> {
       return true;
     } else {
       if (!mounted) return false;
-      showSnackbar(context, "No Bambuddy Server found!", health == true ? appColor.success : appColor.error);
+      showSnackbar(
+        context,
+        "No Bambuddy Server found!",
+        health == true ? appColor.success : appColor.error,
+      );
       return false;
     }
   }

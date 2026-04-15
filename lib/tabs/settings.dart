@@ -1,6 +1,8 @@
 import 'package:bambuscanner/services/storage.dart';
-import 'package:bambuscanner/widgets/button.dart';
+import 'package:bambuscanner/widgets/infocard.dart';
+import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -23,8 +25,10 @@ class _SettingsState extends State<Settings> {
   }
 
   void loadData() async {
-    _bambuddyUrlController.text = StorageService().bambuddyUrl;
-    _xapiTokenController.text = StorageService().xapitoken;
+    setState(() {
+      _bambuddyUrlController.text = StorageService().bambuddyUrl;
+      _xapiTokenController.text = StorageService().xapitoken;
+    });
   }
 
   @override
@@ -36,29 +40,72 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    final StorageService storageService = StorageService();
+
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextField(controller: _bambuddyUrlController),
-            TextField(controller: _xapiTokenController, obscureText: true),
-            Button(
-              onPressed: () {
-                saveSettings();
-              },
-              expanded: true,
-              child: const Text("Save"),
-            ),
-          ],
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              InfoCard(
+                title: "Connection",
+                value: "",
+                icon: MdiIcons.connection,
+                more: Setting(
+                  title: "Connection",
+                  widgets: [
+                    TextInput(
+                      controller: _bambuddyUrlController,
+                      onTapOutside: () => storageService.setBambuddyUrl(
+                        _bambuddyUrlController.text,
+                      ),
+                      labeltext: "Bambuddy URL",
+                      hinttext: "e.g. http://127.0.0.1:8000",
+                    ),
+                    TextInput(
+                      controller: _xapiTokenController,
+                      onTapOutside: () =>
+                          storageService.saveToken(_xapiTokenController.text),
+                      obscure: true,
+                      labeltext: "Bambuddy API Key",
+                      hinttext:
+                          "Bambuddy Website -> Settings -> API Keys",
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  void saveSettings() {
-    StorageService storageService = StorageService();
-    storageService.setBambuddyUrl(_bambuddyUrlController.text);
-    storageService.saveToken(_xapiTokenController.text);
+class Setting extends StatefulWidget {
+  const Setting({super.key, required this.title, required this.widgets});
+  final String title;
+  final List<Widget> widgets;
+
+  @override
+  State<Setting> createState() => SettingState();
+}
+
+class SettingState extends State<Setting> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widget.widgets,
+        ),
+      ),
+    );
   }
 }

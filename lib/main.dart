@@ -107,7 +107,7 @@ class _MyAppState extends State<MyApp> {
     if (storageLoaded == false) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (storage.bambuddyUrl == "" || storage.xapitoken == "") {
+    if (storage.firstUse == true) {
       return Onboarding();
     } else {
       return Scaffold(

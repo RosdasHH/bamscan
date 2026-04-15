@@ -5,18 +5,22 @@ class TextInput extends StatefulWidget {
   const TextInput({
     super.key,
     required this.controller,
-    this.labeltext = "",
+    this.hinttext = "",
     this.obscure = false,
     this.margin = 4.0,
     this.onchanged,
     this.value = "",
+    this.onTapOutside,
+    this.labeltext = "",
   });
   final TextEditingController controller;
-  final String labeltext;
+  final String hinttext;
   final bool obscure;
   final double margin;
   final String value;
+  final String labeltext;
   final void Function(String)? onchanged;
+  final void Function()? onTapOutside;
 
   @override
   State<TextInput> createState() => _TextInputState();
@@ -29,6 +33,9 @@ class _TextInputState extends State<TextInput> {
       padding: EdgeInsetsGeometry.all(widget.margin),
       child: TextField(
         onTapOutside: (_) {
+          if (widget.onTapOutside != null) {
+            widget.onTapOutside!.call();
+          }
           FocusScope.of(context).unfocus();
         },
         controller: widget.controller,
@@ -44,9 +51,9 @@ class _TextInputState extends State<TextInput> {
             borderRadius: BorderRadius.circular(999),
           ),
           filled: true,
-          hint: Text(widget.labeltext),
+          hint: Text(widget.hinttext),
+          label: widget.labeltext.isNotEmpty ? Text(widget.labeltext) : null,
         ),
-
         obscureText: widget.obscure,
         onChanged: widget.onchanged,
         autocorrect: false,
