@@ -184,12 +184,21 @@ class _InfoCardState extends State<InfoCard> {
                                 ),
                               ],
                             ),
-                            Row(
-                              children: [
-                                Text(widget.value!),
-                                if (widget.more != null)
-                                  Icon(Icons.chevron_right_rounded),
-                              ],
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(width: 5),
+                                  Flexible(
+                                    child: Text(
+                                      widget.value!,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  if (widget.more != null)
+                                    Icon(Icons.chevron_right_rounded),
+                                ],
+                              ),
                             ),
                           ],
                         ),

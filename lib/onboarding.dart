@@ -91,6 +91,7 @@ class _OnboardingState extends State<Onboarding> {
     ];
     return Scaffold(
       backgroundColor: context.appColor.base1,
+      appBar: AppBar(),
       body: SafeArea(
         child: IntroductionScreen(
           globalBackgroundColor: context.appColor.base1,

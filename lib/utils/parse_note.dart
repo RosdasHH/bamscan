@@ -9,7 +9,8 @@ String? parseQrCodeFromString(String string) {
 }
 
 String deleteQrCodeFromString(String string) {
-  return string.replaceAll(RegExp(r'\[QR-CODE\]=>\[.*?\]\n'), '');
+  String newString = string.replaceAll(RegExp(r'\[QR-CODE\]=>\[.*?\]\n?'), '');
+  return newString;
 }
 
 String addQrCodeToString(String string, String id) {
@@ -35,6 +36,7 @@ Future<bool> addQrCodeReq(
 
 Future<bool> deleteQrCodeReq(BuildContext context, Spool spool) async {
   final availableFilaments = context.read<AvailableFilaments>();
+  await availableFilaments.getAllSpools();
   final newNotes = deleteQrCodeFromString(spool.note.toString());
   bool success = await availableFilaments.patchSpool(spool.id.toString(), {
     "note": newNotes,

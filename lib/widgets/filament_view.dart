@@ -92,14 +92,14 @@ class FilamentViewState extends State<FilamentView> {
               icon: MdiIcons.factoryIcon,
               title: "Brand",
               value: spool.brand,
-                            apiname: "brand",
+              apiname: "brand",
               spool: spool,
             ),
             InfoCard(
               icon: MdiIcons.shape,
               title: "Subtype",
               value: spool.subtype,
-                            apiname: "subtype",
+              apiname: "subtype",
               spool: spool,
             ),
             InfoCard(
@@ -112,7 +112,7 @@ class FilamentViewState extends State<FilamentView> {
                   (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
             ),
             InfoCard(
-              icon: Icons.qr_code,
+              icon: MdiIcons.qrcodeEdit,
               title: "Assigned QR-Code",
               value: spool.qrcode ?? "None",
               more: QRCodeMore(spool: spool),
@@ -167,6 +167,7 @@ class FilamentViewState extends State<FilamentView> {
                   style: TextStyle(color: context.appColor.error),
                 ),
               ),
+            SizedBox(height: 20),
           ],
         ),
       ),
@@ -263,41 +264,29 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                 ],
               ),
               SizedBox(height: 50),
-              SizedBox(
-                width: double.infinity,
-                child: Button(
-                  onPressed: () async {
-                    assignQrCode();
-                  },
-                  expanded: true,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add),
-                      SizedBox(width: 8),
-                      Text("Assign QR-Code"),
-                    ],
-                  ),
+              if (widget.spool.qrcode != null)
+                InfoCard(
+                  title: "Value",
+                  value: widget.spool.qrcode,
+                  icon: MdiIcons.identifier,
                 ),
+              InfoCard(
+                title: "Assign QR-Code",
+                value: "",
+                icon: MdiIcons.qrcodePlus,
+                onTap: () {
+                  assignQrCode();
+                },
               ),
-              SizedBox(
-                width: double.infinity,
-                child: Button(
-                  onPressed: () {
+              if (widget.spool.qrcode != null)
+                InfoCard(
+                  title: "Unassign QR-Code",
+                  value: "",
+                  icon: MdiIcons.qrcodeMinus,
+                  onTap: () {
                     unassignQrCode();
                   },
-                  backgroundColor: Colors.transparent,
-                  expanded: true,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.remove),
-                      SizedBox(width: 8),
-                      Text("Unassign QR-Code"),
-                    ],
-                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -307,7 +296,18 @@ class _QRCodeMoreState extends State<QRCodeMore> {
 
   void unassignQrCode() async {
     final bool res = await deleteQrCodeReq(context, widget.spool);
-    if (res) print("Deleted successfully");
+    if (!mounted) {
+      return;
+    }
+    if (res) {
+      showSnackbar(context, "Unassigned QR-Code", context.appColor.success);
+    } else {
+      showSnackbar(
+        context,
+        "There was a problem unassigning the QR-Code",
+        context.appColor.error,
+      );
+    }
     if (!mounted) return;
     Navigator.pop(context);
   }
