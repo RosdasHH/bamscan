@@ -60,6 +60,10 @@ class _TextInputState extends State<TextInput> {
         onChanged: widget.onchanged,
         autocorrect: false,
         autofocus: widget.autofocus,
+        textInputAction: TextInputAction.go,
+        onSubmitted: (_) {
+          widget.onTapOutside!.call();
+        },
       ),
     );
   }

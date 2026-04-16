@@ -192,7 +192,7 @@ class SettingState extends State<Setting> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         child: Column(
           spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.start,
