@@ -24,6 +24,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ApiService()),
       ],
       child: MaterialApp(
+        //showPerformanceOverlay: true,
         title: "BamScan",
         themeMode: ThemeMode.light,
         theme: AppTheme().light,

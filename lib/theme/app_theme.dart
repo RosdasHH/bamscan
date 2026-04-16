@@ -29,6 +29,7 @@ class AppTheme {
         backgroundColor: color.base1,
         foregroundColor: color.primaryText,
         shadowColor: Color(0x00000000),
+        surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
         color: color.base2,
