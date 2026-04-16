@@ -126,14 +126,14 @@ class _MyAppState extends State<MyApp> {
           isVisible: true,
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(
-              duration: Duration(milliseconds: 400),
+              duration: Duration(milliseconds: 200),
               curve: Curves.ease,
             ),
             screenTransitionAnimation: ScreenTransitionAnimationSettings(
               animateTabTransition: true,
-              duration: Duration(milliseconds: 200),
+              duration: Duration(milliseconds: 100),
               screenTransitionAnimationType:
-                  ScreenTransitionAnimationType.fadeIn,
+                  ScreenTransitionAnimationType.slide,
             ),
           ),
           confineToSafeArea: true,

@@ -94,7 +94,7 @@ class _PrinterListState extends State<PrinterList> {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsetsGeometry.all(10),
+        padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
         child: Column(
           children: [
             if (printers.isEmpty) Center(child: Text("No printers available.")),

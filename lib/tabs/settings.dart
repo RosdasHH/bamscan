@@ -48,9 +48,9 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: SingleChildScrollView(
           child: Column(
             children: [
               InfoCard(

@@ -28,7 +28,7 @@ class _FilamentTabState extends State<FilamentTab> {
     return Scaffold(
       appBar: AppBar(title: Text("Filaments")),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: 15),
         child: FilamentList(),
       ),
       //floatingActionButton: apiService.reachable
