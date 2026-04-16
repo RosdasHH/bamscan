@@ -1,8 +1,12 @@
+import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/storage.dart';
+import 'package:bambuscanner/utils/parse_note.dart';
 import 'package:bambuscanner/widgets/infocard.dart';
 import 'package:bambuscanner/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -86,9 +90,80 @@ class _SettingsState extends State<Settings> {
                       title: "Reset app data",
                       value: "",
                       icon: Icons.restore,
-                      onTap: () async {
-                        final storage = StorageService();
-                        storage.deleteAllData();
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Are you sure?"),
+                              content: Text(
+                                "This will delete the Bambuddy URL and Bambuddy API Key from the app.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("No"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final storage = StorageService();
+                                    storage.deleteAllData();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Yes"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    InfoCard(
+                      title: "Reset QR-Codes",
+                      value: "",
+                      icon: MdiIcons.qrcodeRemove,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Are you sure?"),
+                              content: Text(
+                                "This will delete all QR-Code mappings.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("No"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final AvailableFilaments
+                                    availableFilaments = context
+                                        .read<AvailableFilaments>();
+                                    await availableFilaments.getAllSpools();
+                                    for (Spool spool
+                                        in availableFilaments.spools) {
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      await deleteQrCodeReq(context, spool);
+                                    }
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Yes"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                   ],
