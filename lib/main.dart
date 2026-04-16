@@ -122,12 +122,12 @@ class _MyAppState extends State<MyApp> {
           hideNavigationBarWhenKeyboardAppears: true,
           popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
           padding: const EdgeInsets.only(top: 8),
-          backgroundColor: context.appColor.base2,
+          backgroundColor: context.appColor.base3,
           isVisible: true,
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(
-              duration: Duration(milliseconds: 300),
-              curve: Curves.ease,
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
             ),
             screenTransitionAnimation: ScreenTransitionAnimationSettings(
               animateTabTransition: true,

@@ -127,16 +127,16 @@ class _OnboardingState extends State<Onboarding> {
           },
           nextStyle: ButtonStyle(
             foregroundColor: WidgetStateProperty.all(
-              context.appColor.primaryText,
+              context.appColor.primary,
             ),
           ),
           doneStyle: ButtonStyle(
             foregroundColor: WidgetStateProperty.all(
-              context.appColor.primaryText,
+              context.appColor.primary,
             ),
           ),
           dotsDecorator: DotsDecorator(
-            activeColor: context.appColor.primaryText,
+            activeColor: context.appColor.primary,
             color: Colors.grey,
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/helper/showsnackbar.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/services/api.dart';
 import 'package:bambuscanner/services/storage.dart';
@@ -176,7 +177,14 @@ class FilamentListState extends State<FilamentList> {
                         },
                       ),
                     );
-                    if (spool == null) return;
+                    if (spool == null && context.mounted) {
+                      showSnackbar(
+                        context,
+                        "No Spool found!",
+                        context.appColor.error,
+                      );
+                      return;
+                    }
                     if (!context.mounted) return;
                     await Navigator.push(
                       context,
