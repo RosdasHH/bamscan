@@ -1,5 +1,4 @@
 import 'package:bambuscanner/theme/app_theme.dart';
-import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatelessWidget {
@@ -22,15 +21,16 @@ class LoadingScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: getContrastColor(
-              context.appColor.base1,
-            ).withValues(alpha: 0.5),
+            color: context.appColor.base1,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
-                if (loadingMessage != null) Text(loadingMessage!),
+                if (loadingMessage != null) ...[
+                  SizedBox(height: 20),
+                  Text(loadingMessage!),
+                ],
               ],
             ),
           ),

@@ -297,76 +297,79 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 );
                                                               },
                                                             ),
-                                                            InfoCard(
-                                                              title:
-                                                                  "Select Manually",
-                                                              value: "",
-                                                              icon: MdiIcons
-                                                                  .cursorDefault,
-                                                              onTap: () async {
-                                                                final String?
-                                                                spoolId = await showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (
-                                                                        BuildContext
+                                                            if (traytype ==
+                                                                TrayType
+                                                                    .spoolLoaded)
+                                                              InfoCard(
+                                                                title:
+                                                                    "Select Manually",
+                                                                value: "",
+                                                                icon: MdiIcons
+                                                                    .cursorDefault,
+                                                                onTap: () async {
+                                                                  final String?
+                                                                  spoolId = await showDialog(
+                                                                    context:
                                                                         context,
-                                                                      ) {
-                                                                        return Dialog(
-                                                                          insetPadding: EdgeInsets.all(
-                                                                            20,
-                                                                          ),
-                                                                          child: Padding(
-                                                                            padding: EdgeInsets.all(
+                                                                    builder:
+                                                                        (
+                                                                          BuildContext
+                                                                          context,
+                                                                        ) {
+                                                                          return Dialog(
+                                                                            insetPadding: EdgeInsets.all(
                                                                               20,
                                                                             ),
-                                                                            child: Column(
-                                                                              children: [
-                                                                                Text(
-                                                                                  "Select Spool for Slot ${tray.id + 1}",
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 20,
-                                                                                    fontWeight: FontWeight.bold,
+                                                                            child: Padding(
+                                                                              padding: EdgeInsets.all(
+                                                                                20,
+                                                                              ),
+                                                                              child: Column(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "Select Spool for Slot ${tray.id + 1}",
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 20,
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                    ),
                                                                                   ),
-                                                                                ),
-                                                                                SizedBox(
-                                                                                  height: 15,
-                                                                                ),
-                                                                                Expanded(
-                                                                                  child: FilamentList(
-                                                                                    selection: true,
+                                                                                  SizedBox(
+                                                                                    height: 15,
                                                                                   ),
-                                                                                ),
-                                                                              ],
+                                                                                  Expanded(
+                                                                                    child: FilamentList(
+                                                                                      selection: true,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                );
-                                                                if (!context
-                                                                    .mounted) {
-                                                                  return;
-                                                                }
-                                                                if (spoolId ==
-                                                                    null) {
-                                                                  return;
-                                                                }
-                                                                Navigator.pop(
-                                                                  context,
-                                                                );
-                                                                await availableFilaments.setSlotToSpoolId(
-                                                                  widget
-                                                                      .printerid,
-                                                                  ams.id
-                                                                      .toString(),
-                                                                  tray.id
-                                                                      .toString(),
-                                                                  spoolId
-                                                                      .toString(),
-                                                                );
-                                                              },
-                                                            ),
+                                                                          );
+                                                                        },
+                                                                  );
+                                                                  if (!context
+                                                                      .mounted) {
+                                                                    return;
+                                                                  }
+                                                                  if (spoolId ==
+                                                                      null) {
+                                                                    return;
+                                                                  }
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  );
+                                                                  await availableFilaments.setSlotToSpoolId(
+                                                                    widget
+                                                                        .printerid,
+                                                                    ams.id
+                                                                        .toString(),
+                                                                    tray.id
+                                                                        .toString(),
+                                                                    spoolId
+                                                                        .toString(),
+                                                                  );
+                                                                },
+                                                              ),
                                                           ],
                                                         ),
                                                       ),

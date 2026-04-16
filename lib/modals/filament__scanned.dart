@@ -84,77 +84,79 @@ class _FilamentScannedModal extends State<FilamentScanned> {
             child: Column(
               children: [
                 Expanded(child: FilamentViewScreen(spool: widget.scannedSpool)),
-                if (spoolAssignment != null)
-                  Row(
-                    children: [
-                      if (spoolAssignment?.trayId.toString() == widget.trayid &&
-                          spoolAssignment?.printerId.toString() ==
-                              widget.printerid &&
-                          spoolAssignment?.amsId.toString() == widget.amsid)
-                        Text(
-                          "This spool is already assigned to this Slot.",
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(color: Colors.red),
-                        )
-                      else
-                        Text(
-                          "This spool is alredy assigned on: ${spoolAssignment!.printerName}, AMS_ID: ${spoolAssignment!.amsId}, TRAY_ID: ${spoolAssignment!.trayId}",
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(color: Colors.red),
-                        ),
-                    ],
-                  ),
+                //if (spoolAssignment != null)
+                //  Row(
+                //    children: [
+                //      if (spoolAssignment?.trayId.toString() == widget.trayid &&
+                //          spoolAssignment?.printerId.toString() ==
+                //              widget.printerid &&
+                //          spoolAssignment?.amsId.toString() == widget.amsid)
+                //        Text(
+                //          "This spool is already assigned to this Slot.",
+                //          overflow: TextOverflow.clip,
+                //          style: TextStyle(color: Colors.red),
+                //        )
+                //      else
+                //        Text(
+                //          "This spool is already assigned on: ${spoolAssignment!.printerName}, AMS_ID: ${spoolAssignment!.amsId}, TRAY_ID: ${spoolAssignment!.trayId}",
+                //          overflow: TextOverflow.clip,
+                //          style: TextStyle(color: Colors.red),
+                //        ),
+                //    ],
+                //  ),
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              setState(() {
-                spoolLoaded = false;
-              });
-              while (spoolLoaded == false) {
-                AvailablePrinters printers = AvailablePrinters();
-                final List<Ams> allams = await printers.getAmsByPrinterId(
-                  widget.printerid,
-                );
-                for (Ams ams in allams) {
-                  if (ams.id.toString() == widget.amsid) {
-                    for (TraySlot tray in ams.tray) {
-                      if (tray.id.toString() == widget.trayid) {
-                        if (tray.trayColor != "" &&
-                            tray.trayType != "" &&
-                            tray.trayInfoIdx != "") {
-                          setState(() {
-                            spoolLoaded = true;
-                          });
+          floatingActionButton: spoolLoaded != false
+              ? FloatingActionButton(
+                  onPressed: () async {
+                    setState(() {
+                      spoolLoaded = false;
+                    });
+                    while (spoolLoaded == false) {
+                      AvailablePrinters printers = AvailablePrinters();
+                      final List<Ams> allams = await printers.getAmsByPrinterId(
+                        widget.printerid,
+                      );
+                      for (Ams ams in allams) {
+                        if (ams.id.toString() == widget.amsid) {
+                          for (TraySlot tray in ams.tray) {
+                            if (tray.id.toString() == widget.trayid) {
+                              if (tray.trayColor != "" &&
+                                  tray.trayType != "" &&
+                                  tray.trayInfoIdx != "") {
+                                setState(() {
+                                  spoolLoaded = true;
+                                });
+                              }
+                            }
+                          }
                         }
                       }
-                    }
-                  }
-                }
 
-                await Future.delayed(Duration(milliseconds: 500));
-              }
-              bool configured = await availableFilaments.setSlotToSpoolId(
-                widget.printerid,
-                widget.amsid,
-                widget.trayid,
-                widget.scannedSpool.id.toString(),
-              );
-              if (!context.mounted) return;
-              showSnackbar(
-                context,
-                configured ? "Spool assigned" : "Spool NOT assigned",
-                null,
-              );
-              Navigator.popUntil(
-                context,
-                (route) => route.settings.name == "ams",
-              );
-            },
-            shape: const CircleBorder(),
-            child: const Icon(Icons.check),
-          ),
+                      await Future.delayed(Duration(milliseconds: 500));
+                    }
+                    bool configured = await availableFilaments.setSlotToSpoolId(
+                      widget.printerid,
+                      widget.amsid,
+                      widget.trayid,
+                      widget.scannedSpool.id.toString(),
+                    );
+                    if (!context.mounted) return;
+                    showSnackbar(
+                      context,
+                      configured ? "Spool assigned" : "Spool NOT assigned",
+                      null,
+                    );
+                    Navigator.popUntil(
+                      context,
+                      (route) => route.settings.name == "ams",
+                    );
+                  },
+                  shape: const CircleBorder(),
+                  child: const Icon(Icons.check),
+                )
+              : null,
         ),
       );
     }
