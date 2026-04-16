@@ -1,4 +1,5 @@
 import 'package:bambuscanner/classes/spool.dart';
+import 'package:bambuscanner/helper/showsnackbar.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -52,19 +53,28 @@ class _QrscanState extends State<Qrscan> {
         if (scannedCode.barcodes.first.rawValue == null || found == true) {
           return;
         }
+        String? qr = scannedCode.barcodes.first.rawValue;
         if (widget.spools == null) {
           found = true;
-          Navigator.pop(context, scannedCode.barcodes.first.rawValue);
+          Navigator.pop(context, qr);
         } else {
           found = true;
           final List<Spool> spools = widget.spools!
-              .where((x) => x.qrcode == scannedCode.barcodes.first.rawValue)
+              .where((x) => x.qrcode == qr)
               .toList();
           if (spools.length > 1) {
-            print("Multiple Assignments!");
             Navigator.pop(context);
+            showSnackbar(
+              context,
+              "Multiple Assignments: ${spools.where((x) => x.qrcode == qr).map((x) => x.id)}",
+              context.appColor.error,
+            );
           }
-          Navigator.pop(context, spools.first);
+          if (spools.length == 1) {
+            Navigator.pop(context, spools.first);
+          } else {
+            Navigator.pop(context, null);
+          }
         }
       },
     );

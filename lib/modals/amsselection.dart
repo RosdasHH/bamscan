@@ -3,6 +3,7 @@ import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/ams_spool.dart';
 import 'package:bambuscanner/classes/spool.dart';
 import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bambuscanner/helper/showsnackbar.dart';
 import 'package:bambuscanner/modals/filament__scanned.dart';
 import 'package:bambuscanner/provider/available_filaments.dart';
 import 'package:bambuscanner/provider/available_printers.dart';
@@ -397,7 +398,10 @@ class _AmsSelectionState extends State<AmsSelection> {
       context,
       MaterialPageRoute(builder: (context) => Qrscan(spools: spools)),
     );
-    if (res == null) return;
+    if (res == null && mounted) {
+      showSnackbar(context, "No spool found!", context.appColor.error);
+      return;
+    }
     if (!mounted) return;
     Navigator.push(
       context,
