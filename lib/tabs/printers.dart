@@ -6,7 +6,7 @@ import 'package:bambuscanner/services/globals.dart';
 import 'package:bambuscanner/services/storage.dart';
 import 'package:bambuscanner/tabs/offline.dart';
 import 'package:bambuscanner/theme/app_theme.dart';
-import 'package:bambuscanner/widgets/badgeCard.dart';
+import 'package:bambuscanner/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -94,7 +94,7 @@ class _PrinterListState extends State<PrinterList> {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         child: Column(
           children: [
             if (printers.isEmpty) Center(child: Text("No printers available.")),

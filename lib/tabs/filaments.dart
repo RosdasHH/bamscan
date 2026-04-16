@@ -296,9 +296,13 @@ class FilamentCardState extends State<FilamentCard> {
                   : SizedBox.shrink(),
             ],
           ),
-          trailing: Stack(
-            alignment: AlignmentGeometry.center,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              if (widget.filament.qrcode != null && widget.selection == false)
+                Icon(Icons.qr_code_2_rounded)
+              else
+                SizedBox.shrink(),
               if (widget.delete)
                 IconButton(
                   onPressed: () => widget.deleteCallback?.call(),
@@ -307,6 +311,7 @@ class FilamentCardState extends State<FilamentCard> {
                     color: context.appColor.error,
                   ),
                 ),
+              SizedBox(width: 10),
               if (widget.selection != null)
                 CircularProgressIndicator(
                   value:
@@ -315,10 +320,6 @@ class FilamentCardState extends State<FilamentCard> {
                               widget.filament.labelWeight)
                           .toDouble(),
                 ),
-              if (widget.filament.qrcode != null && widget.selection == false)
-                Icon(Icons.qr_code_2_rounded)
-              else
-                SizedBox.shrink(),
             ],
           ),
         ),

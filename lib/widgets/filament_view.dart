@@ -219,7 +219,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
       appBar: AppBar(title: Text("QR-Code")),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Column(
             children: [
               Row(
