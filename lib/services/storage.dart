@@ -58,4 +58,14 @@ class StorageService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool("firstuse") ?? true;
   }
+
+  Future<void> deleteAllData() async {
+    final storage = FlutterSecureStorage();
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.clear();
+    await storage.deleteAll();
+    loadFromStorage();
+    notifyListeners();
+  }
 }

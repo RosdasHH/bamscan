@@ -61,7 +61,7 @@ class _SettingsState extends State<Settings> {
                       onTapOutside: () => storageService.setBambuddyUrl(
                         _bambuddyUrlController.text,
                       ),
-                      labeltext: "Bambuddy URL",
+                      labeltext: "Bambuddy URL:PORT",
                       hinttext: "e.g. http://127.0.0.1:8000",
                     ),
                     TextInput(
@@ -70,8 +70,26 @@ class _SettingsState extends State<Settings> {
                           storageService.saveToken(_xapiTokenController.text),
                       obscure: true,
                       labeltext: "Bambuddy API Key",
-                      hinttext:
-                          "Bambuddy Website -> Settings -> API Keys",
+                      hinttext: "Bambuddy Website -> Settings -> API Keys",
+                    ),
+                  ],
+                ),
+              ),
+              InfoCard(
+                title: "Reset",
+                value: "",
+                icon: Icons.restore,
+                more: Setting(
+                  title: "Reset",
+                  widgets: [
+                    InfoCard(
+                      title: "Reset app data",
+                      value: "",
+                      icon: Icons.restore,
+                      onTap: () async {
+                        final storage = StorageService();
+                        storage.deleteAllData();
+                      },
                     ),
                   ],
                 ),

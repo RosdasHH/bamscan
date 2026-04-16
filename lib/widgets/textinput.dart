@@ -12,6 +12,7 @@ class TextInput extends StatefulWidget {
     this.value = "",
     this.onTapOutside,
     this.labeltext = "",
+    this.autofocus = false,
   });
   final TextEditingController controller;
   final String hinttext;
@@ -21,6 +22,7 @@ class TextInput extends StatefulWidget {
   final String labeltext;
   final void Function(String)? onchanged;
   final void Function()? onTapOutside;
+  final bool autofocus;
 
   @override
   State<TextInput> createState() => _TextInputState();
@@ -57,6 +59,7 @@ class _TextInputState extends State<TextInput> {
         obscureText: widget.obscure,
         onChanged: widget.onchanged,
         autocorrect: false,
+        autofocus: widget.autofocus,
       ),
     );
   }

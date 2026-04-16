@@ -34,7 +34,7 @@ class _OnboardingState extends State<Onboarding> {
           ),
         ),
         bodyWidget: Text(
-          "This is the onboarding of BamScan.",
+          "Manage your filaments more easily.",
           style: TextStyle(color: context.appColor.primaryText, fontSize: 18),
         ),
         image: SvgPicture.asset(
@@ -65,7 +65,9 @@ class _OnboardingState extends State<Onboarding> {
                   Expanded(
                     child: TextInput(
                       controller: _bambuddyUrlController,
-                      hinttext: "Bambuddy URL",
+                      labeltext: "Bambuddy URL:PORT",
+                      hinttext: "e.g. http://127.0.0.1:8000",
+                      autofocus: true,
                     ),
                   ),
                 ],
@@ -75,7 +77,8 @@ class _OnboardingState extends State<Onboarding> {
                   Expanded(
                     child: TextInput(
                       controller: _bambuddyAPIKeyController,
-                      hinttext: "Bambuddy API Key",
+                      labeltext: "Bambuddy API Key",
+                      hinttext: "Bambuddy WebUI -> Settings -> API Keys",
                       obscure: true,
                     ),
                   ),
@@ -120,7 +123,6 @@ class _OnboardingState extends State<Onboarding> {
             storageService.setFirstUse(false);
             StorageService().loadFromStorage();
             storageService = StorageService();
-            print(storageService.firstUse);
           },
           nextStyle: ButtonStyle(
             foregroundColor: WidgetStateProperty.all(
@@ -144,7 +146,7 @@ class _OnboardingState extends State<Onboarding> {
   Future<bool> checkapikey(AppColor appColor) async {
     ApiService apiService = context.read<ApiService>();
     bool? apikeystate = await apiService.checkApiKey(
-      _bambuddyUrlController.text,
+      stripUrl(_bambuddyUrlController.text),
       _bambuddyAPIKeyController.text,
     );
     if (apikeystate == true) {
