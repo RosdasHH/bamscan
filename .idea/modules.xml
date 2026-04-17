@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/bambuscanner.iml" filepath="$PROJECT_DIR$/bambuscanner.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/bambuscanner_android.iml" filepath="$PROJECT_DIR$/android/bambuscanner_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bamscan.iml" filepath="$PROJECT_DIR$/bamscan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/bamscan_android.iml" filepath="$PROJECT_DIR$/android/bamscan_android.iml" />
     </modules>
   </component>
 </project>
