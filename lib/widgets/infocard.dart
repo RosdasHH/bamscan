@@ -1,5 +1,5 @@
-import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/theme/app_theme.dart';
+import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InfoCard extends StatefulWidget {

@@ -1,5 +1,5 @@
-import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/provider/available_filaments.dart';
+import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/provider/available_filaments.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 

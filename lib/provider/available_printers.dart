@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:bambuscanner/classes/ams.dart';
-import 'package:bambuscanner/classes/printer.dart';
-import 'package:bambuscanner/classes/printer_status.dart';
-import 'package:bambuscanner/classes/trayslot.dart';
-import 'package:bambuscanner/services/api.dart';
-import 'package:bambuscanner/services/storage.dart';
+import 'package:bamscan/classes/ams.dart';
+import 'package:bamscan/classes/printer.dart';
+import 'package:bamscan/classes/printer_status.dart';
+import 'package:bamscan/classes/trayslot.dart';
+import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

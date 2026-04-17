@@ -1,5 +1,5 @@
-import 'package:bambuscanner/theme/app_color.dart';
-import 'package:bambuscanner/utils/color.dart';
+import 'package:bamscan/theme/app_color.dart';
+import 'package:bamscan/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {

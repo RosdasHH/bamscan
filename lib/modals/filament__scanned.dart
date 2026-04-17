@@ -1,12 +1,12 @@
-import 'package:bambuscanner/classes/ams.dart';
-import 'package:bambuscanner/classes/ams_spool.dart';
-import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/classes/trayslot.dart';
-import 'package:bambuscanner/helper/showsnackbar.dart';
-import 'package:bambuscanner/provider/available_filaments.dart';
-import 'package:bambuscanner/provider/available_printers.dart';
-import 'package:bambuscanner/widgets/filament_view.dart';
-import 'package:bambuscanner/widgets/loading_screen.dart';
+import 'package:bamscan/classes/ams.dart';
+import 'package:bamscan/classes/ams_spool.dart';
+import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/classes/trayslot.dart';
+import 'package:bamscan/helper/showsnackbar.dart';
+import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/provider/available_printers.dart';
+import 'package:bamscan/widgets/filament_view.dart';
+import 'package:bamscan/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

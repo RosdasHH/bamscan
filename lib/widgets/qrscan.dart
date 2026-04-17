@@ -1,6 +1,6 @@
-import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/helper/showsnackbar.dart';
-import 'package:bambuscanner/theme/app_theme.dart';
+import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/helper/showsnackbar.dart';
+import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 

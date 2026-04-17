@@ -1,4 +1,4 @@
-import 'package:bambuscanner/classes/spool.dart';
+import 'package:bamscan/classes/spool.dart';
 
 class AmsSpool {
   final int id;

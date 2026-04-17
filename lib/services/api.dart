@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:bambuscanner/services/globals.dart';
-import 'package:bambuscanner/services/storage.dart';
+import 'package:bamscan/services/globals.dart';
+import 'package:bamscan/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

@@ -1,4 +1,4 @@
-import 'package:bambuscanner/classes/printer_status.dart';
+import 'package:bamscan/classes/printer_status.dart';
 
 class Printer {
   final String name;

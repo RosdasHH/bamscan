@@ -1,4 +1,4 @@
-import 'package:bambuscanner/utils/parse_note.dart';
+import 'package:bamscan/utils/parse_note.dart';
 
 class Spool {
   final String material;

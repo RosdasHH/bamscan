@@ -1,12 +1,12 @@
-import 'package:bambuscanner/classes/printer.dart';
-import 'package:bambuscanner/modals/amsselection.dart';
-import 'package:bambuscanner/provider/available_printers.dart';
-import 'package:bambuscanner/services/api.dart';
-import 'package:bambuscanner/services/globals.dart';
-import 'package:bambuscanner/services/storage.dart';
-import 'package:bambuscanner/tabs/offline.dart';
-import 'package:bambuscanner/theme/app_theme.dart';
-import 'package:bambuscanner/widgets/badge_card.dart';
+import 'package:bamscan/classes/printer.dart';
+import 'package:bamscan/modals/amsselection.dart';
+import 'package:bamscan/provider/available_printers.dart';
+import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/globals.dart';
+import 'package:bamscan/services/storage.dart';
+import 'package:bamscan/tabs/offline.dart';
+import 'package:bamscan/theme/app_theme.dart';
+import 'package:bamscan/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

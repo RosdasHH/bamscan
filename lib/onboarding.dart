@@ -1,10 +1,10 @@
-import 'package:bambuscanner/helper/showSnackbar.dart';
-import 'package:bambuscanner/services/api.dart';
-import 'package:bambuscanner/services/storage.dart';
-import 'package:bambuscanner/theme/app_color.dart';
-import 'package:bambuscanner/theme/app_theme.dart';
-import 'package:bambuscanner/utils/url.dart';
-import 'package:bambuscanner/widgets/textinput.dart';
+import 'package:bamscan/helper/showSnackbar.dart';
+import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/storage.dart';
+import 'package:bamscan/theme/app_color.dart';
+import 'package:bamscan/theme/app_theme.dart';
+import 'package:bamscan/utils/url.dart';
+import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:introduction_screen/introduction_screen.dart';

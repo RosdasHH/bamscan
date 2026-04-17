@@ -1,4 +1,4 @@
-import 'package:bambuscanner/classes/trayslot.dart';
+import 'package:bamscan/classes/trayslot.dart';
 
 class Ams {
   final int id;

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:bambuscanner/classes/ams_spool.dart';
-import 'package:bambuscanner/classes/slot_preset.dart';
-import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/services/api.dart';
+import 'package:bamscan/classes/ams_spool.dart';
+import 'package:bamscan/classes/slot_preset.dart';
+import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

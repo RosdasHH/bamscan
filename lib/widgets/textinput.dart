@@ -1,4 +1,4 @@
-import 'package:bambuscanner/theme/app_theme.dart';
+import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class TextInput extends StatefulWidget {

@@ -1,9 +1,9 @@
-import 'package:bambuscanner/classes/spool.dart';
-import 'package:bambuscanner/provider/available_filaments.dart';
-import 'package:bambuscanner/services/storage.dart';
-import 'package:bambuscanner/utils/parse_note.dart';
-import 'package:bambuscanner/widgets/infocard.dart';
-import 'package:bambuscanner/widgets/textinput.dart';
+import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/storage.dart';
+import 'package:bamscan/utils/parse_note.dart';
+import 'package:bamscan/widgets/infocard.dart';
+import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
