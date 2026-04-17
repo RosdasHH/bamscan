@@ -4,7 +4,7 @@ BamScan is a third-party companion app that integrates with the Bambuddy API to 
 
 Instead of manually managing spool assignments, BamScan allows you to scan QR codes attached to physical spools and instantly map them to the correct AMS slot on your printer.
 
-A Bambuddy installation is required to use this app.
+A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to use this app.
 
 ---
 
