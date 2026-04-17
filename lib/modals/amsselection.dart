@@ -87,7 +87,9 @@ class _AmsSelectionState extends State<AmsSelection> {
                                 children: [
                                   SizedBox(width: 5),
                                   Text(
-                                    "AMS ${ams.id + 1}",
+                                    ams.isExternalSpool
+                                        ? "External Spool"
+                                        : "AMS ${ams.id + 1}",
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -110,21 +112,22 @@ class _AmsSelectionState extends State<AmsSelection> {
                                         Spool? spool;
 
                                         if (amsmapping != null) {
-                                          for (AmsSpool amsmapping
-                                              in amsmapping!) {
-                                            if (amsmapping.trayId == tray.id) {
-                                              for (Spool filament
-                                                  in availableFilaments
-                                                      .spools) {
-                                                if (amsmapping.spoolId ==
-                                                    filament.id) {
-                                                  spool = filament;
+                                          for (AmsSpool amsmap in amsmapping!) {
+                                            if (amsmap.amsId == ams.id) {
+                                              if (amsmap.trayId == tray.id ||
+                                                  amsmap.amsId == 255) {
+                                                for (Spool filament
+                                                    in availableFilaments
+                                                        .spools) {
+                                                  if (amsmap.spoolId ==
+                                                      filament.id) {
+                                                    spool = filament;
+                                                  }
                                                 }
                                               }
                                             }
                                           }
                                         }
-
                                         if (spool != null) {
                                           usage =
                                               (spool.labelWeight -
@@ -132,11 +135,13 @@ class _AmsSelectionState extends State<AmsSelection> {
                                               spool.labelWeight;
                                           color = toFlutterColor(spool.rgba);
                                         }
-                                        int amsId = amsdata!.indexOf(ams);
-                                        int trayId = ams.tray.indexOf(tray);
+                                        int amsForIndex = amsdata!.indexOf(ams);
+                                        int trayForIndex = ams.tray.indexOf(
+                                          tray,
+                                        );
                                         TrayType traytype = checkSlotState(
-                                          amsId,
-                                          trayId,
+                                          amsForIndex,
+                                          trayForIndex,
                                         );
                                         String traytext;
                                         Color traycolor = color;
@@ -146,7 +151,9 @@ class _AmsSelectionState extends State<AmsSelection> {
                                         Color bordercolor = Colors.grey;
                                         switch (traytype) {
                                           case TrayType.spoolLoaded:
-                                            traytext = (tray.id + 1).toString();
+                                            traytext = ams.isExternalSpool
+                                                ? ""
+                                                : (tray.id + 1).toString();
                                             break;
                                           case TrayType.noSpool:
                                             traytext = "No Spool!";
@@ -234,7 +241,9 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                     10,
                                                                   ),
                                                               child: Text(
-                                                                "Select Spool for Slot ${tray.id + 1}",
+                                                                ams.isExternalSpool
+                                                                    ? "Select external spool"
+                                                                    : "Select Spool for Slot ${tray.id + 1}",
                                                                 style: TextStyle(
                                                                   fontSize: 24,
                                                                   fontWeight:
@@ -253,10 +262,12 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                   await availableFilaments.unassignSpool(
                                                                     widget
                                                                         .printerid,
-                                                                    amsId
+                                                                    ams.id
                                                                         .toString(),
-                                                                    trayId
-                                                                        .toString(),
+                                                                    ams.isExternalSpool
+                                                                        ? "0"
+                                                                        : tray.id
+                                                                              .toString(),
                                                                   );
                                                                   if (!context
                                                                       .mounted) {
@@ -297,9 +308,10 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 );
                                                               },
                                                             ),
-                                                            if (traytype ==
-                                                                TrayType
-                                                                    .spoolLoaded)
+                                                            if (traytype !=
+                                                                    TrayType
+                                                                        .noFilament ||
+                                                                ams.isExternalSpool)
                                                               InfoCard(
                                                                 title:
                                                                     "Select Manually",
@@ -327,7 +339,9 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                               child: Column(
                                                                                 children: [
                                                                                   Text(
-                                                                                    "Select Spool for Slot ${tray.id + 1}",
+                                                                                    ams.isExternalSpool
+                                                                                        ? "Select external spool"
+                                                                                        : "Select Spool for Slot ${tray.id + 1}",
                                                                                     style: TextStyle(
                                                                                       fontSize: 20,
                                                                                       fontWeight: FontWeight.bold,
@@ -363,8 +377,10 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                         .printerid,
                                                                     ams.id
                                                                         .toString(),
-                                                                    tray.id
-                                                                        .toString(),
+                                                                    ams.isExternalSpool
+                                                                        ? "0"
+                                                                        : tray.id
+                                                                              .toString(),
                                                                     spoolId
                                                                         .toString(),
                                                                   );
@@ -414,6 +430,7 @@ class _AmsSelectionState extends State<AmsSelection> {
           printerid: widget.printerid,
           amsid: ams.id.toString(),
           trayid: slot.id.toString(),
+          isExternalSpool: ams.isExternalSpool,
         ),
       ),
     );

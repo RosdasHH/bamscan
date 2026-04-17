@@ -1,4 +1,5 @@
 import 'package:bambuscanner/theme/app_color.dart';
+import 'package:bambuscanner/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -90,6 +91,20 @@ class AppTheme {
         shape: CircleBorder(),
         backgroundColor: color.base3,
         foregroundColor: color.primary,
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return color.primary;
+          }
+          return null;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return getContrastColor(color.primary);
+          }
+          return null;
+        }),
       ),
     );
   }

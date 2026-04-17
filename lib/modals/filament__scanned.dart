@@ -17,11 +17,13 @@ class FilamentScanned extends StatefulWidget {
     required this.printerid,
     required this.amsid,
     required this.trayid,
+    this.isExternalSpool = false,
   });
   final Spool scannedSpool;
   final String printerid;
   final String amsid;
   final String trayid;
+  final bool isExternalSpool;
 
   @override
   State<FilamentScanned> createState() => _FilamentScannedModal();
@@ -110,9 +112,11 @@ class _FilamentScannedModal extends State<FilamentScanned> {
           floatingActionButton: spoolLoaded != false
               ? FloatingActionButton(
                   onPressed: () async {
-                    setState(() {
-                      spoolLoaded = false;
-                    });
+                    if (!widget.isExternalSpool) {
+                      setState(() {
+                        spoolLoaded = false;
+                      });
+                    }
                     while (spoolLoaded == false) {
                       AvailablePrinters printers = AvailablePrinters();
                       final List<Ams> allams = await printers.getAmsByPrinterId(
@@ -139,7 +143,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                     bool configured = await availableFilaments.setSlotToSpoolId(
                       widget.printerid,
                       widget.amsid,
-                      widget.trayid,
+                      widget.isExternalSpool ? "0" : widget.trayid,
                       widget.scannedSpool.id.toString(),
                     );
                     if (!context.mounted) return;

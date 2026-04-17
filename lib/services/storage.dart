@@ -12,15 +12,18 @@ class StorageService extends ChangeNotifier {
   String _bambuddyUrl = "";
   String _xapitoken = "";
   bool _firstUse = true;
+  bool _externalSpool = false;
 
   String get bambuddyUrl => _bambuddyUrl;
   String get xapitoken => _xapitoken;
   bool get firstUse => _firstUse;
+  bool get externalSpool => _externalSpool;
 
   Future<void> loadFromStorage() async {
     _bambuddyUrl = await getBambuddyUrl();
     _xapitoken = await getToken();
     _firstUse = await getFirseUse();
+    _externalSpool = await getExternalSpool();
     notifyListeners();
   }
 
@@ -49,6 +52,12 @@ class StorageService extends ChangeNotifier {
     await loadFromStorage();
   }
 
+  Future<void> setExternalSpool(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool("externalSpool", value);
+    await loadFromStorage();
+  }
+
   static Future<String> getBambuddyUrl() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("bambuddyUrl") ?? "";
@@ -57,6 +66,11 @@ class StorageService extends ChangeNotifier {
   static Future<bool> getFirseUse() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool("firstuse") ?? true;
+  }
+
+  static Future<bool> getExternalSpool() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("externalSpool") ?? false;
   }
 
   Future<void> deleteAllData() async {

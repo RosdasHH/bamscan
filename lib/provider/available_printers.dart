@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:bambuscanner/classes/ams.dart';
 import 'package:bambuscanner/classes/printer.dart';
 import 'package:bambuscanner/classes/printer_status.dart';
+import 'package:bambuscanner/classes/trayslot.dart';
 import 'package:bambuscanner/services/api.dart';
+import 'package:bambuscanner/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,18 +37,24 @@ class AvailablePrinters extends ChangeNotifier {
         printer.status = await getPrinterStatus(printer.id);
       }
       setPrinters(printers);
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   Future<List<Ams>> getAmsByPrinterId(String id) async {
     final http.Response res = await ApiService().apiReq("/printers/$id/status");
-    final List<dynamic> jsonList = jsonDecode(res.body)["ams"] as List;
+    final List<dynamic> amsList = jsonDecode(res.body)["ams"] as List;
+    final List<dynamic> vtrayList = jsonDecode(res.body)["vt_tray"] as List;
 
-    final List<Ams> ams = jsonList
+    final List<Ams> ams = amsList
         .map((e) => Ams.fromJson(e as Map<String, dynamic>))
         .toList();
-
+    if (StorageService().externalSpool) {
+      final List<TraySlot> vtTray = vtrayList
+          .map((e) => TraySlot.fromJson(e as Map<String, dynamic>))
+          .toList();
+      final Ams vttrayams = Ams(id: 255, tray: vtTray, isExternalSpool: true);
+      ams.add(vttrayams);
+    }
     return ams;
   }
 

@@ -17,7 +17,7 @@ class InfoCard extends StatefulWidget {
   });
   final IconData icon;
   final String title;
-  final String? value;
+  final Object? value;
   final double? progress;
   final Color? spoolColor;
   final Widget? more;
@@ -30,18 +30,18 @@ class InfoCard extends StatefulWidget {
 }
 
 class _InfoCardState extends State<InfoCard> {
-  final TextEditingController textEditingController = TextEditingController();
+  //final TextEditingController textEditingController = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
-    textEditingController.dispose();
+    //textEditingController.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    textEditingController.text = widget.value ?? "";
+    //textEditingController.text = widget.value ?? "";
   }
 
   @override
@@ -184,10 +184,14 @@ class _InfoCardState extends State<InfoCard> {
                                 children: [
                                   SizedBox(width: 5),
                                   Flexible(
-                                    child: Text(
-                                      widget.value!,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    child: widget.value is String
+                                        ? Text(
+                                            widget.value! as String,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : widget.value is Widget
+                                        ? widget.value as Widget
+                                        : SizedBox.shrink(),
                                   ),
                                   if (widget.more != null)
                                     Icon(Icons.chevron_right_rounded),

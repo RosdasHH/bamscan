@@ -7,8 +7,8 @@ class AmsSpool {
   final String printerName;
   final int amsId;
   final int trayId;
-  final String fingerprintColor;
-  final String fingerprintType;
+  final String? fingerprintColor;
+  final String? fingerprintType;
   final DateTime createdAt;
   final Spool spool;
   final bool configured;
@@ -21,8 +21,8 @@ class AmsSpool {
     required this.printerName,
     required this.amsId,
     required this.trayId,
-    required this.fingerprintColor,
-    required this.fingerprintType,
+    this.fingerprintColor,
+    this.fingerprintType,
     required this.createdAt,
     required this.spool,
     required this.configured,
@@ -38,8 +38,8 @@ class AmsSpool {
         printerName: json['printer_name'] as String,
         amsId: json['ams_id'] as int,
         trayId: json['tray_id'] as int,
-        fingerprintColor: json['fingerprint_color'] as String,
-        fingerprintType: json['fingerprint_type'] as String,
+        fingerprintColor: json['fingerprint_color'] as String?,
+        fingerprintType: json['fingerprint_type'] as String?,
         createdAt: DateTime.parse(json['created_at'] as String),
         spool: Spool.fromJson(json['spool'] as Map<String, dynamic>),
         configured: json['configured'] as bool,

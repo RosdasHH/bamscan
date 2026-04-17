@@ -44,7 +44,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    final StorageService storageService = StorageService();
+    final StorageService storageService = context.watch<StorageService>();
 
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
@@ -165,6 +165,28 @@ class _SettingsState extends State<Settings> {
                           },
                         );
                       },
+                    ),
+                  ],
+                ),
+              ),
+              InfoCard(
+                title: "Beta Features",
+                value: "",
+                icon: Icons.rocket,
+                more: Setting(
+                  title: "Beta Features",
+                  widgets: [
+                    InfoCard(
+                      title: "External Spool",
+                      value: Consumer<StorageService>(
+                        builder: (context, storageService, _) => Switch(
+                          value: storageService.externalSpool,
+                          onChanged: (value) {
+                            storageService.setExternalSpool(value);
+                          },
+                        ),
+                      ),
+                      icon: MdiIcons.disc,
                     ),
                   ],
                 ),

@@ -71,7 +71,7 @@ class ApiService extends ChangeNotifier {
             ),
             headers: {"x-api-key": StorageService().xapitoken},
           )
-          .timeout(Duration(seconds: 1));
+          .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
       return res;
@@ -90,7 +90,7 @@ class ApiService extends ChangeNotifier {
             ),
             headers: {"x-api-key": StorageService().xapitoken},
           )
-          .timeout(Duration(seconds: 1));
+          .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
       return res;
@@ -116,7 +116,7 @@ class ApiService extends ChangeNotifier {
             },
             body: jsonEncode(data),
           )
-          .timeout(Duration(seconds: 1));
+          .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
       return res;
@@ -156,7 +156,7 @@ class ApiService extends ChangeNotifier {
             },
             body: jsonEncode(data),
           )
-          .timeout(Duration(seconds: 1));
+          .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
       return res;
