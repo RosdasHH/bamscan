@@ -1,8 +1,10 @@
 # BamScan
 
-BamScan is a companion app for the Bambuddy ecosystem that simplifies the assignment of filament spools to AMS units using QR codes.
+BamScan is a third-party companion app that integrates with the Bambuddy API to simplify the assignment of filament spools to AMS units using QR codes.
 
 Instead of manually managing spool assignments, BamScan allows you to scan QR codes attached to physical spools and instantly map them to the correct AMS slot on your printer.
+
+A Bambuddy installation is required to use this app.
 
 ---
 
@@ -27,42 +29,8 @@ Instead of manually managing spool assignments, BamScan allows you to scan QR co
 
 ---
 
-## 📸 Screenshots
-
-> Replace these placeholders with actual screenshots
-
-### Home / Printer Overview
-![Home Screen](./screenshots/home.png)
-
-### Filament List
-![Filament Page](./screenshots/filament.png)
-
-### Scanner View
-![Scanner](./screenshots/scanner.png)
-
-### Settings
-![Settings](./screenshots/settings.png)
-
----
-
-## 🧵 MakerWorld Spool Insert
-
-The QR code spool insert used in this workflow can be found here:
-
-👉 **[MakerWorld Link]**
-
-This OpenSCAD model lets you generate printable spool inserts designed to hold QR codes for easy scanning.
-
----
-
 ## 🔧 Requirements
 
 - Bambuddy setup
 - Bambuddy compatible 3D printer with AMS
 - Printed spool QR inserts (optional, any other unique qrcode will make it too)
-
----
-
-## 📄 License
-
-[license]
