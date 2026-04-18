@@ -33,4 +33,10 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 
 - Bambuddy setup
 - Bambuddy compatible 3D printer with AMS
-- Printed spool QR inserts (optional, any other unique qrcode will make it too)
+- Printed spool [QR inserts](https://makerworld.com/de/models/2679686-qr-code-insets-for-sunlu-bambu-spools#profileId-2967504) (optional, any other unique qrcode will make it too)
+
+---
+
+## 🚀 Installation
+
+Download and install the APK from the Releases section, or join the closed beta on Google Play by sending me your Google account email so I can grant you access.
