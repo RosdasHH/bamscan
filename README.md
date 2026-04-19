@@ -50,12 +50,3 @@ Download and install the APK from the Releases section, or join the closed beta 
 <img width="19%" alt="Screenshot_20260417_205026" src="https://github.com/user-attachments/assets/b9839d5c-b3bd-4f1a-9945-b0d073928e65" />
 <img width="19%" alt="Screenshot_20260417_205034" src="https://github.com/user-attachments/assets/7ab36e00-3427-40db-a07f-14625baafbf8" />
 <img width="19%" alt="Screenshot_20260418_012636" src="https://github.com/user-attachments/assets/7b34e24e-941a-4e8d-8f15-79cb138c926c" />
-
----
-
-## 🛠 What I worked on
-
-- Built a Flutter-based mobile application for Android
-- QR code scanning integration
-- API integration with Bambuddy backend
-- State management and UI design
