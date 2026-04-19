@@ -21,11 +21,11 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 ## 🧠 How it works
 
 1. Configure your filaments in **Bambuddy**
-2. Print spool inserts using the provided OpenSCAD model
+2. Print spool inserts using the provided Makerworld link
 3. Attach QR codes to your filament spools and assign it in the app
 4. Use BamScan to scan a spool
 5. Assign it to the correct AMS slot on your printer
-6. Done — your AMS setup is now updated
+6. Done
 
 ---
 
