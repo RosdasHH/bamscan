@@ -21,7 +21,7 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 ## 🧠 How it works
 
 1. Configure your filaments in **Bambuddy**
-2. Print spool inserts using the provided Makerworld link
+2. Print spool inserts using the provided Makerworld link or use your own custom qr codes
 3. Attach QR codes to your filament spools and assign it in the app
 4. Use BamScan to scan a spool
 5. Assign it to the correct AMS slot on your printer
@@ -39,7 +39,7 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 
 ## 🚀 Installation
 
-Download and install the APK from the Releases section, or join the closed beta on Google Play by sending me your Google account email so I can grant you access.
+Download and install the APK from the Releases section, or join the closed beta on Google Play by sending me your Google account email so I can grant you access. (we need 12 testers to publish it on the Play Store)
 
 ---
 
