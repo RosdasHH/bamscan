@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 #MAJOR.MINOR.PATCH+BUILD
 #BIGCHANGE.NEWFEATURE.BUGFIX+BUILDNUMBER
-version: 1.0.0+2
+version: 1.1.0+3
 
 environment:
   sdk: ^3.10.4
