@@ -126,6 +126,16 @@ class AvailableFilaments extends ChangeNotifier {
     }
     return spools;
   }
+  Future<List<Spool>> getSpoolsByNfc(String nfcid) async {
+    final List<Spool> allSpools = _spools;
+    List<Spool> spools = [];
+    for (Spool spool in allSpools) {
+      if (spool.nfcid != null && spool.nfcid == nfcid) {
+        spools.add(spool);
+      }
+    }
+    return spools;
+  }
 
   Future<List<AmsSpool>> getAllFilamentMappings() async {
     try {

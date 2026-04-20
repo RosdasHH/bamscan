@@ -7,10 +7,12 @@ import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/modals/filament__scanned.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
+import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/tabs/filaments.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/color.dart';
 import 'package:bamscan/widgets/infocard.dart';
+import 'package:bamscan/widgets/nfc_read_page.dart';
 import 'package:bamscan/widgets/qrscan.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -51,6 +53,7 @@ class _AmsSelectionState extends State<AmsSelection> {
       context,
       listen: false,
     );
+    DeviceCapabilities().checkDevicesCapabilities();
     availableFilaments.getAllSpools();
     amsmapping = await availableFilaments.getFilamentMappingForPrinter(
       int.parse(widget.printerid),
@@ -65,6 +68,7 @@ class _AmsSelectionState extends State<AmsSelection> {
 
   @override
   Widget build(BuildContext context) {
+    DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
     return Scaffold(
       appBar: AppBar(title: const Text("Ams selection")),
       body: amsdata == null
@@ -386,6 +390,25 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                   );
                                                                 },
                                                               ),
+                                                            if (deviceCapabilities
+                                                                .isNfcAvailable)
+                                                              InfoCard(
+                                                                title:
+                                                                    "NFC-Scan",
+                                                                value: "",
+                                                                icon: MdiIcons
+                                                                    .contactlessPayment,
+                                                                onTap: () {
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  );
+
+                                                                  nfcreading(
+                                                                    ams,
+                                                                    tray,
+                                                                  );
+                                                                },
+                                                              ),
                                                           ],
                                                         ),
                                                       ),
@@ -412,6 +435,21 @@ class _AmsSelectionState extends State<AmsSelection> {
     );
   }
 
+  void nfcreading(Ams ams, TraySlot tray) async {
+    Spool? spool = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return NfcReadPage();
+        },
+      ),
+    );
+    if (spool == null) {
+      return;
+    }
+    return pushToDetailPage(ams, tray, spool);
+  }
+
   void scanFilament(Ams ams, TraySlot slot, List<Spool> spools) async {
     final res = await Navigator.push(
       context,
@@ -421,12 +459,15 @@ class _AmsSelectionState extends State<AmsSelection> {
       showSnackbar(context, "No spool found!", context.appColor.error);
       return;
     }
-    if (!mounted) return;
+    pushToDetailPage(ams, slot, res);
+  }
+
+  void pushToDetailPage(Ams ams, TraySlot slot, Spool spool) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FilamentScanned(
-          scannedSpool: res,
+          scannedSpool: spool,
           printerid: widget.printerid,
           amsid: ams.id.toString(),
           trayid: slot.id.toString(),

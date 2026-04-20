@@ -51,6 +51,7 @@ dependencies:
   qr_flutter: ^4.1.0
   auto_size_text: ^3.0.0
   fuzzy: ^0.5.1
+  nfc_manager: ^3.2.0
 
 dev_dependencies:
   flutter_test:

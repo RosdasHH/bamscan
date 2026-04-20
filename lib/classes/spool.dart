@@ -32,6 +32,7 @@ class Spool {
   final DateTime updatedAt;
   final List<dynamic> kProfiles;
   final String? qrcode;
+  final String? nfcid;
   Assignment? assignment;
 
   Spool({
@@ -67,6 +68,7 @@ class Spool {
     required this.kProfiles,
     this.qrcode,
     this.assignment,
+    this.nfcid,
   });
 
   factory Spool.fromJson(Map<String, dynamic> json) {
@@ -116,6 +118,9 @@ class Spool {
         kProfiles: json['k_profiles'] as List<dynamic>,
         qrcode: (json["note"] as String?) != null
             ? parseQrCodeFromString(json["note"])
+            : null,
+        nfcid: (json["note"] as String?) != null
+            ? parseNfcIdentifierFromString(json["note"])
             : null,
       );
     } catch (e) {

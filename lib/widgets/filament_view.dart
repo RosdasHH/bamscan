@@ -8,6 +8,7 @@ import 'package:bamscan/utils/color.dart';
 import 'package:bamscan/utils/parse_note.dart';
 import 'package:bamscan/widgets/button.dart';
 import 'package:bamscan/widgets/infocard.dart';
+import 'package:bamscan/widgets/nfc_read_page.dart';
 import 'package:bamscan/widgets/qrscan.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
@@ -114,8 +115,14 @@ class FilamentViewState extends State<FilamentView> {
             InfoCard(
               icon: MdiIcons.qrcodeEdit,
               title: "Assigned QR-Code",
-              value: spool.qrcode ?? "None",
+              value: spool.qrcode != null ? "Yes" : "No",
               more: QRCodeMore(spool: spool),
+            ),
+            InfoCard(
+              icon: MdiIcons.contactlessPayment,
+              title: "Assigned NFC-Tag",
+              value: spool.nfcid != null ? "Yes" : "No",
+              more: NfcMore(spool: spool),
             ),
             if (spool.assignment == null && widget.editable)
               Button(
@@ -201,6 +208,110 @@ class FilamentViewScreenState extends State<FilamentViewScreen> {
     } else {
       return FilamentView(spool: widget.spool, editable: widget.editable);
     }
+  }
+}
+
+class NfcMore extends StatefulWidget {
+  const NfcMore({super.key, required this.spool});
+  final Spool spool;
+
+  @override
+  State<NfcMore> createState() => _NfcMoreState();
+}
+
+class _NfcMoreState extends State<NfcMore> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("NFC")),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox.square(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 50),
+              if (widget.spool.nfcid != null)
+                InfoCard(
+                  title: "Value",
+                  value: widget.spool.nfcid,
+                  icon: MdiIcons.identifier,
+                ),
+              InfoCard(
+                title: "Assign NFC-Tag",
+                value: "",
+                icon: MdiIcons.plus,
+                onTap: () {
+                  assignNfc();
+                },
+              ),
+              if (widget.spool.nfcid != null)
+                InfoCard(
+                  title: "Unassign NFC-Tag",
+                  value: "",
+                  icon: MdiIcons.minus,
+                  onTap: () {
+                    unassignNfc();
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void unassignNfc() async {
+    final bool res = await deleteNfcReq(context, widget.spool);
+    if (!mounted) {
+      return;
+    }
+    if (res) {
+      showSnackbar(context, "Unassigned NFC-Code", context.appColor.success);
+    } else {
+      showSnackbar(
+        context,
+        "There was a problem unassigning the NFC-Tag",
+        context.appColor.error,
+      );
+    }
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  void assignNfc() async {
+    final res = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return NfcReadPage(io: Io.write);
+        },
+      ),
+    );
+    if (res == null) return;
+    if (!mounted) return;
+    final bool success = await addNfcIdReq(context, widget.spool, res);
+    if (!mounted) return;
+    showSnackbar(
+      context,
+      success
+          ? "Successfully assigned NFC-Tag to this Spool!"
+          : "Could NOT assign this NFC-Tag to the spool!",
+      success == true ? context.appColor.success : context.appColor.error,
+    );
+    Navigator.pop(context);
   }
 }
 

@@ -12,6 +12,7 @@ import 'package:bamscan/widgets/qrscan.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 class FilamentTab extends StatefulWidget {
@@ -309,6 +310,10 @@ class FilamentCardState extends State<FilamentCard> {
             children: [
               if (widget.filament.qrcode != null && widget.selection == false)
                 Icon(Icons.qr_code_2_rounded)
+              else
+                SizedBox.shrink(),
+              if (widget.filament.nfcid != null && widget.selection == false)
+                Icon(MdiIcons.contactlessPayment)
               else
                 SizedBox.shrink(),
               if (widget.delete)

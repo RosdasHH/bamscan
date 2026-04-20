@@ -5,6 +5,7 @@ import 'package:bamscan/classes/trayslot.dart';
 import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
+import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/filament_view.dart';
 import 'package:bamscan/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,16 @@ class _FilamentScannedModal extends State<FilamentScanned> {
         spoolAssignment = mapping;
       }
     }
+
+    if (!mounted) return;
+    if (spoolAssignment != null) {
+      showSnackbar(
+        context,
+        "This spool is already assigned to a slot.",
+        context.appColor.error,
+      );
+    }
+
     setState(() {
       mappings = mappings;
       spoolAssignment = spoolAssignment;
@@ -109,7 +120,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
               ],
             ),
           ),
-          floatingActionButton: spoolLoaded != false
+          floatingActionButton: spoolLoaded != false && spoolAssignment == null
               ? FloatingActionButton(
                   onPressed: () async {
                     if (!widget.isExternalSpool) {

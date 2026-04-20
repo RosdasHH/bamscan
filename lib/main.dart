@@ -3,6 +3,7 @@ import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
 import 'package:bamscan/tabs/printers.dart';
@@ -22,6 +23,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => StorageService()),
         ChangeNotifierProvider(create: (_) => AvailableFilaments()),
         ChangeNotifierProvider(create: (_) => ApiService()),
+        ChangeNotifierProvider(create: (_) => DeviceCapabilities()),
       ],
       child: MaterialApp(
         //showPerformanceOverlay: true,
@@ -74,6 +76,7 @@ class _MyAppState extends State<MyApp> {
   void getStorage() async {
     final StorageService storageService = StorageService();
     await storageService.loadFromStorage();
+    DeviceCapabilities().checkDevicesCapabilities();
     setState(() {
       storageLoaded = true;
     });
