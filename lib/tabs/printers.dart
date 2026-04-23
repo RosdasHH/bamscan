@@ -81,8 +81,6 @@ class _PrinterListState extends State<PrinterList> {
 
     if (storage.bambuddyUrl == "") {
       configerror = "Please enter the Bambuddy Url in the Settings tab.";
-    } else if (storage.xapitoken == "") {
-      configerror = "Please enter your Bambuddy API Token in the Settings tab.";
     }
     if (configerror != null) return Center(child: Text(configerror));
     if (apiService.error != null) {
