@@ -315,15 +315,25 @@ class _NfcMoreState extends State<NfcMore> {
     );
     if (res == null) return;
     if (!mounted) return;
-    final bool success = await addNfcIdReq(context, widget.spool, res);
-    if (!mounted) return;
-    showSnackbar(
-      context,
-      success
-          ? "Successfully assigned NFC-Tag to this Spool!"
-          : "Could NOT assign this NFC-Tag to the spool!",
-      success == true ? context.appColor.success : context.appColor.error,
-    );
+    final AvailableFilaments availableFilaments = context
+        .read<AvailableFilaments>();
+    if (availableFilaments.spools.isNotEmpty) {
+      showSnackbar(
+        context,
+        "There is already a Spool assigned to this NFC-Tag",
+        context.appColor.error,
+      );
+    } else {
+      final bool success = await addNfcIdReq(context, widget.spool, res);
+      if (!mounted) return;
+      showSnackbar(
+        context,
+        success
+            ? "Successfully assigned NFC-Tag to this Spool!"
+            : "Could NOT assign this NFC-Tag to the spool!",
+        success == true ? context.appColor.success : context.appColor.error,
+      );
+    }
     Navigator.pop(context);
   }
 }
