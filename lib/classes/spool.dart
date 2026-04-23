@@ -76,7 +76,7 @@ class Spool {
       return Spool(
         material: json['material'] as String,
         subtype: json['subtype'] as String,
-        colorName: json['color_name'] as String,
+        colorName: json['color_name'] ?? "",
         rgba: json['rgba'] as String,
         brand: json['brand'] as String,
         labelWeight: (json['label_weight'] as num).toInt(),

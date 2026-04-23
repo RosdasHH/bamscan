@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/ams_number_letter.dart';
 import 'package:bamscan/utils/color.dart';
@@ -33,6 +34,8 @@ class FilamentViewState extends State<FilamentView> {
       (s) => s.id == widget.spool.id,
       orElse: () => widget.spool,
     );
+    DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
+    deviceCapabilities.checkDevicesCapabilities();
     final Color filamentColor = toFlutterColor(spool.rgba);
     final Color filamentConformTextColor = getContrastColor(filamentColor);
 
@@ -122,7 +125,18 @@ class FilamentViewState extends State<FilamentView> {
               icon: MdiIcons.contactlessPayment,
               title: "Assigned NFC-Tag",
               value: spool.nfcid != null ? "Yes" : "No",
-              more: NfcMore(spool: spool),
+              more: deviceCapabilities.isNfcAvailable
+                  ? NfcMore(spool: spool)
+                  : null,
+              onTap: !deviceCapabilities.isNfcAvailable
+                  ? () {
+                      showSnackbar(
+                        context,
+                        "NFC is not available on this device",
+                        context.appColor.error,
+                      );
+                    }
+                  : null,
             ),
             if (spool.assignment == null && widget.editable)
               Button(
@@ -242,7 +256,6 @@ class _NfcMoreState extends State<NfcMore> {
                   ),
                 ],
               ),
-              SizedBox(height: 50),
               if (widget.spool.nfcid != null)
                 InfoCard(
                   title: "Value",

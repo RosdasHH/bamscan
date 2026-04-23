@@ -95,25 +95,29 @@ class AvailableFilaments extends ChangeNotifier {
   Future<bool?> getAllSpools() async {
     final res = await ApiService().apiReq("/inventory/spools");
     final List<dynamic> data = jsonDecode(res.body);
-
-    List<AmsSpool> assignments = await getAllFilamentMappings();
-    List<Spool> filaments = data
-        .map((e) => Spool.fromJson(e as Map<String, dynamic>))
-        .toList();
-    for (Spool filament in filaments) {
-      for (AmsSpool assignment in assignments) {
-        if (filament.id == assignment.spoolId) {
-          filament.assignment = Assignment(
-            amsId: assignment.amsId,
-            trayId: assignment.trayId,
-            printerName: assignment.printerName.toString(),
-          );
-          break;
+    try {
+      List<AmsSpool> assignments = await getAllFilamentMappings();
+      List<Spool> filaments = data
+          .map((e) => Spool.fromJson(e as Map<String, dynamic>))
+          .toList();
+      for (Spool filament in filaments) {
+        for (AmsSpool assignment in assignments) {
+          if (filament.id == assignment.spoolId) {
+            filament.assignment = Assignment(
+              amsId: assignment.amsId,
+              trayId: assignment.trayId,
+              printerName: assignment.printerName.toString(),
+            );
+            break;
+          }
         }
       }
+      setFilaments(filaments);
+      return true;
+    } catch (e) {
+      print(e);
     }
-    setFilaments(filaments);
-    return true;
+    return null;
   }
 
   Future<List<Spool>> getSpoolsByQrCode(String qrcode) async {
@@ -126,6 +130,7 @@ class AvailableFilaments extends ChangeNotifier {
     }
     return spools;
   }
+
   Future<List<Spool>> getSpoolsByNfc(String nfcid) async {
     final List<Spool> allSpools = _spools;
     List<Spool> spools = [];
