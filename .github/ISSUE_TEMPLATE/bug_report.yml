@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a bug
+title: "[BUG] "
+body:
+  - type: textarea
+    id: bug
+    attributes:
+      label: Describe the bug
+      description: What happened?
+      placeholder: A clear and concise description
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. Scroll down ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
