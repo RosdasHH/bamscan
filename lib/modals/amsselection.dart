@@ -210,48 +210,47 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 Navigator.pop(context);
                                                               },
                                                             ),
-                                                            if (traytype != TrayType.noFilament || ams.isExternalSpool)
-                                                              InfoCard(
-                                                                title: "Select Manually",
-                                                                value: "",
-                                                                icon: MdiIcons.cursorDefault,
-                                                                onTap: () async {
-                                                                  final String? spoolId = await showDialog(
-                                                                    context: context,
-                                                                    builder: (BuildContext context) {
-                                                                      return Dialog(
-                                                                        insetPadding: EdgeInsets.all(20),
-                                                                        child: Padding(
-                                                                          padding: EdgeInsets.all(20),
-                                                                          child: Column(
-                                                                            children: [
-                                                                              Text(
-                                                                                ams.isExternalSpool ? "Select external spool" : "Select Spool for Slot ${tray.id + 1}",
-                                                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                                                              ),
-                                                                              SizedBox(height: 15),
-                                                                              Expanded(child: FilamentList(selection: true)),
-                                                                            ],
-                                                                          ),
+                                                            InfoCard(
+                                                              title: "Select Manually",
+                                                              value: "",
+                                                              icon: MdiIcons.cursorDefault,
+                                                              onTap: () async {
+                                                                final String? spoolId = await showDialog(
+                                                                  context: context,
+                                                                  builder: (BuildContext context) {
+                                                                    return Dialog(
+                                                                      insetPadding: EdgeInsets.all(20),
+                                                                      child: Padding(
+                                                                        padding: EdgeInsets.all(20),
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Text(
+                                                                              ams.isExternalSpool ? "Select external spool" : "Select Spool for Slot ${tray.id + 1}",
+                                                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                                            ),
+                                                                            SizedBox(height: 15),
+                                                                            Expanded(child: FilamentList(selection: true)),
+                                                                          ],
                                                                         ),
-                                                                      );
-                                                                    },
-                                                                  );
-                                                                  if (!context.mounted) {
-                                                                    return;
-                                                                  }
-                                                                  if (spoolId == null) {
-                                                                    return;
-                                                                  }
-                                                                  Navigator.pop(context);
-                                                                  await availableFilaments.setSlotToSpoolId(
-                                                                    widget.printerid,
-                                                                    ams.id.toString(),
-                                                                    ams.isExternalSpool ? "0" : tray.id.toString(),
-                                                                    spoolId.toString(),
-                                                                  );
-                                                                },
-                                                              ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                                if (!context.mounted) {
+                                                                  return;
+                                                                }
+                                                                if (spoolId == null) {
+                                                                  return;
+                                                                }
+                                                                Navigator.pop(context);
+                                                                await availableFilaments.setSlotToSpoolId(
+                                                                  widget.printerid,
+                                                                  ams.id.toString(),
+                                                                  ams.isExternalSpool ? "0" : tray.id.toString(),
+                                                                  spoolId.toString(),
+                                                                );
+                                                              },
+                                                            ),
                                                             if (deviceCapabilities.isNfcAvailable)
                                                               InfoCard(
                                                                 title: "NFC-Scan",
@@ -320,7 +319,7 @@ class _AmsSelectionState extends State<AmsSelection> {
     if (spool == null) {
       return;
     }
-    return pushToDetailPage(ams, tray, spool);
+    assignSpoolToSlot(ams, tray, spool.id.toString());
   }
 
   void scanFilament(Ams ams, TraySlot slot, List<Spool> spools) async {
@@ -329,7 +328,15 @@ class _AmsSelectionState extends State<AmsSelection> {
       showSnackbar(context, "No spool found!", context.appColor.error);
       return;
     }
-    pushToDetailPage(ams, slot, res);
+    assignSpoolToSlot(ams, slot, res.id.toString());
+  }
+
+  void assignSpoolToSlot(Ams ams, TraySlot slot, String spoolId) async {
+    AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+    bool configured = await availableFilaments.setSlotToSpoolId(widget.printerid, ams.id.toString(), ams.isExternalSpool ? "0" : slot.id.toString(), spoolId);
+    if (!mounted) return;
+    showSnackbar(context, configured ? "Spool assigned" : "Spool NOT assigned", null);
+    Navigator.popUntil(context, (route) => route.settings.name == "ams");
   }
 
   void pushToDetailPage(Ams ams, TraySlot slot, Spool spool) {

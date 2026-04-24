@@ -1,13 +1,9 @@
-import 'package:bamscan/classes/ams.dart';
 import 'package:bamscan/classes/ams_spool.dart';
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/classes/trayslot.dart';
 import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
-import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/filament_view.dart';
-import 'package:bamscan/widgets/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -74,34 +70,30 @@ class _FilamentScannedModal extends State<FilamentScanned> {
         },
         child: Scaffold(
           appBar: AppBar(title: const Text("Assigning Spool to Slot")),
-          body: LoadingScreen(
-            loading: spoolLoaded == false,
-            loadingMessage: "Waiting for spool insertion...",
-            child: Column(
-              children: [
-                Expanded(child: FilamentViewScreen(spool: widget.scannedSpool)),
-                //if (spoolAssignment != null)
-                //  Row(
-                //    children: [
-                //      if (spoolAssignment?.trayId.toString() == widget.trayid &&
-                //          spoolAssignment?.printerId.toString() ==
-                //              widget.printerid &&
-                //          spoolAssignment?.amsId.toString() == widget.amsid)
-                //        Text(
-                //          "This spool is already assigned to this Slot.",
-                //          overflow: TextOverflow.clip,
-                //          style: TextStyle(color: Colors.red),
-                //        )
-                //      else
-                //        Text(
-                //          "This spool is already assigned on: ${spoolAssignment!.printerName}, AMS_ID: ${spoolAssignment!.amsId}, TRAY_ID: ${spoolAssignment!.trayId}",
-                //          overflow: TextOverflow.clip,
-                //          style: TextStyle(color: Colors.red),
-                //        ),
-                //    ],
-                //  ),
-              ],
-            ),
+          body: Column(
+            children: [
+              Expanded(child: FilamentViewScreen(spool: widget.scannedSpool)),
+              //if (spoolAssignment != null)
+              //  Row(
+              //    children: [
+              //      if (spoolAssignment?.trayId.toString() == widget.trayid &&
+              //          spoolAssignment?.printerId.toString() ==
+              //              widget.printerid &&
+              //          spoolAssignment?.amsId.toString() == widget.amsid)
+              //        Text(
+              //          "This spool is already assigned to this Slot.",
+              //          overflow: TextOverflow.clip,
+              //          style: TextStyle(color: Colors.red),
+              //        )
+              //      else
+              //        Text(
+              //          "This spool is already assigned on: ${spoolAssignment!.printerName}, AMS_ID: ${spoolAssignment!.amsId}, TRAY_ID: ${spoolAssignment!.trayId}",
+              //          overflow: TextOverflow.clip,
+              //          style: TextStyle(color: Colors.red),
+              //        ),
+              //    ],
+              //  ),
+            ],
           ),
           floatingActionButton: spoolLoaded != false && spoolAssignment == null
               ? FloatingActionButton(
@@ -110,25 +102,6 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                       setState(() {
                         spoolLoaded = false;
                       });
-                    }
-                    while (spoolLoaded == false) {
-                      AvailablePrinters printers = AvailablePrinters();
-                      final List<Ams> allams = await printers.getAmsByPrinterId(widget.printerid);
-                      for (Ams ams in allams) {
-                        if (ams.id.toString() == widget.amsid) {
-                          for (TraySlot tray in ams.tray) {
-                            if (tray.id.toString() == widget.trayid) {
-                              if (tray.trayColor != "" && tray.trayType != "" && tray.trayInfoIdx != "") {
-                                setState(() {
-                                  spoolLoaded = true;
-                                });
-                              }
-                            }
-                          }
-                        }
-                      }
-
-                      await Future.delayed(Duration(milliseconds: 500));
                     }
                     bool configured = await availableFilaments.setSlotToSpoolId(
                       widget.printerid,
