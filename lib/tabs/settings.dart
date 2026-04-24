@@ -181,6 +181,7 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
+              Text(storageService.version, style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),

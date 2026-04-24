@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService extends ChangeNotifier {
@@ -13,18 +14,26 @@ class StorageService extends ChangeNotifier {
   String _xapitoken = "";
   bool _firstUse = true;
   bool _externalSpool = false;
+  String _version = "0.0.0";
 
   String get bambuddyUrl => _bambuddyUrl;
   String get xapitoken => _xapitoken;
   bool get firstUse => _firstUse;
   bool get externalSpool => _externalSpool;
+  String get version => _version;
 
   Future<void> loadFromStorage() async {
     _bambuddyUrl = await getBambuddyUrl();
     _xapitoken = await getToken();
     _firstUse = await getFirseUse();
     _externalSpool = await getExternalSpool();
+    _version = await getVersion();
     notifyListeners();
+  }
+
+  Future<String> getVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    return ("Version: ${info.version}+${info.buildNumber}");
   }
 
   Future<void> saveToken(String token) async {

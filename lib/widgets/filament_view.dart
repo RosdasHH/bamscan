@@ -252,9 +252,11 @@ class _NfcMoreState extends State<NfcMore> {
     if (res == null) return;
     if (!mounted) return;
     final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-    if (availableFilaments.spools.isNotEmpty) {
-      showSnackbar(context, "There is already a Spool assigned to this NFC-Tag", context.appColor.error);
+    final List alreadyAssigned = await availableFilaments.getSpoolsByNfc(res);
+    if (alreadyAssigned.isNotEmpty && mounted) {
+      showSnackbar(context, "NFC-Tag already assigned to Spool ${alreadyAssigned[0].id}", context.appColor.error);
     } else {
+      if (!mounted) return;
       final bool success = await addNfcIdReq(context, widget.spool, res);
       if (!mounted) return;
       showSnackbar(
@@ -263,6 +265,7 @@ class _NfcMoreState extends State<NfcMore> {
         success == true ? context.appColor.success : context.appColor.error,
       );
     }
+    if (!mounted) return;
     Navigator.pop(context);
   }
 }
