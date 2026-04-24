@@ -28,6 +28,8 @@ class AppTheme {
         color: color.base2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
+      listTileTheme: ListTileThemeData(textColor: color.primaryText, iconColor: color.primaryText),
+      iconTheme: IconThemeData(color: color.primaryText),
       textTheme: TextTheme(
         displayLarge: TextStyle(color: color.primaryText),
         displayMedium: TextStyle(color: color.primaryText),
@@ -66,7 +68,7 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
       ),
-      dialogTheme: DialogThemeData(backgroundColor: color.base2, insetPadding: EdgeInsets.all(20)),
+      dialogTheme: DialogThemeData(backgroundColor: color.popup, insetPadding: EdgeInsets.all(20)),
       textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: color.primary)),
       floatingActionButtonTheme: FloatingActionButtonThemeData(shape: CircleBorder(), backgroundColor: color.base3, foregroundColor: color.primary),
       switchTheme: SwitchThemeData(

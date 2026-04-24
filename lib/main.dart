@@ -28,7 +28,7 @@ void main() {
       child: MaterialApp(
         //showPerformanceOverlay: true,
         title: "BamScan",
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.system,
         theme: AppTheme().light,
         darkTheme: AppTheme().dark,
         home: const MyApp(),

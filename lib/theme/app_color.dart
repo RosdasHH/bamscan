@@ -8,6 +8,7 @@ class AppColor extends ThemeExtension<AppColor> {
   final Color base1;
   final Color base2;
   final Color base3;
+  final Color popup;
   final Color error;
   final Color success;
   final Color info;
@@ -25,6 +26,7 @@ class AppColor extends ThemeExtension<AppColor> {
     required this.success,
     required this.info,
     required this.warning,
+    required this.popup,
   });
 
   @override
@@ -42,6 +44,7 @@ class DarkColor extends AppColor {
         accent: Colors.green,
         primaryText: const Color.fromARGB(255, 222, 222, 222),
         base1: Colors.grey[900]!,
+        popup: const Color.fromRGBO(50, 50, 50, 1),
         base2: Colors.grey[800]!,
         base3: Colors.grey[700]!,
         error: Colors.red,
@@ -59,6 +62,7 @@ class LightColor extends AppColor {
         accent: Colors.green,
         primaryText: Colors.grey[800]!,
         base1: Colors.grey[300]!,
+        popup: const Color.fromRGBO(231, 231, 231, 1),
         base2: Colors.grey[200]!,
         base3: Colors.grey[100]!,
         error: Colors.red,
