@@ -36,7 +36,7 @@ class FilamentViewState extends State<FilamentView> {
     );
     DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
     deviceCapabilities.checkDevicesCapabilities();
-    final Color filamentColor = toFlutterColor(spool.rgba);
+    final Color filamentColor = spool.color;
     final Color filamentConformTextColor = getContrastColor(filamentColor);
 
     return Padding(
@@ -53,7 +53,7 @@ class FilamentViewState extends State<FilamentView> {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
-                        color: toFlutterColor(spool.rgba),
+                        color: spool.color,
                       ),
                       child: Center(
                         child: Text(

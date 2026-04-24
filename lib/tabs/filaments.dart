@@ -279,7 +279,7 @@ class FilamentCardState extends State<FilamentCard> {
                 dimension: 20,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: toFlutterColor(widget.filament.rgba),
+                    color: widget.filament.color,
                     shape: BoxShape.circle,
                   ),
                 ),

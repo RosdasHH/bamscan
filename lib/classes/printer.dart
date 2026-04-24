@@ -48,25 +48,25 @@ class Printer {
   factory Printer.fromJson(Map<String, dynamic> json) {
     try {
       return Printer(
-        name: json['name'] as String,
-        serialNumber: json['serial_number'] as String,
-        ipAddress: json['ip_address'] as String,
-        accessCode: json['access_code'] as String,
-        model: json['model'] as String,
+        name: json['name'] as String? ?? "",
+        serialNumber: json['serial_number'] as String? ?? "",
+        ipAddress: json['ip_address'] as String? ?? "",
+        accessCode: json['access_code'] as String? ?? "",
+        model: json['model'] as String? ?? "",
         location: json['location'] as String?,
         autoArchive: json['auto_archive'] as bool,
         externalCameraUrl: json['external_camera_url'] as String?,
         externalCameraType: json['external_camera_type'] as String?,
         externalCameraEnabled: json['external_camera_enabled'] as bool,
-        cameraRotation: json['camera_rotation'] as int,
+        cameraRotation: json['camera_rotation'] as int? ?? 0,
         id: json['id'] as int,
         isActive: json['is_active'] as bool,
-        nozzleCount: json['nozzle_count'] as int,
+        nozzleCount: json['nozzle_count'] as int? ?? 0,
         printHoursOffset: (json['print_hours_offset'] as num).toInt(),
         plateDetectionEnabled: json['plate_detection_enabled'] as bool,
         plateDetectionRoi: json['plate_detection_roi'] as String?,
-        createdAt: DateTime.parse(json['created_at'] as String),
-        updatedAt: DateTime.parse(json['updated_at'] as String),
+        createdAt: DateTime.parse(json['created_at'] as String? ?? ""),
+        updatedAt: DateTime.parse(json['updated_at'] as String? ?? ""),
       );
     } on FormatException {
       rethrow;

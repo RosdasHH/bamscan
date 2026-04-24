@@ -137,7 +137,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                               (spool.labelWeight -
                                                   spool.weightUsed) /
                                               spool.labelWeight;
-                                          color = toFlutterColor(spool.rgba);
+                                          color = spool.color;
                                         }
                                         int amsForIndex = amsdata!.indexOf(ams);
                                         int trayForIndex = ams.tray.indexOf(

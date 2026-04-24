@@ -1,10 +1,12 @@
+import 'package:bamscan/utils/color.dart';
 import 'package:bamscan/utils/parse_note.dart';
+import 'package:flutter/material.dart';
 
 class Spool {
   final String material;
   final String subtype;
   final String colorName;
-  final String rgba;
+  final Color color;
   final String brand;
   final int labelWeight;
   final int coreWeight;
@@ -39,7 +41,7 @@ class Spool {
     required this.material,
     required this.subtype,
     required this.colorName,
-    required this.rgba,
+    required this.color,
     required this.brand,
     required this.labelWeight,
     required this.coreWeight,
@@ -74,29 +76,29 @@ class Spool {
   factory Spool.fromJson(Map<String, dynamic> json) {
     try {
       return Spool(
-        material: json['material'] as String,
-        subtype: json['subtype'] as String,
-        colorName: json['color_name'] ?? "",
-        rgba: json['rgba'] as String,
-        brand: json['brand'] as String,
-        labelWeight: (json['label_weight'] as num).toInt(),
-        coreWeight: (json['core_weight'] as num).toInt(),
+        material: json['material'] as String? ?? "",
+        subtype: json['subtype'] as String? ?? "",
+        colorName: json['color_name'] as String? ?? "",
+        color: toFlutterColor(json['rgba']),
+        brand: json['brand'] as String? ?? "",
+        labelWeight: (json['label_weight'] as num?)?.toInt() ?? 0,
+        coreWeight: (json['core_weight'] as num?)?.toInt() ?? 0,
         coreWeightCatalogId: json['core_weight_catalog_id'] != null
             ? (json['core_weight_catalog_id'] as num).toInt()
             : null,
-        weightUsed: (json['weight_used'] as num).toInt(),
-        slicerFilament: json['slicer_filament'] as String,
-        slicerFilamentName: json['slicer_filament_name'] as String,
-        nozzleTempMin: json['nozzle_temp_min'] as int?,
-        nozzleTempMax: json['nozzle_temp_max'] as int?,
-        note: json['note'] as String?,
-        tagUid: json['tag_uid'] as String?,
-        trayUuid: json['tray_uuid'] as String?,
-        dataOrigin: json['data_origin'] as String?,
-        tagType: json['tag_type'] as String?,
-        costPerKg: (json['cost_per_kg'] as num?)?.toDouble(),
+        weightUsed: (json['weight_used'] as num?)?.toInt() ?? 0,
+        slicerFilament: json['slicer_filament'] as String? ?? "",
+        slicerFilamentName: json['slicer_filament_name'] as String? ?? "",
+        nozzleTempMin: (json['nozzle_temp_min'] as num?)?.toInt() ?? 0,
+        nozzleTempMax: (json['nozzle_temp_max'] as num?)?.toInt() ?? 0,
+        note: json['note'] as String? ?? "",
+        tagUid: json['tag_uid'] as String? ?? "",
+        trayUuid: json['tray_uuid'] as String? ?? "",
+        dataOrigin: json['data_origin'] as String? ?? "",
+        tagType: json['tag_type'] as String? ?? "",
+        costPerKg: (json['cost_per_kg'] as num?)?.toDouble() ?? 0.0,
         weightLocked: json['weight_locked'] as bool,
-        lastScaleWeight: json['last_scale_weight'] as int?,
+        lastScaleWeight: json['last_scale_weight'] as int? ?? 0,
         lastWeighedAt: json['last_weighed_at'] != null
             ? DateTime.parse(json['last_weighed_at'] as String)
             : null,
@@ -113,9 +115,9 @@ class Spool {
         archivedAt: json['archived_at'] != null
             ? DateTime.parse(json['archived_at'] as String)
             : null,
-        createdAt: DateTime.parse(json['created_at'] as String),
-        updatedAt: DateTime.parse(json['updated_at'] as String),
-        kProfiles: json['k_profiles'] as List<dynamic>,
+        createdAt: DateTime.parse(json['created_at'] as String? ?? ""),
+        updatedAt: DateTime.parse(json['updated_at'] as String? ?? ""),
+        kProfiles: json['k_profiles'] as List<dynamic>? ?? [],
         qrcode: (json["note"] as String?) != null
             ? parseQrCodeFromString(json["note"])
             : null,
