@@ -114,9 +114,7 @@ class AvailableFilaments extends ChangeNotifier {
       }
       setFilaments(filaments);
       return true;
-    } catch (e) {
-      print(e);
-    }
+    } catch (_) {}
     return null;
   }
 

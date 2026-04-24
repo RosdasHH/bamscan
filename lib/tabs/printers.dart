@@ -114,10 +114,12 @@ class _PrinterListState extends State<PrinterList> {
                       : state == "FINISH"
                       ? context.appColor.success
                       : state == "PREPARE"
-                      ? Colors.orange
+                      ? context.appColor.warning
                       : state == "RUNNING"
-                      ? Colors.purple
-                      : Colors.blue;
+                      ? context.appColor.success
+                      : state == "IDLE"
+                      ? context.appColor.success
+                      : context.appColor.info;
                   return Card(
                     clipBehavior: Clip.hardEdge,
                     child: InkWell(
@@ -147,7 +149,7 @@ class _PrinterListState extends State<PrinterList> {
                                 ),
                               ),
                             ),
-                            Flexible(
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -163,8 +165,9 @@ class _PrinterListState extends State<PrinterList> {
                                     printer.model,
                                     style: TextStyle(fontSize: 15),
                                   ),
-                                  Row(
+                                  Wrap(
                                     spacing: 10,
+                                    runSpacing: 5,
                                     children: [
                                       BadgeCard(
                                         text: connected,

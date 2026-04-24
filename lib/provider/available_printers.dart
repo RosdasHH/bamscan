@@ -37,9 +37,7 @@ class AvailablePrinters extends ChangeNotifier {
         printer.status = await getPrinterStatus(printer.id);
       }
       setPrinters(printers);
-    } catch (e) {
-      print("Error fetching printers: $e");
-    }
+    } catch (_) {}
   }
 
   Future<List<Ams>> getAmsByPrinterId(String id) async {

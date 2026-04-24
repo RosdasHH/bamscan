@@ -6,7 +6,6 @@ import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/offline.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/ams_number_letter.dart';
-import 'package:bamscan/utils/color.dart';
 import 'package:bamscan/widgets/filament_view.dart';
 import 'package:bamscan/widgets/qrscan.dart';
 import 'package:bamscan/widgets/textinput.dart';

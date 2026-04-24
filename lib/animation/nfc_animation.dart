@@ -72,7 +72,7 @@ class _NfcAnimationState extends State<NfcAnimation>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.blueAccent.withOpacity(0.5),
+              color: Colors.blueAccent.withValues(alpha: 0.5),
               width: 2,
             ),
           ),
@@ -90,11 +90,11 @@ class _NfcAnimationState extends State<NfcAnimation>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            Colors.blue.withOpacity(0.25),
-            Colors.blue.withOpacity(0.05),
+            Colors.blue.withValues(alpha: 0.25),
+            Colors.blue.withValues(alpha: 0.05),
           ],
         ),
-        border: Border.all(color: Colors.blue.withOpacity(0.4), width: 1),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.4), width: 1),
       ),
       child: const Icon(Icons.contactless, size: 44, color: Colors.blue),
     );
@@ -108,7 +108,7 @@ class _NfcAnimationState extends State<NfcAnimation>
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.25),
+            color: Colors.blue.withValues(alpha: 0.25),
             blurRadius: 60,
             spreadRadius: 20,
           ),
