@@ -1,8 +1,8 @@
 # BamScan
 
-BamScan is a third-party companion app that integrates with the Bambuddy API to simplify the assignment of filament spools to AMS units using QR codes.
+BamScan is a third-party companion app that integrates with the Bambuddy API to simplify the assignment of filament spools to AMS units using NFC-Tags or QR codes.
 
-Instead of manually managing spool assignments, BamScan allows you to scan QR codes attached to physical spools and instantly map them to the correct AMS slot on your printer.
+Instead of manually managing spool assignments, BamScan allows you to scan NFC/QR codes attached to physical spools and instantly map them to the correct AMS slot on your printer.
 
 A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to use this app.
 
@@ -10,7 +10,7 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 
 ## 🚀 Features
 
-- 📱 Scan filament spool QR codes with your phone
+- 📱 Scan filament spool NFC/QR codes with your phone
 - 🧵 Assign filaments directly to AMS units
 - 🧪 Manual assignment option (without QR codes)
 - ⚙️ Uses Bambuddy as the backend
@@ -21,7 +21,7 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 ## 🧠 How it works
 
 1. Configure your filaments in **Bambuddy**
-2. Print spool inserts using the provided Makerworld link or use your own custom qr codes
+2. Print spool inserts using the provided Makerworld link or use your own custom qr codes or use any NFC/RFID Tag.
 3. Attach QR codes to your filament spools and assign it in the app
 4. Use BamScan to scan a spool
 5. Assign it to the correct AMS slot on your printer
@@ -33,7 +33,10 @@ A [Bambuddy](https://github.com/maziggy/bambuddy) installation is required to us
 
 - Bambuddy setup
 - Bambuddy compatible 3D printer with AMS
-- Printed spool [QR inserts](https://makerworld.com/de/models/2679686-qr-code-insets-for-sunlu-bambu-spools#profileId-2967504) (optional, any other unique qrcode will make it too)
+- QR-Codes / NFC-Tags on your Spools
+
+### Optional
+- Printed spool [QR inserts](https://makerworld.com/de/models/2679686-qr-code-insets-for-sunlu-bambu-spools#profileId-2967504) (any other unique qrcode will make it too)
 
 ---
 
