@@ -64,4 +64,16 @@ class AvailablePrinters extends ChangeNotifier {
     final printerStatus = PrinterStatus.fromJson(jsonList);
     return printerStatus;
   }
+
+  Future<bool> resetSlot(String printerId, String amsId, String trayId) async {
+    try {
+      final res = await ApiService().apiPost(
+        "/printers/$printerId/ams/$amsId/tray/$trayId/reset",
+        {},
+      );
+      return res.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 }

@@ -45,14 +45,10 @@ class _AmsSelectionState extends State<AmsSelection> {
   }
 
   Future<void> loadAms() async {
-    final availablePrinters = Provider.of<AvailablePrinters>(
-      context,
-      listen: false,
-    );
-    final availableFilaments = Provider.of<AvailableFilaments>(
-      context,
-      listen: false,
-    );
+    final AvailablePrinters availablePrinters = context
+        .read<AvailablePrinters>();
+    final AvailableFilaments availableFilaments = context
+        .read<AvailableFilaments>();
     DeviceCapabilities().checkDevicesCapabilities();
     availableFilaments.getAllSpools();
     amsmapping = await availableFilaments.getFilamentMappingForPrinter(
@@ -409,6 +405,45 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                   );
                                                                 },
                                                               ),
+                                                            InfoCard(
+                                                              title:
+                                                                  "Reset Slot",
+                                                              value: "",
+                                                              icon:
+                                                                  Icons.restore,
+                                                              onTap: () async {
+                                                                final AvailablePrinters
+                                                                availablePrinters =
+                                                                    context
+                                                                        .read<
+                                                                          AvailablePrinters
+                                                                        >();
+                                                                final res = await availablePrinters.resetSlot(
+                                                                  widget
+                                                                      .printerid,
+                                                                  ams.id
+                                                                      .toString(),
+                                                                  ams.isExternalSpool
+                                                                      ? "0"
+                                                                      : tray.id
+                                                                            .toString(),
+                                                                );
+                                                                if (res ==
+                                                                    true) {
+                                                                  if (!context
+                                                                      .mounted) {
+                                                                    return;
+                                                                  }
+                                                                  showSnackbar(
+                                                                    context,
+                                                                    "Slot reset successfully!",
+                                                                    context
+                                                                        .appColor
+                                                                        .success,
+                                                                  );
+                                                                }
+                                                              },
+                                                            ),
                                                           ],
                                                         ),
                                                       ),
