@@ -28,10 +28,7 @@ class _FilamentTabState extends State<FilamentTab> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Filaments")),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        child: FilamentList(),
-      ),
+      body: Padding(padding: EdgeInsets.symmetric(horizontal: 15), child: FilamentList()),
       //floatingActionButton: apiService.reachable
       //    ? FloatingActionButton(
       //        onPressed: () {
@@ -108,16 +105,8 @@ class FilamentListState extends State<FilamentList> {
         threshold: 0.5,
         keys: [
           WeightedKey(name: "brand", getter: (Spool u) => u.brand, weight: 1),
-          WeightedKey(
-            name: "slicerFilamentName",
-            getter: (Spool u) => u.slicerFilamentName,
-            weight: 1,
-          ),
-          WeightedKey(
-            name: "colorName",
-            getter: (Spool u) => u.colorName,
-            weight: 1,
-          ),
+          WeightedKey(name: "slicerFilamentName", getter: (Spool u) => u.slicerFilamentName, weight: 1),
+          WeightedKey(name: "colorName", getter: (Spool u) => u.colorName, weight: 1),
         ],
       ),
     );
@@ -176,11 +165,7 @@ class FilamentListState extends State<FilamentList> {
                       ),
                     );
                     if (spool == null && context.mounted) {
-                      showSnackbar(
-                        context,
-                        "No Spool found!",
-                        context.appColor.error,
-                      );
+                      showSnackbar(context, "No Spool found!", context.appColor.error);
                       return;
                     }
                     if (!context.mounted) return;
@@ -201,12 +186,9 @@ class FilamentListState extends State<FilamentList> {
             ],
           ),
           SizedBox(height: 10),
-          if (sortedSpools != null)
-            Text("Search results:", style: TextStyle(fontSize: 20)),
+          if (sortedSpools != null) Text("Search results:", style: TextStyle(fontSize: 20)),
           for (Spool filament in iterationList)
-            if (widget.selection && filament.assignment == null ||
-                !widget.selection)
-              FilamentCard(filament: filament, selection: widget.selection),
+            if (widget.selection && filament.assignment == null || !widget.selection) FilamentCard(filament: filament, selection: widget.selection),
         ],
         SizedBox(height: 30),
       ],
@@ -215,13 +197,7 @@ class FilamentListState extends State<FilamentList> {
 }
 
 class FilamentCard extends StatefulWidget {
-  const FilamentCard({
-    super.key,
-    required this.filament,
-    required this.selection,
-    this.delete = false,
-    this.deleteCallback,
-  });
+  const FilamentCard({super.key, required this.filament, required this.selection, this.delete = false, this.deleteCallback});
   final Spool filament;
   final bool? selection;
   final bool delete;
@@ -255,11 +231,7 @@ class FilamentCardState extends State<FilamentCard> {
                     context,
                     MaterialPageRoute(
                       settings: const RouteSettings(name: "filamentdata"),
-                      builder: (context) => FilamentViewScreen(
-                        spool: widget.filament,
-                        editable: true,
-                        useScaffold: true,
-                      ),
+                      builder: (context) => FilamentViewScreen(spool: widget.filament, editable: true, useScaffold: true),
                     ),
                   );
                   getFilaments();
@@ -277,23 +249,14 @@ class FilamentCardState extends State<FilamentCard> {
               child: SizedBox.square(
                 dimension: 20,
                 child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: widget.filament.color,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: BoxDecoration(color: widget.filament.color, shape: BoxShape.circle),
                 ),
               ),
             ),
           ),
           subtitle: Row(
             children: [
-              Flexible(
-                child: Text(
-                  widget.filament.colorName,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                ),
-              ),
+              Flexible(child: Text(widget.filament.colorName, overflow: TextOverflow.ellipsis, softWrap: false)),
               widget.filament.assignment != null && widget.selection != null
                   ? Text(
                       " ⋅ ${widget.filament.assignment!.printerName} | ${amsIdToLetter(widget.filament.assignment!.amsId)}${widget.filament.assignment!.trayId + 1}",
@@ -305,31 +268,15 @@ class FilamentCardState extends State<FilamentCard> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.filament.qrcode != null && widget.selection == false)
-                Icon(Icons.qr_code_2_rounded)
-              else
-                SizedBox.shrink(),
-              if (widget.filament.nfcid != null && widget.selection == false)
-                Icon(MdiIcons.contactlessPayment)
-              else
-                SizedBox.shrink(),
+              if (widget.filament.qrcode != null && widget.selection == false) Icon(Icons.qr_code_2_rounded) else SizedBox.shrink(),
+              if (widget.filament.nfcid != null && widget.selection == false) Icon(MdiIcons.contactlessPayment) else SizedBox.shrink(),
               if (widget.delete)
                 IconButton(
                   onPressed: () => widget.deleteCallback?.call(),
-                  icon: Icon(
-                    Icons.cancel_outlined,
-                    color: context.appColor.error,
-                  ),
+                  icon: Icon(Icons.cancel_outlined, color: context.appColor.error),
                 ),
               SizedBox(width: 10),
-              if (widget.selection != null)
-                CircularProgressIndicator(
-                  value:
-                      ((widget.filament.labelWeight -
-                                  widget.filament.weightUsed) /
-                              widget.filament.labelWeight)
-                          .toDouble(),
-                ),
+              if (widget.selection != null) CircularProgressIndicator(value: ((widget.filament.labelWeight - widget.filament.weightUsed) / widget.filament.labelWeight).toDouble()),
             ],
           ),
         ),

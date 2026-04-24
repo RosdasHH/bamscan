@@ -21,17 +21,9 @@ class AppTheme {
         },
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color.primary,
-          foregroundColor: color.base3,
-        ),
+        style: ElevatedButton.styleFrom(backgroundColor: color.primary, foregroundColor: color.base3),
       ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: color.base1,
-        foregroundColor: color.primaryText,
-        shadowColor: Color(0x00000000),
-        surfaceTintColor: Colors.transparent,
-      ),
+      appBarTheme: AppBarTheme(backgroundColor: color.base1, foregroundColor: color.primaryText, shadowColor: Color(0x00000000), surfaceTintColor: Colors.transparent),
       cardTheme: CardThemeData(
         color: color.base2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -69,29 +61,14 @@ class AppTheme {
           return IconThemeData(color: color.primaryText);
         }),
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: color.primary,
-        circularTrackColor: color.base1,
-        strokeCap: StrokeCap.round,
-      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(color: color.primary, circularTrackColor: color.base1, strokeCap: StrokeCap.round),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
       ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: color.base2,
-        insetPadding: EdgeInsets.all(20),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: color.primary),
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        shape: CircleBorder(),
-        backgroundColor: color.base3,
-        foregroundColor: color.primary,
-      ),
+      dialogTheme: DialogThemeData(backgroundColor: color.base2, insetPadding: EdgeInsets.all(20)),
+      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: color.primary)),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(shape: CircleBorder(), backgroundColor: color.base3, foregroundColor: color.primary),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {

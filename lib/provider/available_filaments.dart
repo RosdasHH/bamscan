@@ -30,24 +30,13 @@ class AvailableFilaments extends ChangeNotifier {
     return spool;
   }
 
-  Future<SlotPreset> getPreset(
-    String printerid,
-    String amsid,
-    String trayid,
-  ) async {
-    http.Response res = await ApiService().apiReq(
-      "/printers/$printerid/slot-presets/$amsid/$trayid",
-    );
+  Future<SlotPreset> getPreset(String printerid, String amsid, String trayid) async {
+    http.Response res = await ApiService().apiReq("/printers/$printerid/slot-presets/$amsid/$trayid");
     SlotPreset preset = SlotPreset.fromJson(jsonDecode(res.body));
     return preset;
   }
 
-  Future<bool> setSlotToSpoolId(
-    String printerid,
-    String amsid,
-    String trayid,
-    String spoolid,
-  ) async {
+  Future<bool> setSlotToSpoolId(String printerid, String amsid, String trayid, String spoolid) async {
     final res = await ApiService().apiPost("/inventory/assignments", {
       "spool_id": int.parse(spoolid),
       "printer_id": int.parse(printerid),
@@ -77,10 +66,7 @@ class AvailableFilaments extends ChangeNotifier {
 
   Future<void> archive(String id) async {
     try {
-      final res = await ApiService().apiPost(
-        "/inventory/spools/$id/archive",
-        {},
-      );
+      final res = await ApiService().apiPost("/inventory/spools/$id/archive", {});
       removeSpoolByRes(res);
     } catch (_) {}
   }
@@ -97,17 +83,11 @@ class AvailableFilaments extends ChangeNotifier {
     final List<dynamic> data = jsonDecode(res.body);
     try {
       List<AmsSpool> assignments = await getAllFilamentMappings();
-      List<Spool> filaments = data
-          .map((e) => Spool.fromJson(e as Map<String, dynamic>))
-          .toList();
+      List<Spool> filaments = data.map((e) => Spool.fromJson(e as Map<String, dynamic>)).toList();
       for (Spool filament in filaments) {
         for (AmsSpool assignment in assignments) {
           if (filament.id == assignment.spoolId) {
-            filament.assignment = Assignment(
-              amsId: assignment.amsId,
-              trayId: assignment.trayId,
-              printerName: assignment.printerName.toString(),
-            );
+            filament.assignment = Assignment(amsId: assignment.amsId, trayId: assignment.trayId, printerName: assignment.printerName.toString());
             break;
           }
         }
@@ -144,32 +124,20 @@ class AvailableFilaments extends ChangeNotifier {
     try {
       final res = await ApiService().apiReq("/inventory/assignments");
       final List<dynamic> data = jsonDecode(res.body);
-      return data
-          .map((e) => AmsSpool.fromJson(e as Map<String, dynamic>))
-          .toList();
+      return data.map((e) => AmsSpool.fromJson(e as Map<String, dynamic>)).toList();
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> unassignSpool(
-    String printerId,
-    String amsId,
-    String trayId,
-  ) async {
-    await ApiService().apiDel(
-      "/inventory/assignments/$printerId/$amsId/$trayId",
-    );
+  Future<void> unassignSpool(String printerId, String amsId, String trayId) async {
+    await ApiService().apiDel("/inventory/assignments/$printerId/$amsId/$trayId");
     return;
   }
 
   Future<List<AmsSpool>> getFilamentMappingForPrinter(int printerId) async {
-    final res = await ApiService().apiReq(
-      "/inventory/assignments?printer_id=$printerId",
-    );
+    final res = await ApiService().apiReq("/inventory/assignments?printer_id=$printerId");
     final List<dynamic> data = jsonDecode(res.body);
-    return data
-        .map((e) => AmsSpool.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return data.map((e) => AmsSpool.fromJson(e as Map<String, dynamic>)).toList();
   }
 }

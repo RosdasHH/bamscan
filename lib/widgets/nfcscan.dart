@@ -18,8 +18,7 @@ class Nfcscan extends StatefulWidget {
 
 class _NfcscanState extends State<Nfcscan> {
   Future<void> startNFC() async {
-    if (!await NfcManager.instance.isAvailable() &&
-        widget.spoolCallback != null) {
+    if (!await NfcManager.instance.isAvailable() && widget.spoolCallback != null) {
       widget.spoolCallback!(null);
       if (!mounted) {
         return;
@@ -29,16 +28,12 @@ class _NfcscanState extends State<Nfcscan> {
     }
     NfcManager.instance.startSession(
       onDiscovered: (NfcTag tag) async {
-        String id = tag.data["nfca"]["identifier"]
-            .toString()
-            .replaceAll("[", "")
-            .replaceAll("]", "");
+        String id = tag.data["nfca"]["identifier"].toString().replaceAll("[", "").replaceAll("]", "");
         if (widget.nfcIdCallback != null) {
           widget.nfcIdCallback!(id);
         }
         if (widget.spoolCallback != null) {
-          AvailableFilaments availableFilaments = context
-              .read<AvailableFilaments>();
+          AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
           List<Spool> spools = await availableFilaments.getSpoolsByNfc(id);
           Spool? spool;
           try {

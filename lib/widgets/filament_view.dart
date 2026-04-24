@@ -30,10 +30,7 @@ class FilamentViewState extends State<FilamentView> {
   @override
   Widget build(BuildContext context) {
     final spools = context.watch<AvailableFilaments>();
-    final spool = spools.spools.firstWhere(
-      (s) => s.id == widget.spool.id,
-      orElse: () => widget.spool,
-    );
+    final spool = spools.spools.firstWhere((s) => s.id == widget.spool.id, orElse: () => widget.spool);
     DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
     deviceCapabilities.checkDevicesCapabilities();
     final Color filamentColor = spool.color;
@@ -51,18 +48,11 @@ class FilamentViewState extends State<FilamentView> {
                   child: SizedBox(
                     height: 200,
                     child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: spool.color,
-                      ),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: spool.color),
                       child: Center(
                         child: Text(
                           spool.material,
-                          style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            color: filamentConformTextColor,
-                          ),
+                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: filamentConformTextColor),
                         ),
                       ),
                     ),
@@ -72,48 +62,20 @@ class FilamentViewState extends State<FilamentView> {
             ),
             if (spool.assignment != null)
               Chip(
-                label: Text(
-                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}",
-                ),
+                label: Text("${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}"),
                 backgroundColor: Colors.purple.withValues(alpha: 0.3),
               ),
 
-            InfoCard(
-              icon: Icons.color_lens,
-              title: "Color Name",
-              value: spool.colorName,
-              apiname: "color_name",
-              spool: spool,
-            ),
-            InfoCard(
-              icon: MdiIcons.printer3DNozzle,
-              title: "Material",
-              value: spool.material,
-              apiname: "material",
-              spool: spool,
-            ),
-            InfoCard(
-              icon: MdiIcons.factoryIcon,
-              title: "Brand",
-              value: spool.brand,
-              apiname: "brand",
-              spool: spool,
-            ),
-            InfoCard(
-              icon: MdiIcons.shape,
-              title: "Subtype",
-              value: spool.subtype,
-              apiname: "subtype",
-              spool: spool,
-            ),
+            InfoCard(icon: Icons.color_lens, title: "Color Name", value: spool.colorName, apiname: "color_name", spool: spool),
+            InfoCard(icon: MdiIcons.printer3DNozzle, title: "Material", value: spool.material, apiname: "material", spool: spool),
+            InfoCard(icon: MdiIcons.factoryIcon, title: "Brand", value: spool.brand, apiname: "brand", spool: spool),
+            InfoCard(icon: MdiIcons.shape, title: "Subtype", value: spool.subtype, apiname: "subtype", spool: spool),
             InfoCard(
               icon: MdiIcons.weight,
               title: "Weight",
-              value:
-                  "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
+              value: "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
               spoolColor: context.appColor.primary,
-              progress:
-                  (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
+              progress: (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
             ),
             InfoCard(
               icon: MdiIcons.qrcodeEdit,
@@ -125,16 +87,10 @@ class FilamentViewState extends State<FilamentView> {
               icon: MdiIcons.contactlessPayment,
               title: "Assigned NFC-Tag",
               value: spool.nfcid != null ? "Yes" : "No",
-              more: deviceCapabilities.isNfcAvailable
-                  ? NfcMore(spool: spool)
-                  : null,
+              more: deviceCapabilities.isNfcAvailable ? NfcMore(spool: spool) : null,
               onTap: !deviceCapabilities.isNfcAvailable
                   ? () {
-                      showSnackbar(
-                        context,
-                        "NFC is not available on this device",
-                        context.appColor.error,
-                      );
+                      showSnackbar(context, "NFC is not available on this device", context.appColor.error);
                     }
                   : null,
             ),
@@ -142,8 +98,7 @@ class FilamentViewState extends State<FilamentView> {
               Button(
                 onPressed: () async {
                   Future<void> archive() async {
-                    AvailableFilaments availableFilaments = context
-                        .read<AvailableFilaments>();
+                    AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
                     await availableFilaments.archive(spool.id.toString());
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -158,9 +113,7 @@ class FilamentViewState extends State<FilamentView> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text("Archive?"),
-                          content: const Text(
-                            "Do you really want to archive this Spool? It has more than 50g available.",
-                          ),
+                          content: const Text("Do you really want to archive this Spool? It has more than 50g available."),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -183,10 +136,7 @@ class FilamentViewState extends State<FilamentView> {
                 expanded: true,
                 backgroundColor: context.appColor.base3,
                 borderColor: context.appColor.error,
-                child: Text(
-                  "Archive Spool",
-                  style: TextStyle(color: context.appColor.error),
-                ),
+                child: Text("Archive Spool", style: TextStyle(color: context.appColor.error)),
               ),
             SizedBox(height: 20),
           ],
@@ -197,12 +147,7 @@ class FilamentViewState extends State<FilamentView> {
 }
 
 class FilamentViewScreen extends StatefulWidget {
-  const FilamentViewScreen({
-    super.key,
-    required this.spool,
-    this.editable = false,
-    this.useScaffold = false,
-  });
+  const FilamentViewScreen({super.key, required this.spool, this.editable = false, this.useScaffold = false});
   final Spool spool;
   final bool editable;
   final bool useScaffold;
@@ -256,12 +201,7 @@ class _NfcMoreState extends State<NfcMore> {
                   ),
                 ],
               ),
-              if (widget.spool.nfcid != null)
-                InfoCard(
-                  title: "Value",
-                  value: widget.spool.nfcid,
-                  icon: MdiIcons.identifier,
-                ),
+              if (widget.spool.nfcid != null) InfoCard(title: "Value", value: widget.spool.nfcid, icon: MdiIcons.identifier),
               InfoCard(
                 title: "Assign NFC-Tag",
                 value: "",
@@ -294,11 +234,7 @@ class _NfcMoreState extends State<NfcMore> {
     if (res) {
       showSnackbar(context, "Unassigned NFC-Code", context.appColor.success);
     } else {
-      showSnackbar(
-        context,
-        "There was a problem unassigning the NFC-Tag",
-        context.appColor.error,
-      );
+      showSnackbar(context, "There was a problem unassigning the NFC-Tag", context.appColor.error);
     }
     if (!mounted) return;
     Navigator.pop(context);
@@ -315,22 +251,15 @@ class _NfcMoreState extends State<NfcMore> {
     );
     if (res == null) return;
     if (!mounted) return;
-    final AvailableFilaments availableFilaments = context
-        .read<AvailableFilaments>();
+    final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
     if (availableFilaments.spools.isNotEmpty) {
-      showSnackbar(
-        context,
-        "There is already a Spool assigned to this NFC-Tag",
-        context.appColor.error,
-      );
+      showSnackbar(context, "There is already a Spool assigned to this NFC-Tag", context.appColor.error);
     } else {
       final bool success = await addNfcIdReq(context, widget.spool, res);
       if (!mounted) return;
       showSnackbar(
         context,
-        success
-            ? "Successfully assigned NFC-Tag to this Spool!"
-            : "Could NOT assign this NFC-Tag to the spool!",
+        success ? "Successfully assigned NFC-Tag to this Spool!" : "Could NOT assign this NFC-Tag to the spool!",
         success == true ? context.appColor.success : context.appColor.error,
       );
     }
@@ -383,11 +312,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                                 child: Center(
                                   child: AutoSizeText(
                                     "No assigned QR-Code",
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 100,
-                                    ),
+                                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 100),
                                     maxLines: 1,
                                   ),
                                 ),
@@ -398,12 +323,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                 ],
               ),
               SizedBox(height: 50),
-              if (widget.spool.qrcode != null)
-                InfoCard(
-                  title: "Value",
-                  value: widget.spool.qrcode,
-                  icon: MdiIcons.identifier,
-                ),
+              if (widget.spool.qrcode != null) InfoCard(title: "Value", value: widget.spool.qrcode, icon: MdiIcons.identifier),
               InfoCard(
                 title: "Assign QR-Code",
                 value: "",
@@ -436,11 +356,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     if (res) {
       showSnackbar(context, "Unassigned QR-Code", context.appColor.success);
     } else {
-      showSnackbar(
-        context,
-        "There was a problem unassigning the QR-Code",
-        context.appColor.error,
-      );
+      showSnackbar(context, "There was a problem unassigning the QR-Code", context.appColor.error);
     }
     if (!mounted) return;
     Navigator.pop(context);
@@ -457,18 +373,11 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     );
     if (res == null) return;
     if (!mounted) return;
-    final AvailableFilaments availableFilaments = context
-        .read<AvailableFilaments>();
-    final List alreadyAssigned = await availableFilaments.getSpoolsByQrCode(
-      res,
-    );
+    final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+    final List alreadyAssigned = await availableFilaments.getSpoolsByQrCode(res);
     if (!mounted) return;
     if (alreadyAssigned.isNotEmpty) {
-      showSnackbar(
-        context,
-        "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}",
-        context.appColor.error,
-      );
+      showSnackbar(context, "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}", context.appColor.error);
       return;
     }
     if (!mounted) return;
@@ -476,9 +385,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     if (!mounted) return;
     showSnackbar(
       context,
-      success
-          ? "Successfully assigned QR-Code to this Spool!"
-          : "Could NOT assign this QR-Code to the spool!",
+      success ? "Successfully assigned QR-Code to this Spool!" : "Could NOT assign this QR-Code to the spool!",
       success == true ? context.appColor.success : context.appColor.error,
     );
     Navigator.pop(context);
@@ -516,10 +423,7 @@ class _ColorNameMoreState extends State<ColorNameMore> {
       body: Row(
         children: [
           Flexible(
-            child: TextInput(
-              controller: _colorNameController,
-              hinttext: "Color Name",
-            ),
+            child: TextInput(controller: _colorNameController, hinttext: "Color Name"),
           ),
           Button(
             onPressed: () {

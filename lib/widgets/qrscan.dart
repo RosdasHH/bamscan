@@ -21,10 +21,7 @@ class _QrscanState extends State<Qrscan> {
         return Stack(
           children: [
             ColorFiltered(
-              colorFilter: ColorFilter.mode(
-                Colors.black.withValues(alpha: 0.6),
-                BlendMode.srcOut,
-              ),
+              colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.6), BlendMode.srcOut),
               child: Stack(
                 children: [
                   Center(
@@ -34,10 +31,7 @@ class _QrscanState extends State<Qrscan> {
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: context.appColor.base1,
-                            width: 10,
-                          ),
+                          border: Border.all(color: context.appColor.base1, width: 10),
                         ),
                       ),
                     ),
@@ -59,16 +53,10 @@ class _QrscanState extends State<Qrscan> {
           Navigator.pop(context, qr);
         } else {
           found = true;
-          final List<Spool> spools = widget.spools!
-              .where((x) => x.qrcode == qr)
-              .toList();
+          final List<Spool> spools = widget.spools!.where((x) => x.qrcode == qr).toList();
           if (spools.length > 1) {
             Navigator.pop(context);
-            showSnackbar(
-              context,
-              "Multiple Assignments: ${spools.where((x) => x.qrcode == qr).map((x) => x.id)}",
-              context.appColor.error,
-            );
+            showSnackbar(context, "Multiple Assignments: ${spools.where((x) => x.qrcode == qr).map((x) => x.id)}", context.appColor.error);
           }
           if (spools.length == 1) {
             Navigator.pop(context, spools.first);
@@ -88,10 +76,7 @@ class CornerBorder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size.square(size),
-      painter: _CornerPainter(context.appColor.base1),
-    );
+    return CustomPaint(size: Size.square(size), painter: _CornerPainter(context.appColor.base1));
   }
 }
 
@@ -125,12 +110,7 @@ class _CornerPainter extends CustomPainter {
 
     path.moveTo(size.width, size.height - r - cornerLength);
     path.lineTo(size.width, size.height - r);
-    path.quadraticBezierTo(
-      size.width,
-      size.height,
-      size.width - r,
-      size.height,
-    );
+    path.quadraticBezierTo(size.width, size.height, size.width - r, size.height);
     path.lineTo(size.width - r - cornerLength, size.height);
 
     path.moveTo(r + cornerLength, size.height);

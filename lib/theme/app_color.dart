@@ -31,10 +31,7 @@ class AppColor extends ThemeExtension<AppColor> {
   ThemeExtension<AppColor> copyWith() => this;
 
   @override
-  ThemeExtension<AppColor> lerp(
-    covariant ThemeExtension<AppColor>? other,
-    double t,
-  ) => this;
+  ThemeExtension<AppColor> lerp(covariant ThemeExtension<AppColor>? other, double t) => this;
 }
 
 class DarkColor extends AppColor {

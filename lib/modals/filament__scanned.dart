@@ -12,14 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FilamentScanned extends StatefulWidget {
-  const FilamentScanned({
-    super.key,
-    required this.scannedSpool,
-    required this.printerid,
-    required this.amsid,
-    required this.trayid,
-    this.isExternalSpool = false,
-  });
+  const FilamentScanned({super.key, required this.scannedSpool, required this.printerid, required this.amsid, required this.trayid, this.isExternalSpool = false});
   final Spool scannedSpool;
   final String printerid;
   final String amsid;
@@ -44,10 +37,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
   }
 
   Future<void> _loadMappings() async {
-    final availableFilaments = Provider.of<AvailableFilaments>(
-      context,
-      listen: false,
-    );
+    final availableFilaments = Provider.of<AvailableFilaments>(context, listen: false);
     mappings = await availableFilaments.getAllFilamentMappings();
     if (mappings == null) return;
     //Slot data if spool is already assigned
@@ -59,11 +49,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
 
     if (!mounted) return;
     if (spoolAssignment != null) {
-      showSnackbar(
-        context,
-        "This spool is already assigned to a slot.",
-        context.appColor.error,
-      );
+      showSnackbar(context, "This spool is already assigned to a slot.", context.appColor.error);
     }
 
     setState(() {
@@ -83,10 +69,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.popUntil(
-              context,
-              (route) => route.settings.name == "ams",
-            );
+            Navigator.popUntil(context, (route) => route.settings.name == "ams");
           });
         },
         child: Scaffold(
@@ -130,16 +113,12 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                     }
                     while (spoolLoaded == false) {
                       AvailablePrinters printers = AvailablePrinters();
-                      final List<Ams> allams = await printers.getAmsByPrinterId(
-                        widget.printerid,
-                      );
+                      final List<Ams> allams = await printers.getAmsByPrinterId(widget.printerid);
                       for (Ams ams in allams) {
                         if (ams.id.toString() == widget.amsid) {
                           for (TraySlot tray in ams.tray) {
                             if (tray.id.toString() == widget.trayid) {
-                              if (tray.trayColor != "" &&
-                                  tray.trayType != "" &&
-                                  tray.trayInfoIdx != "") {
+                              if (tray.trayColor != "" && tray.trayType != "" && tray.trayInfoIdx != "") {
                                 setState(() {
                                   spoolLoaded = true;
                                 });
@@ -158,15 +137,8 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                       widget.scannedSpool.id.toString(),
                     );
                     if (!context.mounted) return;
-                    showSnackbar(
-                      context,
-                      configured ? "Spool assigned" : "Spool NOT assigned",
-                      null,
-                    );
-                    Navigator.popUntil(
-                      context,
-                      (route) => route.settings.name == "ams",
-                    );
+                    showSnackbar(context, configured ? "Spool assigned" : "Spool NOT assigned", null);
+                    Navigator.popUntil(context, (route) => route.settings.name == "ams");
                   },
                   shape: const CircleBorder(),
                   child: const Icon(Icons.check),

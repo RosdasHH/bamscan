@@ -28,11 +28,7 @@ class _NfcReadPageState extends State<NfcReadPage> {
                   ? (spool) {
                       Navigator.pop(context, spool);
                       if (spool == null) {
-                        showSnackbar(
-                          context,
-                          "No Spool found!",
-                          context.appColor.error,
-                        );
+                        showSnackbar(context, "No Spool found!", context.appColor.error);
                       }
                     }
                   : null,

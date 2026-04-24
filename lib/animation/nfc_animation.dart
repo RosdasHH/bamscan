@@ -7,15 +7,13 @@ class NfcAnimation extends StatefulWidget {
   State<NfcAnimation> createState() => _NfcAnimationState();
 }
 
-class _NfcAnimationState extends State<NfcAnimation>
-    with SingleTickerProviderStateMixin {
+class _NfcAnimationState extends State<NfcAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _c;
 
   @override
   void initState() {
     super.initState();
-    _c = AnimationController(vsync: this, duration: const Duration(seconds: 3))
-      ..repeat();
+    _c = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat();
   }
 
   @override
@@ -39,18 +37,7 @@ class _NfcAnimationState extends State<NfcAnimation>
               builder: (context, _) {
                 final t = _c.value;
 
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    _glow(),
-
-                    _wave(size * 0.9, t),
-                    _wave(size * 0.7, (t + 0.33) % 1),
-                    _wave(size * 0.5, (t + 0.66) % 1),
-
-                    _core(),
-                  ],
-                );
+                return Stack(alignment: Alignment.center, children: [_glow(), _wave(size * 0.9, t), _wave(size * 0.7, (t + 0.33) % 1), _wave(size * 0.5, (t + 0.66) % 1), _core()]);
               },
             ),
           );
@@ -71,10 +58,7 @@ class _NfcAnimationState extends State<NfcAnimation>
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.blueAccent.withValues(alpha: 0.5),
-              width: 2,
-            ),
+            border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.5), width: 2),
           ),
         ),
       ),
@@ -88,12 +72,7 @@ class _NfcAnimationState extends State<NfcAnimation>
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            Colors.blue.withValues(alpha: 0.25),
-            Colors.blue.withValues(alpha: 0.05),
-          ],
-        ),
+        gradient: RadialGradient(colors: [Colors.blue.withValues(alpha: 0.25), Colors.blue.withValues(alpha: 0.05)]),
         border: Border.all(color: Colors.blue.withValues(alpha: 0.4), width: 1),
       ),
       child: const Icon(Icons.contactless, size: 44, color: Colors.blue),
@@ -106,13 +85,7 @@ class _NfcAnimationState extends State<NfcAnimation>
       height: 260,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withValues(alpha: 0.25),
-            blurRadius: 60,
-            spreadRadius: 20,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.blue.withValues(alpha: 0.25), blurRadius: 60, spreadRadius: 20)],
       ),
     );
   }

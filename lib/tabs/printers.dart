@@ -53,8 +53,7 @@ class _PrinterListState extends State<PrinterList> {
   }
 
   Future<void> fetch() async {
-    final AvailablePrinters availablePrinters = context
-        .read<AvailablePrinters>();
+    final AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
     if (!availablePrinters.printersSet) {
       setState(() {
         _isLoading = true;
@@ -101,12 +100,8 @@ class _PrinterListState extends State<PrinterList> {
                 builder: (BuildContext context) {
                   final status = printer.status;
                   if (status == null) return SizedBox.shrink();
-                  final String connected = status.connected
-                      ? "Connected"
-                      : "Not connected";
-                  final Color connectedColor = status.connected
-                      ? context.appColor.success
-                      : context.appColor.error;
+                  final String connected = status.connected ? "Connected" : "Not connected";
+                  final Color connectedColor = status.connected ? context.appColor.success : context.appColor.error;
                   final double progress = status.progress / 100;
                   final String state = status.state;
                   final stateColor = state == "FAILED"
@@ -128,8 +123,7 @@ class _PrinterListState extends State<PrinterList> {
                           context,
                           MaterialPageRoute(
                             settings: const RouteSettings(name: "ams"),
-                            builder: (context) =>
-                                AmsSelection(printerid: printer.id.toString()),
+                            builder: (context) => AmsSelection(printerid: printer.id.toString()),
                           ),
                         );
                       },
@@ -144,8 +138,7 @@ class _PrinterListState extends State<PrinterList> {
                                 dimension: 75,
                                 child: Image.network(
                                   "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      SizedBox.expand(),
+                                  errorBuilder: (context, error, stackTrace) => SizedBox.expand(),
                                 ),
                               ),
                             ),
@@ -156,23 +149,14 @@ class _PrinterListState extends State<PrinterList> {
                                   Text(
                                     printer.name,
                                     overflow: TextOverflow.visible,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                   ),
-                                  Text(
-                                    printer.model,
-                                    style: TextStyle(fontSize: 15),
-                                  ),
+                                  Text(printer.model, style: TextStyle(fontSize: 15)),
                                   Wrap(
                                     spacing: 10,
                                     runSpacing: 5,
                                     children: [
-                                      BadgeCard(
-                                        text: connected,
-                                        color: connectedColor,
-                                      ),
+                                      BadgeCard(text: connected, color: connectedColor),
                                       BadgeCard(text: state, color: stateColor),
                                     ],
                                   ),
@@ -184,17 +168,8 @@ class _PrinterListState extends State<PrinterList> {
                               child: Stack(
                                 alignment: AlignmentGeometry.center,
                                 children: [
-                                  SizedBox.square(
-                                    dimension: 50,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 7,
-                                      value: progress,
-                                    ),
-                                  ),
-                                  Text(
-                                    "${(progress * 100).toInt()}%",
-                                    style: TextStyle(fontSize: 15),
-                                  ),
+                                  SizedBox.square(dimension: 50, child: CircularProgressIndicator(strokeWidth: 7, value: progress)),
+                                  Text("${(progress * 100).toInt()}%", style: TextStyle(fontSize: 15)),
                                 ],
                               ),
                             ),
@@ -221,10 +196,7 @@ class IconWithCicle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.3),
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.3), shape: BoxShape.circle),
       child: Padding(
         padding: EdgeInsets.all(3),
         child: Icon(icon, color: color.withValues(alpha: 0.7)),
@@ -244,13 +216,7 @@ class CardWithoutMat extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.appColor.base3,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: child,
     );

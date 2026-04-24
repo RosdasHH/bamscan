@@ -19,41 +19,22 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   final TextEditingController _bambuddyUrlController = TextEditingController();
-  final TextEditingController _bambuddyAPIKeyController =
-      TextEditingController();
+  final TextEditingController _bambuddyAPIKeyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     List<PageViewModel> listPagesViewModel = [
       PageViewModel(
         titleWidget: Text(
           "Welcome to BamScan",
-          style: TextStyle(
-            color: context.appColor.primaryText,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: context.appColor.primaryText, fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        bodyWidget: Text(
-          "Manage your filaments more easily.",
-          style: TextStyle(color: context.appColor.primaryText, fontSize: 18),
-        ),
-        image: SvgPicture.asset(
-          "assets/lens.svg",
-          height: 250.0,
-          colorFilter: ColorFilter.mode(
-            context.appColor.primaryText,
-            BlendMode.srcIn,
-          ),
-        ),
+        bodyWidget: Text("Manage your filaments more easily.", style: TextStyle(color: context.appColor.primaryText, fontSize: 18)),
+        image: SvgPicture.asset("assets/lens.svg", height: 250.0, colorFilter: ColorFilter.mode(context.appColor.primaryText, BlendMode.srcIn)),
       ),
       PageViewModel(
         titleWidget: Text(
           "Connect Bambuddy",
-          style: TextStyle(
-            color: context.appColor.primaryText,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: context.appColor.primaryText, fontSize: 24, fontWeight: FontWeight.bold),
         ),
         bodyWidget: SingleChildScrollView(
           child: Column(
@@ -63,24 +44,14 @@ class _OnboardingState extends State<Onboarding> {
               Row(
                 children: [
                   Expanded(
-                    child: TextInput(
-                      controller: _bambuddyUrlController,
-                      labeltext: "Bambuddy URL:PORT",
-                      hinttext: "e.g. http://127.0.0.1:8000",
-                      autofocus: true,
-                    ),
+                    child: TextInput(controller: _bambuddyUrlController, labeltext: "Bambuddy URL:PORT", hinttext: "e.g. http://127.0.0.1:8000", autofocus: true),
                   ),
                 ],
               ),
               Row(
                 children: [
                   Expanded(
-                    child: TextInput(
-                      controller: _bambuddyAPIKeyController,
-                      labeltext: "Bambuddy API Key",
-                      hinttext: "Bambuddy WebUI -> Settings -> API Keys",
-                      obscure: true,
-                    ),
+                    child: TextInput(controller: _bambuddyAPIKeyController, labeltext: "Bambuddy API Key", hinttext: "Bambuddy WebUI -> Settings -> API Keys", obscure: true),
                   ),
                 ],
               ),
@@ -96,18 +67,9 @@ class _OnboardingState extends State<Onboarding> {
         child: IntroductionScreen(
           globalBackgroundColor: context.appColor.base1,
           pages: listPagesViewModel,
-          next: const Text(
-            "Next",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          done: const Text(
-            "Done",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          back: const Text(
-            "Back",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          next: const Text("Next", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          done: const Text("Done", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          back: const Text("Back", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           onDone: () async {
             if (!await checkurl(context.appColor)) {
               return;
@@ -117,28 +79,15 @@ class _OnboardingState extends State<Onboarding> {
               return;
             }
             StorageService storageService = StorageService();
-            storageService.setBambuddyUrl(
-              stripUrl(_bambuddyUrlController.text),
-            );
+            storageService.setBambuddyUrl(stripUrl(_bambuddyUrlController.text));
             storageService.saveToken(_bambuddyAPIKeyController.text);
             storageService.setFirstUse(false);
             StorageService().loadFromStorage();
             storageService = StorageService();
           },
-          nextStyle: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(
-              context.appColor.primary,
-            ),
-          ),
-          doneStyle: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(
-              context.appColor.primary,
-            ),
-          ),
-          dotsDecorator: DotsDecorator(
-            activeColor: context.appColor.primary,
-            color: Colors.grey,
-          ),
+          nextStyle: ButtonStyle(foregroundColor: WidgetStateProperty.all(context.appColor.primary)),
+          doneStyle: ButtonStyle(foregroundColor: WidgetStateProperty.all(context.appColor.primary)),
+          dotsDecorator: DotsDecorator(activeColor: context.appColor.primary, color: Colors.grey),
         ),
       ),
     );
@@ -146,21 +95,12 @@ class _OnboardingState extends State<Onboarding> {
 
   Future<bool> checkapikey(AppColor appColor) async {
     ApiService apiService = context.read<ApiService>();
-    bool? apikeystate = await apiService.checkApiKey(
-      stripUrl(_bambuddyUrlController.text),
-      _bambuddyAPIKeyController.text,
-    );
+    bool? apikeystate = await apiService.checkApiKey(stripUrl(_bambuddyUrlController.text), _bambuddyAPIKeyController.text);
     if (apikeystate == true) {
       return true;
     } else {
       if (!mounted) return false;
-      showSnackbar(
-        context,
-        apikeystate == false
-            ? "API Key is invalid!"
-            : "Error while checking API Key!",
-        apikeystate == true ? appColor.success : appColor.error,
-      );
+      showSnackbar(context, apikeystate == false ? "API Key is invalid!" : "Error while checking API Key!", apikeystate == true ? appColor.success : appColor.error);
       return false;
     }
   }
@@ -173,11 +113,7 @@ class _OnboardingState extends State<Onboarding> {
       return true;
     } else {
       if (!mounted) return false;
-      showSnackbar(
-        context,
-        "No Bambuddy Server found!",
-        health == true ? appColor.success : appColor.error,
-      );
+      showSnackbar(context, "No Bambuddy Server found!", health == true ? appColor.success : appColor.error);
       return false;
     }
   }

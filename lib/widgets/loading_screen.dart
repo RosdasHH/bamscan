@@ -2,12 +2,7 @@ import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatelessWidget {
-  const LoadingScreen({
-    super.key,
-    required this.child,
-    required this.loading,
-    this.loadingMessage,
-  });
+  const LoadingScreen({super.key, required this.child, required this.loading, this.loadingMessage});
   final bool loading;
   final String? loadingMessage;
   final Widget child;
@@ -27,10 +22,7 @@ class LoadingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
-                if (loadingMessage != null) ...[
-                  SizedBox(height: 20),
-                  Text(loadingMessage!),
-                ],
+                if (loadingMessage != null) ...[SizedBox(height: 20), Text(loadingMessage!)],
               ],
             ),
           ),

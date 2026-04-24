@@ -30,9 +30,7 @@ class AvailablePrinters extends ChangeNotifier {
     try {
       final http.Response res = await ApiService().apiReq("/printers/");
       final List<dynamic> jsonList = jsonDecode(res.body) as List<dynamic>;
-      final List<Printer> printers = jsonList
-          .map((e) => Printer.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final List<Printer> printers = jsonList.map((e) => Printer.fromJson(e as Map<String, dynamic>)).toList();
       for (Printer printer in printers) {
         printer.status = await getPrinterStatus(printer.id);
       }
@@ -45,13 +43,9 @@ class AvailablePrinters extends ChangeNotifier {
     final List<dynamic> amsList = jsonDecode(res.body)["ams"] as List;
     final List<dynamic> vtrayList = jsonDecode(res.body)["vt_tray"] as List;
 
-    final List<Ams> ams = amsList
-        .map((e) => Ams.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final List<Ams> ams = amsList.map((e) => Ams.fromJson(e as Map<String, dynamic>)).toList();
     if (StorageService().externalSpool) {
-      final List<TraySlot> vtTray = vtrayList
-          .map((e) => TraySlot.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final List<TraySlot> vtTray = vtrayList.map((e) => TraySlot.fromJson(e as Map<String, dynamic>)).toList();
       final Ams vttrayams = Ams(id: 255, tray: vtTray, isExternalSpool: true);
       ams.add(vttrayams);
     }
@@ -67,10 +61,7 @@ class AvailablePrinters extends ChangeNotifier {
 
   Future<bool> resetSlot(String printerId, String amsId, String trayId) async {
     try {
-      final res = await ApiService().apiPost(
-        "/printers/$printerId/ams/$amsId/tray/$trayId/reset",
-        {},
-      );
+      final res = await ApiService().apiPost("/printers/$printerId/ams/$amsId/tray/$trayId/reset", {});
       return res.statusCode == 200;
     } catch (_) {
       return false;

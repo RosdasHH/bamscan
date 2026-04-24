@@ -3,18 +3,7 @@ import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InfoCard extends StatefulWidget {
-  const InfoCard({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.icon,
-    this.progress,
-    this.spoolColor,
-    this.more,
-    this.onTap,
-    this.apiname,
-    this.spool,
-  });
+  const InfoCard({super.key, required this.title, required this.value, required this.icon, this.progress, this.spoolColor, this.more, this.onTap, this.apiname, this.spool});
   final IconData icon;
   final String title;
   final Object? value;
@@ -59,10 +48,7 @@ class _InfoCardState extends State<InfoCard> {
                         widget.onTap!();
                       }
                       if (widget.more != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => widget.more!),
-                        );
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => widget.more!));
                       }
                       //if (widget.apiname != null) {
                       //  showDialog(
@@ -142,13 +128,7 @@ class _InfoCardState extends State<InfoCard> {
                           alignment: Alignment.centerLeft,
                           child: FractionallySizedBox(
                             widthFactor: widget.progress!.clamp(0.0, 1.0),
-                            child: SizedBox.expand(
-                              child: Container(
-                                color: widget.spoolColor!.withValues(
-                                  alpha: 0.3,
-                                ),
-                              ),
-                            ),
+                            child: SizedBox.expand(child: Container(color: widget.spoolColor!.withValues(alpha: 0.3))),
                           ),
                         ),
                       ),
@@ -164,18 +144,9 @@ class _InfoCardState extends State<InfoCard> {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(right: 8),
-                                  child: Icon(
-                                    widget.icon,
-                                    color: context.appColor.primary,
-                                  ),
+                                  child: Icon(widget.icon, color: context.appColor.primary),
                                 ),
-                                Text(
-                                  widget.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                                Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                               ],
                             ),
                             Expanded(
@@ -185,16 +156,12 @@ class _InfoCardState extends State<InfoCard> {
                                   SizedBox(width: 5),
                                   Flexible(
                                     child: widget.value is String
-                                        ? Text(
-                                            widget.value! as String,
-                                            overflow: TextOverflow.ellipsis,
-                                          )
+                                        ? Text(widget.value! as String, overflow: TextOverflow.ellipsis)
                                         : widget.value is Widget
                                         ? widget.value as Widget
                                         : SizedBox.shrink(),
                                   ),
-                                  if (widget.more != null)
-                                    Icon(Icons.chevron_right_rounded),
+                                  if (widget.more != null) Icon(Icons.chevron_right_rounded),
                                 ],
                               ),
                             ),

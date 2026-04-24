@@ -83,9 +83,7 @@ class Spool {
         brand: json['brand'] as String? ?? "",
         labelWeight: (json['label_weight'] as num?)?.toInt() ?? 0,
         coreWeight: (json['core_weight'] as num?)?.toInt() ?? 0,
-        coreWeightCatalogId: json['core_weight_catalog_id'] != null
-            ? (json['core_weight_catalog_id'] as num).toInt()
-            : null,
+        coreWeightCatalogId: json['core_weight_catalog_id'] != null ? (json['core_weight_catalog_id'] as num).toInt() : null,
         weightUsed: (json['weight_used'] as num?)?.toInt() ?? 0,
         slicerFilament: json['slicer_filament'] as String? ?? "",
         slicerFilamentName: json['slicer_filament_name'] as String? ?? "",
@@ -99,31 +97,17 @@ class Spool {
         costPerKg: (json['cost_per_kg'] as num?)?.toDouble() ?? 0.0,
         weightLocked: json['weight_locked'] as bool,
         lastScaleWeight: json['last_scale_weight'] as int? ?? 0,
-        lastWeighedAt: json['last_weighed_at'] != null
-            ? DateTime.parse(json['last_weighed_at'] as String)
-            : null,
+        lastWeighedAt: json['last_weighed_at'] != null ? DateTime.parse(json['last_weighed_at'] as String) : null,
         id: json['id'] as int,
-        addedFull: json['added_full'] != null
-            ? DateTime.parse(json['added_full'] as String)
-            : null,
-        lastUsed: json['last_used'] != null
-            ? DateTime.parse(json['last_used'] as String)
-            : null,
-        encodeTime: json['encode_time'] != null
-            ? DateTime.parse(json['encode_time'] as String)
-            : null,
-        archivedAt: json['archived_at'] != null
-            ? DateTime.parse(json['archived_at'] as String)
-            : null,
+        addedFull: json['added_full'] != null ? DateTime.parse(json['added_full'] as String) : null,
+        lastUsed: json['last_used'] != null ? DateTime.parse(json['last_used'] as String) : null,
+        encodeTime: json['encode_time'] != null ? DateTime.parse(json['encode_time'] as String) : null,
+        archivedAt: json['archived_at'] != null ? DateTime.parse(json['archived_at'] as String) : null,
         createdAt: DateTime.parse(json['created_at'] as String? ?? ""),
         updatedAt: DateTime.parse(json['updated_at'] as String? ?? ""),
         kProfiles: json['k_profiles'] as List<dynamic>? ?? [],
-        qrcode: (json["note"] as String?) != null
-            ? parseQrCodeFromString(json["note"])
-            : null,
-        nfcid: (json["note"] as String?) != null
-            ? parseNfcIdentifierFromString(json["note"])
-            : null,
+        qrcode: (json["note"] as String?) != null ? parseQrCodeFromString(json["note"]) : null,
+        nfcid: (json["note"] as String?) != null ? parseNfcIdentifierFromString(json["note"]) : null,
       );
     } catch (e) {
       rethrow;
@@ -136,11 +120,7 @@ class Assignment {
   final int trayId;
   final String printerName;
 
-  Assignment({
-    required this.amsId,
-    required this.trayId,
-    required this.printerName,
-  });
+  Assignment({required this.amsId, required this.trayId, required this.printerName});
 
   Map<String, dynamic> toMap() {
     return {"amsId": amsId, "trayId": trayId, "printerName": printerName};

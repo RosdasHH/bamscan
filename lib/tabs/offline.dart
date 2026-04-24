@@ -6,12 +6,7 @@ class Offline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("No connection to Server."),
-        ],
-      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("No connection to Server.")]),
     );
   }
 }

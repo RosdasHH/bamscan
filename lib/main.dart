@@ -52,16 +52,11 @@ class _MyAppState extends State<MyApp> {
 
   bool storageLoaded = false;
 
-  final PersistentTabController _controller = PersistentTabController(
-    initialIndex: 1,
-  );
+  final PersistentTabController _controller = PersistentTabController(initialIndex: 1);
 
   List<Widget> _buildScreens() {
     return [
-      Scaffold(
-        backgroundColor: context.appColor.base1,
-        body: const FilamentTab(),
-      ),
+      Scaffold(backgroundColor: context.appColor.base1, body: const FilamentTab()),
       Scaffold(backgroundColor: context.appColor.base1, body: const Printers()),
       Scaffold(backgroundColor: context.appColor.base1, body: const Settings()),
     ];
@@ -129,15 +124,11 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: context.appColor.base3,
           isVisible: true,
           animationSettings: const NavBarAnimationSettings(
-            navBarItemAnimation: ItemAnimationSettings(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-            ),
+            navBarItemAnimation: ItemAnimationSettings(duration: Duration(milliseconds: 200), curve: Curves.easeInOut),
             screenTransitionAnimation: ScreenTransitionAnimationSettings(
               animateTabTransition: true,
               duration: Duration(milliseconds: 150),
-              screenTransitionAnimationType:
-                  ScreenTransitionAnimationType.slide,
+              screenTransitionAnimationType: ScreenTransitionAnimationType.slide,
               curve: Curves.easeInOut,
             ),
           ),

@@ -43,10 +43,7 @@ class ApiService extends ChangeNotifier {
 
   Future<bool?> checkApiKey(String url, String apikey) async {
     try {
-      http.Response res = await http.get(
-        Uri.parse("$url${Globals.apinamespace}/users"),
-        headers: {'X-API-Key': apikey},
-      );
+      http.Response res = await http.get(Uri.parse("$url${Globals.apinamespace}/users"), headers: {'X-API-Key': apikey});
       if (res.statusCode == 401) {
         _setReachable(false);
         return false;
@@ -65,12 +62,7 @@ class ApiService extends ChangeNotifier {
   Future<http.Response> apiReq(String apiEndpoint) async {
     try {
       http.Response res = await http
-          .get(
-            Uri.parse(
-              StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
-            ),
-            headers: {"x-api-key": StorageService().xapitoken},
-          )
+          .get(Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint), headers: {"x-api-key": StorageService().xapitoken})
           .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
@@ -84,12 +76,7 @@ class ApiService extends ChangeNotifier {
   Future<http.Response> apiDel(String apiEndpoint) async {
     try {
       http.Response res = await http
-          .delete(
-            Uri.parse(
-              StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
-            ),
-            headers: {"x-api-key": StorageService().xapitoken},
-          )
+          .delete(Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint), headers: {"x-api-key": StorageService().xapitoken})
           .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
@@ -100,20 +87,12 @@ class ApiService extends ChangeNotifier {
     }
   }
 
-  Future<http.Response> apiPost(
-    String apiEndpoint,
-    Map<String, dynamic> data,
-  ) async {
+  Future<http.Response> apiPost(String apiEndpoint, Map<String, dynamic> data) async {
     try {
       http.Response res = await http
           .post(
-            Uri.parse(
-              StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
-            ),
-            headers: {
-              "x-api-key": StorageService().xapitoken,
-              'Content-Type': 'application/json',
-            },
+            Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint),
+            headers: {"x-api-key": StorageService().xapitoken, 'Content-Type': 'application/json'},
             body: jsonEncode(data),
           )
           .timeout(Duration(seconds: 3));
@@ -140,20 +119,12 @@ class ApiService extends ChangeNotifier {
     }
   }
 
-  Future<http.Response> apiPatch(
-    String apiEndpoint,
-    Map<String, dynamic> data,
-  ) async {
+  Future<http.Response> apiPatch(String apiEndpoint, Map<String, dynamic> data) async {
     try {
       http.Response res = await http
           .patch(
-            Uri.parse(
-              StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint,
-            ),
-            headers: {
-              "x-api-key": StorageService().xapitoken,
-              'Content-Type': 'application/json',
-            },
+            Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint),
+            headers: {"x-api-key": StorageService().xapitoken, 'Content-Type': 'application/json'},
             body: jsonEncode(data),
           )
           .timeout(Duration(seconds: 3));

@@ -62,16 +62,13 @@ class _SettingsState extends State<Settings> {
                   widgets: [
                     TextInput(
                       controller: _bambuddyUrlController,
-                      onTapOutside: () => storageService.setBambuddyUrl(
-                        _bambuddyUrlController.text,
-                      ),
+                      onTapOutside: () => storageService.setBambuddyUrl(_bambuddyUrlController.text),
                       labeltext: "Bambuddy URL:PORT",
                       hinttext: "e.g. http://127.0.0.1:8000",
                     ),
                     TextInput(
                       controller: _xapiTokenController,
-                      onTapOutside: () =>
-                          storageService.saveToken(_xapiTokenController.text),
+                      onTapOutside: () => storageService.saveToken(_xapiTokenController.text),
                       obscure: true,
                       labeltext: "Bambuddy API Key",
                       hinttext: "Bambuddy Website -> Settings -> API Keys",
@@ -96,9 +93,7 @@ class _SettingsState extends State<Settings> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text("Are you sure?"),
-                              content: Text(
-                                "This will delete the Bambuddy URL and Bambuddy API Key from the app.",
-                              ),
+                              content: Text("This will delete the Bambuddy URL and Bambuddy API Key from the app."),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -130,9 +125,7 @@ class _SettingsState extends State<Settings> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text("Are you sure?"),
-                              content: Text(
-                                "This will delete all QR-Code mappings.",
-                              ),
+                              content: Text("This will delete all QR-Code mappings."),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -142,12 +135,9 @@ class _SettingsState extends State<Settings> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    final AvailableFilaments
-                                    availableFilaments = context
-                                        .read<AvailableFilaments>();
+                                    final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
                                     await availableFilaments.getAllSpools();
-                                    for (Spool spool
-                                        in availableFilaments.spools) {
+                                    for (Spool spool in availableFilaments.spools) {
                                       if (!context.mounted) {
                                         return;
                                       }
@@ -215,11 +205,7 @@ class SettingState extends State<Setting> {
       appBar: AppBar(title: Text(widget.title)),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: Column(
-          spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: widget.widgets,
-        ),
+        child: Column(spacing: 10, crossAxisAlignment: CrossAxisAlignment.start, children: widget.widgets),
       ),
     );
   }

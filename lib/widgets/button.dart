@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Button extends StatefulWidget {
-  const Button({
-    super.key,
-    required this.onPressed,
-    required this.child,
-    this.expanded = false,
-    this.backgroundColor,
-    this.borderColor,
-  });
+  const Button({super.key, required this.onPressed, required this.child, this.expanded = false, this.backgroundColor, this.borderColor});
 
   final Function()? onPressed;
   final Widget child;
@@ -36,9 +29,7 @@ class _ButtonState extends State<Button> {
             )
           : ElevatedButton(
               onPressed: widget.onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.backgroundColor,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: widget.backgroundColor),
               child: widget.child,
             ),
     );
