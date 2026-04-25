@@ -76,7 +76,7 @@ class CornerBorder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(size: Size.square(size), painter: _CornerPainter(context.appColor.base1));
+    return CustomPaint(size: Size.square(size), painter: _CornerPainter(Colors.white));
   }
 }
 

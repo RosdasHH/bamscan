@@ -3,7 +3,19 @@ import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InfoCard extends StatefulWidget {
-  const InfoCard({super.key, required this.title, required this.value, required this.icon, this.progress, this.spoolColor, this.more, this.onTap, this.apiname, this.spool});
+  const InfoCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    this.progress,
+    this.spoolColor,
+    this.more,
+    this.onTap,
+    this.apiname,
+    this.spool,
+    this.height = 70,
+  });
   final IconData icon;
   final String title;
   final Object? value;
@@ -13,6 +25,7 @@ class InfoCard extends StatefulWidget {
   final Function? onTap;
   final String? apiname;
   final Spool? spool;
+  final int height;
 
   @override
   State<InfoCard> createState() => _InfoCardState();
@@ -117,60 +130,57 @@ class _InfoCardState extends State<InfoCard> {
                     }
                   : null,
               borderRadius: BorderRadius.circular(16),
-              child: SizedBox(
-                height: 70,
-                child: Stack(
-                  children: [
-                    if (widget.progress != null && widget.spoolColor != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: FractionallySizedBox(
-                            widthFactor: widget.progress!.clamp(0.0, 1.0),
-                            child: SizedBox.expand(child: Container(color: widget.spoolColor!.withValues(alpha: 0.3))),
-                          ),
-                        ),
-                      ),
-                    Padding(
-                      padding: EdgeInsetsGeometry.all(20),
-                      child: SizedBox(
-                        height: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 8),
-                                  child: Icon(widget.icon, color: context.appColor.primary),
-                                ),
-                                Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                              ],
-                            ),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  SizedBox(width: 5),
-                                  Flexible(
-                                    child: widget.value is String
-                                        ? Text(widget.value! as String, overflow: TextOverflow.ellipsis)
-                                        : widget.value is Widget
-                                        ? widget.value as Widget
-                                        : SizedBox.shrink(),
-                                  ),
-                                  if (widget.more != null) Icon(Icons.chevron_right_rounded),
-                                ],
-                              ),
-                            ),
-                          ],
+              child: Stack(
+                children: [
+                  if (widget.progress != null && widget.spoolColor != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: widget.progress!.clamp(0.0, 1.0),
+                          child: Container(color: widget.spoolColor!.withValues(alpha: 0.3)),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  Padding(
+                    padding: EdgeInsetsGeometry.all(20),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: Icon(widget.icon, color: context.appColor.primary),
+                              ),
+                              Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                            ],
+                          ),
+
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: widget.value is String
+                                      ? Text(widget.value as String, overflow: TextOverflow.ellipsis)
+                                      : widget.value is Widget
+                                      ? widget.value as Widget
+                                      : const SizedBox.shrink(),
+                                ),
+                                if (widget.more != null) const Icon(Icons.chevron_right_rounded),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

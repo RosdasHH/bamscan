@@ -85,6 +85,16 @@ class AppTheme {
           return null;
         }),
       ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        textStyle: TextStyle(color: color.primaryText),
+        menuStyle: MenuStyle(
+          backgroundColor: WidgetStateProperty.all(color.base3),
+          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+          elevation: WidgetStateProperty.all(4),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(suffixIconColor: color.primaryText),
+      menuButtonTheme: MenuButtonThemeData(style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(color.primaryText))),
     );
   }
 }

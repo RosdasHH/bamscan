@@ -25,13 +25,21 @@ void main() {
         ChangeNotifierProvider(create: (_) => ApiService()),
         ChangeNotifierProvider(create: (_) => DeviceCapabilities()),
       ],
-      child: MaterialApp(
-        //showPerformanceOverlay: true,
-        title: "BamScan",
-        themeMode: ThemeMode.system,
-        theme: AppTheme().light,
-        darkTheme: AppTheme().dark,
-        home: const MyApp(),
+      child: Consumer<StorageService>(
+        builder: (context, storage, _) {
+          return MaterialApp(
+            //showPerformanceOverlay: true,
+            title: "BamScan",
+            themeMode: storage.darkMode == "System"
+                ? ThemeMode.system
+                : storage.darkMode == "Dark"
+                ? ThemeMode.dark
+                : ThemeMode.light,
+            theme: AppTheme().light,
+            darkTheme: AppTheme().dark,
+            home: const MyApp(),
+          );
+        },
       ),
     ),
   );

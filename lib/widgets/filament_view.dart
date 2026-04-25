@@ -137,7 +137,7 @@ class FilamentViewState extends State<FilamentView> {
                   }
                 },
                 expanded: true,
-                backgroundColor: context.appColor.base3,
+                backgroundColor: context.appColor.base3.withValues(alpha: 0.3),
                 borderColor: context.appColor.error,
                 child: Text("Archive Spool", style: TextStyle(color: context.appColor.error)),
               ),

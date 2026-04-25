@@ -15,12 +15,14 @@ class StorageService extends ChangeNotifier {
   bool _firstUse = true;
   final bool _externalSpool = false;
   String _version = "0.0.0";
+  String _darkMode = "System";
 
   String get bambuddyUrl => _bambuddyUrl;
   String get xapitoken => _xapitoken;
   bool get firstUse => _firstUse;
   bool get externalSpool => _externalSpool;
   String get version => _version;
+  String get darkMode => _darkMode;
 
   Future<void> loadFromStorage() async {
     _bambuddyUrl = await getBambuddyUrl();
@@ -28,6 +30,7 @@ class StorageService extends ChangeNotifier {
     _firstUse = await getFirseUse();
     //_externalSpool = await getExternalSpool();
     _version = await getVersion();
+    _darkMode = await getDarkMode();
     notifyListeners();
   }
 
@@ -67,6 +70,12 @@ class StorageService extends ChangeNotifier {
     await loadFromStorage();
   }
 
+  Future<void> setDarkMode(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("darkmode", value);
+    await loadFromStorage();
+  }
+
   static Future<String> getBambuddyUrl() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("bambuddyUrl") ?? "";
@@ -80,6 +89,11 @@ class StorageService extends ChangeNotifier {
   static Future<bool> getExternalSpool() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool("externalSpool") ?? false;
+  }
+
+  static Future<String> getDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("darkmode") ?? "System";
   }
 
   Future<void> deleteAllData() async {

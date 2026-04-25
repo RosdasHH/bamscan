@@ -159,6 +159,33 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
+              InfoCard(
+                title: "Appearance",
+                value: "",
+                icon: Icons.brush,
+                more: Setting(
+                  title: "Appearance",
+                  widgets: [
+                    InfoCard(
+                      title: "Theme",
+                      icon: Icons.contrast,
+                      value: Consumer<StorageService>(
+                        builder: (context, storageService, _) {
+                          return DropdownMenu<String>(
+                            initialSelection: storageService.darkMode,
+                            dropdownMenuEntries: ["System", "Light", "Dark"].map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+                            onSelected: (value) async {
+                              if (value != null) {
+                                await storageService.setDarkMode(value);
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               if (false)
                 InfoCard(
                   title: "Beta Features",
