@@ -68,3 +68,12 @@ Future<bool> deleteNfcReq(BuildContext context, Spool spool) async {
   bool success = await availableFilaments.patchSpool(spool.id.toString(), {"note": newNotes});
   return success;
 }
+
+Future<void> deleteNfcQr(BuildContext context, Spool spool) async {
+  final availableFilaments = context.read<AvailableFilaments>();
+  await availableFilaments.getAllSpools();
+  String newNotes;
+  newNotes = deleteNfcIdentifierFromString(spool.note.toString());
+  newNotes = deleteQrCodeFromString(newNotes);
+  await availableFilaments.patchSpool(spool.id.toString(), {"note": newNotes});
+}

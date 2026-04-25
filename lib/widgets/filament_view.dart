@@ -100,8 +100,9 @@ class FilamentViewState extends State<FilamentView> {
             if (spool.assignment == null && widget.editable)
               Button(
                 onPressed: () async {
-                  Future<void> archive() async {
+                  archive() async {
                     AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+                    await deleteNfcQr(context, widget.spool);
                     await availableFilaments.archive(spool.id.toString());
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -125,8 +126,9 @@ class FilamentViewState extends State<FilamentView> {
                               child: const Text("Cancel"),
                             ),
                             TextButton(
-                              onPressed: () async {
-                                await archive();
+                              onPressed: () {
+                                archive();
+                                Navigator.pop(context);
                               },
                               child: const Text("Archive"),
                             ),
