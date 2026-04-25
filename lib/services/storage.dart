@@ -13,7 +13,7 @@ class StorageService extends ChangeNotifier {
   String _bambuddyUrl = "";
   String _xapitoken = "";
   bool _firstUse = true;
-  bool _externalSpool = false;
+  final bool _externalSpool = false;
   String _version = "0.0.0";
 
   String get bambuddyUrl => _bambuddyUrl;
@@ -26,7 +26,7 @@ class StorageService extends ChangeNotifier {
     _bambuddyUrl = await getBambuddyUrl();
     _xapitoken = await getToken();
     _firstUse = await getFirseUse();
-    _externalSpool = await getExternalSpool();
+    //_externalSpool = await getExternalSpool();
     _version = await getVersion();
     notifyListeners();
   }

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bamscan/classes/ams.dart';
 import 'package:bamscan/classes/ams_spool.dart';
+import 'package:bamscan/classes/printer.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/classes/trayslot.dart';
 import 'package:bamscan/helper/showsnackbar.dart';
@@ -19,9 +20,9 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class AmsSelection extends StatefulWidget {
-  const AmsSelection({super.key, required this.printerid});
+  const AmsSelection({super.key, required this.printer});
 
-  final String printerid;
+  final Printer printer;
 
   @override
   State<AmsSelection> createState() => _AmsSelectionState();
@@ -30,10 +31,12 @@ class AmsSelection extends StatefulWidget {
 class _AmsSelectionState extends State<AmsSelection> {
   List<Ams>? amsdata;
   List<AmsSpool>? amsmapping;
+  late String printerid;
 
   @override
   void initState() {
     super.initState();
+    printerid = widget.printer.id.toString();
     refresh();
   }
 
@@ -49,8 +52,8 @@ class _AmsSelectionState extends State<AmsSelection> {
     final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
     DeviceCapabilities().checkDevicesCapabilities();
     availableFilaments.getAllSpools();
-    amsmapping = await availableFilaments.getFilamentMappingForPrinter(int.parse(widget.printerid));
-    amsdata = await availablePrinters.getAmsByPrinterId(widget.printerid);
+    amsmapping = await availableFilaments.getFilamentMappingForPrinter(int.parse(printerid));
+    amsdata = await availablePrinters.getAmsByPrinterId(printerid);
     if (!mounted) return;
     setState(() {
       amsdata = amsdata;
@@ -189,7 +192,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 delete: true,
                                                                 deleteCallback: () async {
                                                                   await availableFilaments.unassignSpool(
-                                                                    widget.printerid,
+                                                                    printerid,
                                                                     ams.id.toString(),
                                                                     ams.isExternalSpool ? "0" : tray.id.toString(),
                                                                   );
@@ -244,7 +247,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                 }
                                                                 Navigator.pop(context);
                                                                 await availableFilaments.setSlotToSpoolId(
-                                                                  widget.printerid,
+                                                                  printerid,
                                                                   ams.id.toString(),
                                                                   ams.isExternalSpool ? "0" : tray.id.toString(),
                                                                   spoolId.toString(),
@@ -262,25 +265,28 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                   nfcreading(ams, tray);
                                                                 },
                                                               ),
-                                                            InfoCard(
-                                                              title: "Reset Slot",
-                                                              value: "",
-                                                              icon: Icons.restore,
-                                                              onTap: () async {
-                                                                final AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
-                                                                final res = await availablePrinters.resetSlot(
-                                                                  widget.printerid,
-                                                                  ams.id.toString(),
-                                                                  ams.isExternalSpool ? "0" : tray.id.toString(),
-                                                                );
-                                                                if (res == true) {
+                                                            if (widget.printer.status != null && widget.printer.status!.connected)
+                                                              InfoCard(
+                                                                title: "Reset Slot",
+                                                                value: "",
+                                                                icon: Icons.restore,
+                                                                onTap: () async {
+                                                                  final AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
+                                                                  final res = await availablePrinters.resetSlot(
+                                                                    printerid,
+                                                                    ams.id.toString(),
+                                                                    ams.isExternalSpool ? "0" : tray.id.toString(),
+                                                                  );
                                                                   if (!context.mounted) {
                                                                     return;
                                                                   }
-                                                                  showSnackbar(context, "Slot reset successfully!", context.appColor.success);
-                                                                }
-                                                              },
-                                                            ),
+                                                                  if (res == true) {
+                                                                    showSnackbar(context, "Slot reset successfully!", context.appColor.success);
+                                                                  } else {
+                                                                    showSnackbar(context, "Slot reset failed!", context.appColor.error);
+                                                                  }
+                                                                },
+                                                              ),
                                                           ],
                                                         ),
                                                       ),
@@ -333,7 +339,7 @@ class _AmsSelectionState extends State<AmsSelection> {
 
   void assignSpoolToSlot(Ams ams, TraySlot slot, String spoolId) async {
     AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-    bool configured = await availableFilaments.setSlotToSpoolId(widget.printerid, ams.id.toString(), ams.isExternalSpool ? "0" : slot.id.toString(), spoolId);
+    bool configured = await availableFilaments.setSlotToSpoolId(printerid, ams.id.toString(), ams.isExternalSpool ? "0" : slot.id.toString(), spoolId);
     if (!mounted) return;
     showSnackbar(context, configured ? "Spool assigned" : "Spool NOT assigned", null);
     Navigator.popUntil(context, (route) => route.settings.name == "ams");
@@ -344,7 +350,7 @@ class _AmsSelectionState extends State<AmsSelection> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            FilamentScanned(scannedSpool: spool, printerid: widget.printerid, amsid: ams.id.toString(), trayid: slot.id.toString(), isExternalSpool: ams.isExternalSpool),
+            FilamentScanned(scannedSpool: spool, printerid: printerid, amsid: ams.id.toString(), trayid: slot.id.toString(), isExternalSpool: ams.isExternalSpool),
       ),
     );
   }

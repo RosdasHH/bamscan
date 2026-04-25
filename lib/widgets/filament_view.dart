@@ -62,8 +62,11 @@ class FilamentViewState extends State<FilamentView> {
             ),
             if (spool.assignment != null)
               Chip(
-                label: Text("${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}"),
-                backgroundColor: Colors.purple.withValues(alpha: 0.3),
+                label: Text(
+                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}",
+                  style: TextStyle(color: getContrastColor(context.appColor.assinment)),
+                ),
+                backgroundColor: context.appColor.assinment,
               ),
 
             InfoCard(icon: Icons.color_lens, title: "Color Name", value: spool.colorName, apiname: "color_name", spool: spool),

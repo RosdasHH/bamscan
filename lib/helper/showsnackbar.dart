@@ -6,7 +6,7 @@ void showSnackbar(BuildContext context, String message, Color? color) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       backgroundColor: color,
-      content: Text(message, style: TextStyle(color: context.appColor.base3)),
+      content: Text(message, style: TextStyle(color: context.appColor.primaryText)),
       duration: Duration(seconds: 2),
       margin: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 75),
     ),

@@ -159,28 +159,29 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-              InfoCard(
-                title: "Beta Features",
-                value: "",
-                icon: Icons.rocket,
-                more: Setting(
+              if (false)
+                InfoCard(
                   title: "Beta Features",
-                  widgets: [
-                    InfoCard(
-                      title: "External Spool",
-                      value: Consumer<StorageService>(
-                        builder: (context, storageService, _) => Switch(
-                          value: storageService.externalSpool,
-                          onChanged: (value) {
-                            storageService.setExternalSpool(value);
-                          },
+                  value: "",
+                  icon: Icons.rocket,
+                  more: Setting(
+                    title: "Beta Features",
+                    widgets: [
+                      InfoCard(
+                        title: "External Spool",
+                        value: Consumer<StorageService>(
+                          builder: (context, storageService, _) => Switch(
+                            value: storageService.externalSpool,
+                            onChanged: (value) {
+                              storageService.setExternalSpool(value);
+                            },
+                          ),
                         ),
+                        icon: MdiIcons.disc,
                       ),
-                      icon: MdiIcons.disc,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
               Text(storageService.version, style: TextStyle(color: Colors.grey)),
             ],
           ),

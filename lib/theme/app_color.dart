@@ -13,6 +13,7 @@ class AppColor extends ThemeExtension<AppColor> {
   final Color success;
   final Color info;
   final Color warning;
+  final Color assinment;
 
   AppColor({
     required this.primary,
@@ -27,6 +28,7 @@ class AppColor extends ThemeExtension<AppColor> {
     required this.info,
     required this.warning,
     required this.popup,
+    required this.assinment,
   });
 
   @override
@@ -51,6 +53,7 @@ class DarkColor extends AppColor {
         success: Colors.green,
         info: Colors.blue,
         warning: Colors.orange,
+        assinment: Colors.purple,
       );
 }
 
@@ -69,5 +72,6 @@ class LightColor extends AppColor {
         success: Colors.green,
         info: Colors.blue,
         warning: Colors.orange,
+        assinment: Colors.purple,
       );
 }
