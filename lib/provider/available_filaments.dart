@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:bamscan/classes/ams.dart';
 import 'package:bamscan/classes/ams_spool.dart';
 import 'package:bamscan/classes/slot_preset.dart';
 import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/classes/trayslot.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -139,5 +142,34 @@ class AvailableFilaments extends ChangeNotifier {
     final res = await ApiService().apiReq("/inventory/assignments?printer_id=$printerId");
     final List<dynamic> data = jsonDecode(res.body);
     return data.map((e) => AmsSpool.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<List<Ams>> getAllAms(int printerId) async {
+    final List<AmsSpool> filamentMappingsforPrinter = await getFilamentMappingForPrinter(printerId);
+    final List<Ams> amsForPrinter = await getAmsByPrinterId(printerId.toString());
+    for (Ams ams in amsForPrinter) {
+      for (TraySlot tray in ams.tray) {
+        for (AmsSpool mapping in filamentMappingsforPrinter) {
+          if (ams.id == mapping.amsId && tray.id == mapping.trayId) {
+            tray.loadedSpool = mapping;
+          }
+        }
+      }
+    }
+    return amsForPrinter;
+  }
+
+  Future<List<Ams>> getAmsByPrinterId(String id) async {
+    final http.Response res = await ApiService().apiReq("/printers/$id/status");
+    final List<dynamic> amsList = jsonDecode(res.body)["ams"] as List;
+    final List<dynamic> vtrayList = jsonDecode(res.body)["vt_tray"] as List;
+
+    final List<Ams> ams = amsList.map((e) => Ams.fromJson(e as Map<String, dynamic>)).toList();
+    if (StorageService().externalSpool) {
+      final List<TraySlot> vtTray = vtrayList.map((e) => TraySlot.fromJson(e as Map<String, dynamic>)).toList();
+      final Ams vttrayams = Ams(id: 255, tray: vtTray, isExternalSpool: true);
+      ams.add(vttrayams);
+    }
+    return ams;
   }
 }

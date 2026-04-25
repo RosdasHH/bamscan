@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bamscan/classes/ams.dart';
-import 'package:bamscan/classes/ams_spool.dart';
 import 'package:bamscan/classes/printer.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/classes/trayslot.dart';
@@ -29,8 +28,7 @@ class AmsSelection extends StatefulWidget {
 }
 
 class _AmsSelectionState extends State<AmsSelection> {
-  List<Ams>? amsdata;
-  List<AmsSpool>? amsmapping;
+  List<Ams>? allAms;
   late String printerid;
 
   @override
@@ -48,16 +46,13 @@ class _AmsSelectionState extends State<AmsSelection> {
   }
 
   Future<void> loadAms() async {
-    final AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
     final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
     DeviceCapabilities().checkDevicesCapabilities();
     availableFilaments.getAllSpools();
-    amsmapping = await availableFilaments.getFilamentMappingForPrinter(int.parse(printerid));
-    amsdata = await availablePrinters.getAmsByPrinterId(printerid);
+    allAms = await availableFilaments.getAllAms(int.parse(printerid));
     if (!mounted) return;
     setState(() {
-      amsdata = amsdata;
-      amsmapping = amsmapping;
+      allAms = allAms;
     });
   }
 
@@ -66,7 +61,7 @@ class _AmsSelectionState extends State<AmsSelection> {
     DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
     return Scaffold(
       appBar: AppBar(title: const Text("Ams selection")),
-      body: amsdata == null
+      body: allAms == null
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Padding(
@@ -74,7 +69,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (Ams ams in amsdata!)
+                    for (Ams ams in allAms!)
                       Card(
                         child: Padding(
                           padding: EdgeInsets.all(10),
@@ -96,33 +91,22 @@ class _AmsSelectionState extends State<AmsSelection> {
                                       builder: (context) {
                                         AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
                                         double usage = 0.0;
-                                        Color color = toFlutterColor(tray.trayColor);
-                                        Spool? spool;
-
-                                        if (amsmapping != null) {
-                                          for (AmsSpool amsmap in amsmapping!) {
-                                            if (amsmap.amsId == ams.id) {
-                                              if (amsmap.trayId == tray.id || amsmap.amsId == 255) {
-                                                for (Spool filament in availableFilaments.spools) {
-                                                  if (amsmap.spoolId == filament.id) {
-                                                    spool = filament;
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                        if (spool != null) {
-                                          usage = (spool.labelWeight - spool.weightUsed) / spool.labelWeight;
-                                          color = spool.color;
-                                        }
-                                        int amsForIndex = amsdata!.indexOf(ams);
-                                        int trayForIndex = ams.tray.indexOf(tray);
-                                        TrayType traytype = checkSlotState(amsForIndex, trayForIndex);
+                                        Spool? spool = tray.loadedSpool?.spool;
+                                        TrayType traytype = TrayType.noFilament;
+                                        Color traycolor = toFlutterColor(tray.trayColor);
                                         String traytext;
-                                        Color traycolor = color;
-                                        Color fontcolor = getContrastColor(color);
                                         Color bordercolor = Colors.grey;
+
+                                        if (spool != null) {
+                                          traytype = TrayType.spoolLoaded;
+                                          traycolor = spool.color;
+                                          usage = (spool.labelWeight - spool.weightUsed) / spool.labelWeight;
+                                        } else if (tray.trayInfoIdx != "") {
+                                          traytype = TrayType.noSpool;
+                                        }
+
+                                        Color fontcolor = getContrastColor(traycolor);
+
                                         switch (traytype) {
                                           case TrayType.spoolLoaded:
                                             traytext = ams.isExternalSpool ? "" : (tray.id + 1).toString();
@@ -285,6 +269,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                                   } else {
                                                                     showSnackbar(context, "Slot reset failed!", context.appColor.error);
                                                                   }
+                                                                  Navigator.pop(context);
                                                                 },
                                                               ),
                                                           ],
@@ -353,17 +338,6 @@ class _AmsSelectionState extends State<AmsSelection> {
             FilamentScanned(scannedSpool: spool, printerid: printerid, amsid: ams.id.toString(), trayid: slot.id.toString(), isExternalSpool: ams.isExternalSpool),
       ),
     );
-  }
-
-  TrayType checkSlotState(int amsi, int trayi) {
-    for (AmsSpool spool in amsmapping!) {
-      if (amsdata![amsi].tray[trayi].trayInfoIdx == "") {
-        return TrayType.noFilament;
-      } else if (spool.trayId == trayi) {
-        return TrayType.spoolLoaded;
-      }
-    }
-    return TrayType.noSpool;
   }
 }
 

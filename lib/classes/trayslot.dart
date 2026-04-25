@@ -1,3 +1,5 @@
+import 'package:bamscan/classes/ams_spool.dart';
+
 class TraySlot {
   final int id;
   final String trayColor;
@@ -15,6 +17,7 @@ class TraySlot {
   final int? dryingTemp;
   final int? dryingTime;
   final int state;
+  AmsSpool? loadedSpool;
 
   TraySlot({
     required this.id,
@@ -33,6 +36,7 @@ class TraySlot {
     this.dryingTemp,
     this.dryingTime,
     required this.state,
+    this.loadedSpool,
   });
 
   factory TraySlot.fromJson(Map<String, dynamic> json) {
