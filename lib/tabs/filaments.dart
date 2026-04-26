@@ -259,9 +259,15 @@ class FilamentCardState extends State<FilamentCard> {
               }
             : null,
         child: ListTile(
-          title: Text(
-            "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype}",
-            style: TextStyle(color: context.appColor.primaryText),
+          title: Wrap(
+            children: [
+              Text(
+                "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype}",
+                style: TextStyle(color: context.appColor.primaryText),
+              ),
+              if (widget.filament.qrcode != null && widget.selection == false) Icon(Icons.qr_code_2_rounded, size: 18,) else SizedBox.shrink(),
+              if (widget.filament.nfcid != null && widget.selection == false) Icon(MdiIcons.contactlessPayment, size: 18,) else SizedBox.shrink(),
+            ],
           ),
           minLeadingWidth: 20,
           leading: SizedBox(
@@ -281,7 +287,7 @@ class FilamentCardState extends State<FilamentCard> {
               widget.filament.assignment != null && widget.selection != null
                   ? Text(
                       " ⋅ ${widget.filament.assignment!.printerName} | ${amsIdToLetter(widget.filament.assignment!.amsId)}${widget.filament.assignment!.trayId + 1}",
-                      style: TextStyle(color: context.appColor.assinment),
+                      style: TextStyle(color: context.appColor.assignment),
                     )
                   : SizedBox.shrink(),
             ],
@@ -289,8 +295,6 @@ class FilamentCardState extends State<FilamentCard> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.filament.qrcode != null && widget.selection == false) Icon(Icons.qr_code_2_rounded) else SizedBox.shrink(),
-              if (widget.filament.nfcid != null && widget.selection == false) Icon(MdiIcons.contactlessPayment) else SizedBox.shrink(),
               if (widget.delete)
                 IconButton(
                   onPressed: () => widget.deleteCallback?.call(),

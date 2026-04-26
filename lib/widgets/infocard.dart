@@ -3,24 +3,11 @@ import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InfoCard extends StatefulWidget {
-  const InfoCard({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.icon,
-    this.progress,
-    this.spoolColor,
-    this.more,
-    this.onTap,
-    this.apiname,
-    this.spool,
-    this.height = 70,
-  });
+  const InfoCard({super.key, required this.title, required this.value, required this.icon, this.progress, this.more, this.onTap, this.apiname, this.spool, this.height = 70});
   final IconData icon;
   final String title;
   final Object? value;
   final double? progress;
-  final Color? spoolColor;
   final Widget? more;
   final Function? onTap;
   final String? apiname;
@@ -132,14 +119,16 @@ class _InfoCardState extends State<InfoCard> {
               borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
-                  if (widget.progress != null && widget.spoolColor != null)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: FractionallySizedBox(
-                          widthFactor: widget.progress!.clamp(0.0, 1.0),
-                          child: Container(color: widget.spoolColor!.withValues(alpha: 0.3)),
+                  if (widget.progress != null)
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: FractionallySizedBox(
+                            widthFactor: widget.progress!.clamp(0.0, 1.0),
+                            child: Container(color: context.appColor.primary.withValues(alpha: 0.3)),
+                          ),
                         ),
                       ),
                     ),

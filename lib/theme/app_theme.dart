@@ -101,6 +101,7 @@ class AppTheme {
         textStyle: TextStyle(color: color.primary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
+      dividerTheme: DividerThemeData(color: color.base2),
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/ams_number_letter.dart';
 import 'package:bamscan/utils/color.dart';
 import 'package:bamscan/utils/parse_note.dart';
+import 'package:bamscan/widgets/badge_card.dart';
 import 'package:bamscan/widgets/button.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/nfc_read_page.dart';
@@ -49,11 +50,16 @@ class FilamentViewState extends State<FilamentView> {
                     height: 200,
                     child: DecoratedBox(
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: spool.color),
-                      child: Center(
-                        child: Text(
-                          spool.material,
-                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: filamentConformTextColor),
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoSizeText(
+                            spool.material,
+                            maxLines: 1,
+                            style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: filamentConformTextColor),
+                          ),
+                          if (spool.colorName != "") AutoSizeText(spool.colorName, maxLines: 1, style: TextStyle(fontSize: 30, color: filamentConformTextColor)),
+                        ],
                       ),
                     ),
                   ),
@@ -61,25 +67,17 @@ class FilamentViewState extends State<FilamentView> {
               ],
             ),
             if (spool.assignment != null)
-              Chip(
-                label: Text(
-                  "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}",
-                  style: TextStyle(color: getContrastColor(context.appColor.assinment)),
-                ),
-                backgroundColor: context.appColor.assinment,
-              ),
+              BadgeCard(text: "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}", color: context.appColor.assignment, padding: 8,fontsize: 15,),
 
-            InfoCard(icon: Icons.color_lens, title: "Color Name", value: spool.colorName, apiname: "color_name", spool: spool),
-            InfoCard(icon: MdiIcons.printer3DNozzle, title: "Material", value: spool.material, apiname: "material", spool: spool),
-            InfoCard(icon: MdiIcons.factoryIcon, title: "Brand", value: spool.brand, apiname: "brand", spool: spool),
             InfoCard(icon: MdiIcons.shape, title: "Subtype", value: spool.subtype, apiname: "subtype", spool: spool),
+            InfoCard(icon: MdiIcons.factoryIcon, title: "Brand", value: spool.brand, apiname: "brand", spool: spool),
             InfoCard(
               icon: MdiIcons.weight,
               title: "Weight",
               value: "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
-              spoolColor: context.appColor.primary,
               progress: (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
             ),
+            Divider(height: 5, indent: 20, endIndent: 20),
             InfoCard(
               icon: MdiIcons.qrcodeEdit,
               title: "Assigned QR-Code",
