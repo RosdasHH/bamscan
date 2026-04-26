@@ -3,9 +3,22 @@ import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class InfoCard extends StatefulWidget {
-  const InfoCard({super.key, required this.title, required this.value, required this.icon, this.progress, this.more, this.onTap, this.apiname, this.spool, this.height = 70});
+  const InfoCard({
+    super.key,
+    required this.title,
+    this.value = "",
+    required this.icon,
+    this.progress,
+    this.more,
+    this.onTap,
+    this.apiname,
+    this.spool,
+    this.height = 70,
+    this.subtitle,
+  });
   final IconData icon;
   final String title;
+  final String? subtitle;
   final Object? value;
   final double? progress;
   final Widget? more;
@@ -140,30 +153,39 @@ class _InfoCardState extends State<InfoCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: Icon(widget.icon, color: context.appColor.primary),
-                              ),
-                              Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                            ],
-                          ),
-
                           Expanded(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Flexible(
-                                  child: widget.value is String
-                                      ? Text(widget.value as String, overflow: TextOverflow.ellipsis)
-                                      : widget.value is Widget
-                                      ? widget.value as Widget
-                                      : const SizedBox.shrink(),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 8),
+                                  child: Icon(widget.icon, color: context.appColor.primary),
                                 ),
-                                if (widget.more != null) const Icon(Icons.chevron_right_rounded),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                                      if (widget.subtitle != null) Text(widget.subtitle!, style: TextStyle(fontSize: 16)),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: widget.value is String
+                                    ? Text(widget.value as String, overflow: TextOverflow.ellipsis)
+                                    : widget.value is Widget
+                                    ? widget.value as Widget
+                                    : const SizedBox.shrink(),
+                              ),
+                              if (widget.more != null) const Icon(Icons.chevron_right_rounded),
+                            ],
                           ),
                         ],
                       ),

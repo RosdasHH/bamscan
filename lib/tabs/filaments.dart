@@ -188,7 +188,7 @@ class FilamentListState extends State<FilamentList> {
                   itemBuilder: (context) => <PopupMenuEntry>[
                     PopupMenuItem(
                       value: "qr",
-                      child: ListTile(leading: Icon(Icons.qr_code), title: Text("Search by QR")),
+                      child: ListTile(leading: Icon(Icons.qr_code_scanner), title: Text("Search by QR")),
                     ),
                     PopupMenuItem(
                       value: "nfc",
@@ -239,6 +239,7 @@ class FilamentCardState extends State<FilamentCard> {
 
   @override
   Widget build(BuildContext context) {
+    StorageService storageService = context.read<StorageService>();
     return Card(
       child: InkWell(
         onTap: widget.selection != null
@@ -266,8 +267,9 @@ class FilamentCardState extends State<FilamentCard> {
                   text:
                       "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype} ",
                 ),
-                if (widget.filament.qrcode != null && widget.selection == false) WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(Icons.qr_code_2_rounded, size: 18)),
-                if (widget.filament.nfcid != null && widget.selection == false)
+                if (storageService.showicons && widget.filament.qrcode != null && widget.selection == false)
+                  WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(Icons.qr_code_2_rounded, size: 18)),
+                if (storageService.showicons && widget.filament.nfcid != null && widget.selection == false)
                   WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(MdiIcons.contactlessPayment, size: 18)),
               ],
             ),

@@ -54,6 +54,28 @@ class _SettingsState extends State<Settings> {
           child: Column(
             children: [
               InfoCard(
+                title: "General",
+                icon: Icons.tune,
+                more: Setting(
+                  title: "General",
+                  widgets: [
+                    InfoCard(
+                      title: "Show QR/NFC icons",
+                      subtitle: "In the filament list.",
+                      icon: Icons.qr_code_scanner,
+                      value: Consumer<StorageService>(
+                        builder: (context, storageService, _) => Switch(
+                          value: storageService.showicons,
+                          onChanged: (value) {
+                            storageService.setShowIcons(value);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              InfoCard(
                 title: "Connection",
                 value: "",
                 icon: MdiIcons.connection,
