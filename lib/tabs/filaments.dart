@@ -206,7 +206,6 @@ class FilamentListState extends State<FilamentList> {
               children: [
                 for (Spool filament in iterationList)
                   if (widget.selection && filament.assignment == null || !widget.selection) FilamentCard(filament: filament, selection: widget.selection),
-                SizedBox(height: 20),
               ],
             ),
           ),
@@ -261,7 +260,7 @@ class FilamentCardState extends State<FilamentCard> {
         child: ListTile(
           title: RichText(
             text: TextSpan(
-              style: TextStyle(color: Colors.black, fontSize: 16),
+              style: TextStyle(color: context.appColor.primaryText, fontSize: 16, fontWeight: FontWeight(500)),
               children: [
                 TextSpan(
                   text:

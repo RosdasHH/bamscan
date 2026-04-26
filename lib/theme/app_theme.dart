@@ -101,7 +101,7 @@ class AppTheme {
         textStyle: TextStyle(color: color.primary),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
-      dividerTheme: DividerThemeData(color: color.base2),
+      dividerTheme: DividerThemeData(color: getContrastColor(color.base3).withValues(alpha: 0.5)),
     );
   }
 }
