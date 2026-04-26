@@ -67,7 +67,12 @@ class FilamentViewState extends State<FilamentView> {
               ],
             ),
             if (spool.assignment != null)
-              BadgeCard(text: "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}", color: context.appColor.assignment, padding: 8,fontsize: 15,),
+              BadgeCard(
+                text: "${spool.assignment!.printerName} ${amsIdToLetter(spool.assignment!.amsId)}${spool.assignment!.trayId + 1}",
+                color: context.appColor.assignment,
+                padding: 8,
+                fontsize: 15,
+              ),
 
             InfoCard(icon: MdiIcons.shape, title: "Subtype", value: spool.subtype, apiname: "subtype", spool: spool),
             InfoCard(icon: MdiIcons.factoryIcon, title: "Brand", value: spool.brand, apiname: "brand", spool: spool),
@@ -313,6 +318,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                                   size: 250,
                                   errorCorrectionLevel: QrErrorCorrectLevel.H,
                                   backgroundColor: Colors.transparent,
+                                  foregroundColor: context.appColor.primaryText,
                                 ),
                               )
                             : SizedBox.square(
@@ -349,6 +355,7 @@ class _QRCodeMoreState extends State<QRCodeMore> {
                     unassignQrCode();
                   },
                 ),
+              SizedBox(height: 20),
             ],
           ),
         ),
