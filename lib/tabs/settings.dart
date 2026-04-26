@@ -77,6 +77,33 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
               InfoCard(
+                title: "Appearance",
+                value: "",
+                icon: Icons.brush,
+                more: Setting(
+                  title: "Appearance",
+                  widgets: [
+                    InfoCard(
+                      title: "Theme",
+                      icon: Icons.contrast,
+                      value: Consumer<StorageService>(
+                        builder: (context, storageService, _) {
+                          return DropdownMenu<String>(
+                            initialSelection: storageService.darkMode,
+                            dropdownMenuEntries: ["System", "Light", "Dark"].map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+                            onSelected: (value) async {
+                              if (value != null) {
+                                await storageService.setDarkMode(value);
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              InfoCard(
                 title: "Reset",
                 value: "",
                 icon: Icons.restore,
@@ -125,7 +152,7 @@ class _SettingsState extends State<Settings> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text("Are you sure?"),
-                              content: Text("This will delete all QR-Code mappings."),
+                              content: Text("This will delete all QR-Code mappings Bambuddy."),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -156,32 +183,46 @@ class _SettingsState extends State<Settings> {
                         );
                       },
                     ),
-                  ],
-                ),
-              ),
-              InfoCard(
-                title: "Appearance",
-                value: "",
-                icon: Icons.brush,
-                more: Setting(
-                  title: "Appearance",
-                  widgets: [
                     InfoCard(
-                      title: "Theme",
-                      icon: Icons.contrast,
-                      value: Consumer<StorageService>(
-                        builder: (context, storageService, _) {
-                          return DropdownMenu<String>(
-                            initialSelection: storageService.darkMode,
-                            dropdownMenuEntries: ["System", "Light", "Dark"].map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
-                            onSelected: (value) async {
-                              if (value != null) {
-                                await storageService.setDarkMode(value);
-                              }
-                            },
-                          );
-                        },
-                      ),
+                      title: "Reset NFC-Tags",
+                      value: "",
+                      icon: MdiIcons.nfcVariantOff,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Are you sure?"),
+                              content: Text("This will delete all NFC-Tag mappings in Bambuddy."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("No"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+                                    await availableFilaments.getAllSpools();
+                                    for (Spool spool in availableFilaments.spools) {
+                                      if (!context.mounted) {
+                                        return;
+                                      }
+                                      await deleteNfcReq(context, spool);
+                                    }
+                                    if (!context.mounted) {
+                                      return;
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Yes"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
