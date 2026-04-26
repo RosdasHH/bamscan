@@ -259,16 +259,32 @@ class FilamentCardState extends State<FilamentCard> {
               }
             : null,
         child: ListTile(
-          title: Wrap(
-            children: [
-              Text(
-                "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype}",
-                style: TextStyle(color: context.appColor.primaryText),
-              ),
-              if (widget.filament.qrcode != null && widget.selection == false) Icon(Icons.qr_code_2_rounded, size: 18,) else SizedBox.shrink(),
-              if (widget.filament.nfcid != null && widget.selection == false) Icon(MdiIcons.contactlessPayment, size: 18,) else SizedBox.shrink(),
-            ],
+          title: RichText(
+            text: TextSpan(
+              style: TextStyle(color: Colors.black, fontSize: 16),
+              children: [
+                TextSpan(
+                  text:
+                      "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype} ",
+                ),
+                if (widget.filament.qrcode != null && widget.selection == false) WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(Icons.qr_code_2_rounded, size: 18)),
+                if (widget.filament.nfcid != null && widget.selection == false)
+                  WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(MdiIcons.contactlessPayment, size: 18)),
+              ],
+            ),
           ),
+          //title: Wrap(
+          //  alignment: WrapAlignment.start,
+          //  crossAxisAlignment: WrapCrossAlignment.center,
+          //  children: [
+          //    Text(
+          //      "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype}",
+          //      style: TextStyle(color: context.appColor.primaryText),
+          //    ),
+          //    if (widget.filament.qrcode != null && widget.selection == false) Icon(Icons.qr_code_2_rounded, size: 18) else SizedBox.shrink(),
+          //    if (widget.filament.nfcid != null && widget.selection == false) Icon(MdiIcons.contactlessPayment, size: 18) else SizedBox.shrink(),
+          //  ],
+          //),
           minLeadingWidth: 20,
           leading: SizedBox(
             width: 20,
