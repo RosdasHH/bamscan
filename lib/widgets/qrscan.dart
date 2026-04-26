@@ -61,6 +61,7 @@ class _QrscanState extends State<Qrscan> {
           if (spools.length == 1) {
             Navigator.pop(context, spools.first);
           } else {
+            showSnackbar(context, "No Spool found!", context.appColor.error);
             Navigator.pop(context, null);
           }
         }

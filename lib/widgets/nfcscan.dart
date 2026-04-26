@@ -39,6 +39,9 @@ class _NfcscanState extends State<Nfcscan> {
           try {
             spool = spools[0];
           } catch (_) {
+            if (mounted) {
+              showSnackbar(context, "No Spool found!", context.appColor.error);
+            }
             spool = null;
           }
           widget.spoolCallback!(spool);

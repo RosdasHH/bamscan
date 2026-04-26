@@ -22,7 +22,7 @@ class _ButtonState extends State<Button> {
           ? OutlinedButton(
               onPressed: widget.onPressed,
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: widget.borderColor!, width: 1.5),
+                side: BorderSide(color: widget.onPressed != null ? widget.borderColor!.withValues(alpha: 0.5) : widget.borderColor!, width: 1.5),
                 backgroundColor: widget.backgroundColor,
               ),
               child: widget.child,

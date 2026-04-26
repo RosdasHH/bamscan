@@ -316,7 +316,6 @@ class _AmsSelectionState extends State<AmsSelection> {
   void scanFilament(Ams ams, TraySlot slot, List<Spool> spools) async {
     final res = await Navigator.push(context, MaterialPageRoute(builder: (context) => Qrscan(spools: spools)));
     if (res == null && mounted) {
-      showSnackbar(context, "No spool found!", context.appColor.error);
       return;
     }
     assignSpoolToSlot(ams, slot, res.id.toString());

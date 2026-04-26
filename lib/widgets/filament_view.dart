@@ -97,51 +97,53 @@ class FilamentViewState extends State<FilamentView> {
                     }
                   : null,
             ),
-            if (spool.assignment == null && widget.editable)
+            if (widget.editable)
               Button(
-                onPressed: () async {
-                  archive() async {
-                    AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-                    await deleteNfcQr(context, widget.spool);
-                    await availableFilaments.archive(spool.id.toString());
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  }
+                onPressed: spool.assignment == null
+                    ? () async {
+                        archive() async {
+                          AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+                          await deleteNfcQr(context, widget.spool);
+                          await availableFilaments.archive(spool.id.toString());
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }
 
-                  if (spool.labelWeight - spool.weightUsed <= 50) {
-                    archive();
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Archive?"),
-                          content: const Text("Do you really want to archive this Spool? It has more than 50g available."),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                archive();
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Archive"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
+                        if (spool.labelWeight - spool.weightUsed <= 50) {
+                          archive();
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Archive?"),
+                                content: const Text("Do you really want to archive this Spool? It has more than 50g available."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      archive();
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Archive"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }
+                    : () => showSnackbar(context, "The spool is still inserted into an AMS Slot.", context.appColor.error),
                 expanded: true,
                 backgroundColor: context.appColor.base3.withValues(alpha: 0.3),
                 borderColor: context.appColor.error,
-                child: Text("Archive Spool", style: TextStyle(color: context.appColor.error)),
+                child: Text("Archive Spool", style: TextStyle(color: spool.assignment != null ? context.appColor.error.withValues(alpha: 0.5) : context.appColor.error)),
               ),
             SizedBox(height: 20),
           ],

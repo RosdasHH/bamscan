@@ -1,6 +1,4 @@
 import 'package:bamscan/animation/nfc_animation.dart';
-import 'package:bamscan/helper/showsnackbar.dart';
-import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/nfcscan.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +25,6 @@ class _NfcReadPageState extends State<NfcReadPage> {
               spoolCallback: widget.io == Io.read
                   ? (spool) {
                       Navigator.pop(context, spool);
-                      if (spool == null) {
-                        showSnackbar(context, "No Spool found!", context.appColor.error);
-                      }
                     }
                   : null,
               nfcIdCallback: widget.io == Io.write

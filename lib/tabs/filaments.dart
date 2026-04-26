@@ -1,5 +1,4 @@
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/api.dart';
 import 'package:bamscan/services/storage.dart';
@@ -7,6 +6,7 @@ import 'package:bamscan/tabs/offline.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/ams_number_letter.dart';
 import 'package:bamscan/widgets/filament_view.dart';
+import 'package:bamscan/widgets/nfc_read_page.dart';
 import 'package:bamscan/widgets/qrscan.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
@@ -136,12 +136,13 @@ class FilamentListState extends State<FilamentList> {
     } else {
       iterationList = filaments;
     }
-
-    return ListView(
-      children: [
-        if (filaments.isEmpty)
-          Center(child: Text("No filaments available."))
-        else ...[
+    if (filaments.isEmpty) {
+      return Center(child: Text("No filaments available."));
+    } else {
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Row(
             children: [
               Flexible(
@@ -153,19 +154,22 @@ class FilamentListState extends State<FilamentList> {
                   },
                 ),
               ),
-              if (widget.selection == false)
-                IconButton(
-                  onPressed: () async {
+              if (widget.selection == false) ...[
+                PopupMenuButton(
+                  icon: Icon(Icons.more_vert),
+                  offset: Offset(0, 40),
+                  onSelected: (value) async {
                     final spool = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (BuildContext context) {
-                          return Qrscan(spools: filaments);
+                          if (value == "qr") return Qrscan(spools: filaments);
+                          if (value == "nfc") return NfcReadPage();
+                          return SizedBox.shrink();
                         },
                       ),
                     );
                     if (spool == null && context.mounted) {
-                      showSnackbar(context, "No Spool found!", context.appColor.error);
                       return;
                     }
                     if (!context.mounted) return;
@@ -181,18 +185,34 @@ class FilamentListState extends State<FilamentList> {
                       ),
                     );
                   },
-                  icon: Icon(Icons.qr_code),
+                  itemBuilder: (context) => <PopupMenuEntry>[
+                    PopupMenuItem(
+                      value: "qr",
+                      child: ListTile(leading: Icon(Icons.qr_code), title: Text("Search by QR")),
+                    ),
+                    PopupMenuItem(
+                      value: "nfc",
+                      child: ListTile(leading: Icon(Icons.contactless_outlined), title: Text("Search by NFC")),
+                    ),
+                  ],
                 ),
+              ],
             ],
           ),
           SizedBox(height: 10),
           if (sortedSpools != null) Text("Search results:", style: TextStyle(fontSize: 20)),
-          for (Spool filament in iterationList)
-            if (widget.selection && filament.assignment == null || !widget.selection) FilamentCard(filament: filament, selection: widget.selection),
+          Expanded(
+            child: ListView(
+              children: [
+                for (Spool filament in iterationList)
+                  if (widget.selection && filament.assignment == null || !widget.selection) FilamentCard(filament: filament, selection: widget.selection),
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
         ],
-        SizedBox(height: 30),
-      ],
-    );
+      );
+    }
   }
 }
 

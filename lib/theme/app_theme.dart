@@ -96,6 +96,11 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(suffixIconColor: color.primaryText),
       menuButtonTheme: MenuButtonThemeData(style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(color.primaryText))),
       chipTheme: ChipThemeData(elevation: 0, shadowColor: Colors.transparent, surfaceTintColor: Colors.transparent, shape: const StadiumBorder(), side: BorderSide.none),
+      popupMenuTheme: PopupMenuThemeData(
+        color: color.base3,
+        textStyle: TextStyle(color: color.primary),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
     );
   }
 }
