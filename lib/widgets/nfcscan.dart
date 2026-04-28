@@ -28,7 +28,33 @@ class _NfcscanState extends State<Nfcscan> {
     }
     NfcManager.instance.startSession(
       onDiscovered: (NfcTag tag) async {
-        String id = tag.data["nfca"]["identifier"].toString().replaceAll("[", "").replaceAll("]", "");
+        String? nfca = tag.data['nfca']?['identifier'].toString();
+        String? nfcv = tag.data['nfcv']?['identifier'].toString();
+        String? mifareultralight = tag.data['mifareultralight']?['identifier'].toString();
+        String? ndef = tag.data['ndef']?['identifier'].toString();
+        String? nfcb = tag.data['nfcb']?['identifier'].toString();
+        String? nfcf = tag.data['nfcf']?['identifier'].toString();
+        String? isodep = tag.data['isodep']?['identifier'].toString();
+        String? mifareclassic = tag.data['mifareclassic']?['identifier'].toString();
+
+        if (nfca == "") nfca = null;
+        if (nfcv == "") nfcv = null;
+        if (mifareultralight == "") mifareultralight = null;
+        if (ndef == "") ndef = null;
+        if (nfcb == "") nfcb = null;
+        if (nfcf == "") nfcf = null;
+        if (isodep == "") isodep = null;
+        if (mifareclassic == "") mifareclassic = null;
+
+        String? id = nfca ?? nfcv ?? mifareultralight ?? ndef ?? nfcb ?? nfcf ?? isodep ?? mifareclassic;
+
+        if (id == null) {
+          showSnackbar(context, "Could not read tag!", context.appColor.error);
+          return;
+        } else {
+          id = id.replaceAll("[", "").replaceAll("]", "");
+        }
+
         if (widget.nfcIdCallback != null) {
           widget.nfcIdCallback!(id);
         }
