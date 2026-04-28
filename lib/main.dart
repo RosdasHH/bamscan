@@ -1,3 +1,4 @@
+import 'package:bamscan/bletest.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
@@ -37,7 +38,7 @@ void main() {
                 : ThemeMode.light,
             theme: AppTheme().light,
             darkTheme: AppTheme().dark,
-            home: const MyApp(),
+            home: const BLE(),
           );
         },
       ),

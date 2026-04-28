@@ -54,6 +54,7 @@ dependencies:
   nfc_manager: ^3.2.0
   package_info_plus: ^9.0.1
   dropdown_flutter: ^1.0.3
+  flutter_blue_plus: ^2.2.1
 
 dev_dependencies:
   flutter_test:
