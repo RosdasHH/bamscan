@@ -17,6 +17,8 @@ class StorageService extends ChangeNotifier {
   String _version = "0.0.0";
   String _darkMode = "System";
   bool _showicons = true;
+  String? _lastVersion;
+  bool _firstLaunchAfterUpdate = false;
 
   String get bambuddyUrl => _bambuddyUrl;
   String get xapitoken => _xapitoken;
@@ -25,6 +27,7 @@ class StorageService extends ChangeNotifier {
   String get version => _version;
   String get darkMode => _darkMode;
   bool get showicons => _showicons;
+  bool get firstLaunchAfterUpdate => _firstLaunchAfterUpdate;
 
   Future<void> loadFromStorage() async {
     _bambuddyUrl = await getBambuddyUrl();
@@ -34,6 +37,13 @@ class StorageService extends ChangeNotifier {
     _version = await getVersion();
     _darkMode = await getDarkMode();
     _showicons = await getShowIcons();
+    _lastVersion = await getLastVersion();
+
+    if (_lastVersion != _version && firstUse == false) {
+      _firstLaunchAfterUpdate = true;
+      _lastVersion = _version;
+    }
+
     notifyListeners();
   }
 
@@ -103,6 +113,11 @@ class StorageService extends ChangeNotifier {
   static Future<String> getDarkMode() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("darkmode") ?? "System";
+  }
+
+  static Future<String?> getLastVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("lastVersion");
   }
 
   static Future<bool> getShowIcons() async {

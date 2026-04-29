@@ -56,7 +56,6 @@ class _MyAppState extends State<MyApp> {
   bool scannerEnabled = false;
   String? scannedCode;
   Spool? scannedSpool;
-  int currentPageIndex = 0;
 
   bool storageLoaded = false;
 
@@ -83,6 +82,29 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       storageLoaded = true;
     });
+    if (StorageService().firstLaunchAfterUpdate && StorageService().version == "Version: 1.1.4+16") {
+      if (!mounted) return;
+      return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Changes"),
+            content: const Text(
+              "This version changes the way NFC tags are stored and read. Please go to: Settings → Reset → Reset NFC Tags, and reset all mappings. After that, please reassign all your NFC tags to your spools. This step is required to use the NFC feature.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("I understand"),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
