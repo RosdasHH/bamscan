@@ -41,7 +41,7 @@ class StorageService extends ChangeNotifier {
 
     if (_lastVersion != _version && firstUse == false) {
       _firstLaunchAfterUpdate = true;
-      _lastVersion = _version;
+      setLastVersion(_version);
     }
 
     notifyListeners();
@@ -92,6 +92,12 @@ class StorageService extends ChangeNotifier {
   Future<void> setShowIcons(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool("showicons", value);
+    await loadFromStorage();
+  }
+
+  Future<void> setLastVersion(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("lastVersion", value);
     await loadFromStorage();
   }
 

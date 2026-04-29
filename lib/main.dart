@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       storageLoaded = true;
     });
-    if (StorageService().firstLaunchAfterUpdate && StorageService().version == "Version: 1.1.4+16") {
+    if (StorageService().firstLaunchAfterUpdate && StorageService().version == "Version: 1.1.5+17") {
       if (!mounted) return;
       return showDialog(
         context: context,
