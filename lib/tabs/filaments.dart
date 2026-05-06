@@ -241,6 +241,7 @@ class FilamentCardState extends State<FilamentCard> {
   Widget build(BuildContext context) {
     StorageService storageService = context.read<StorageService>();
     return Card(
+      clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: widget.selection != null
             ? () async {
