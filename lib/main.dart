@@ -5,6 +5,7 @@ import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
 import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
+import 'package:bamscan/services/scale_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
 import 'package:bamscan/tabs/printers.dart';
@@ -107,7 +108,8 @@ class _MyAppState extends State<MyApp> {
         },
       );
     }
-    Ble().connect();
+    await Ble().connect();
+    ScaleService().start();
 
     //await Ble().startAutoConnect();
     //final stream = Ble().fetchData();

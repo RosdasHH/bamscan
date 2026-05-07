@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/ble.dart';
+import 'package:bamscan/services/scale_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/utils/parse_note.dart';
 import 'package:bamscan/widgets/infocard.dart';
@@ -23,11 +24,20 @@ class _SettingsState extends State<Settings> {
   late TextEditingController _bambuddyUrlController;
   late TextEditingController _xapiTokenController;
 
+  String weight = "";
+
   @override
   void initState() {
     super.initState();
     _bambuddyUrlController = TextEditingController();
     _xapiTokenController = TextEditingController();
+
+    ScaleService().stream.listen((scale) {
+      if (!mounted) return;
+      setState(() {
+        weight = scale.weight.toString();
+      });
+    });
 
     loadData();
   }
@@ -258,6 +268,7 @@ class _SettingsState extends State<Settings> {
                 icon: Icons.bluetooth,
                 more: Setting(title: "Bluetooth", widgets: BluetoothScan()),
               ),
+              InfoCard(title: "Scale", icon: Icons.scale, value: weight),
               if (false)
                 InfoCard(
                   title: "Beta Features",

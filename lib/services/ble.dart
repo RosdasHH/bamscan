@@ -7,9 +7,15 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 class Ble with WidgetsBindingObserver {
   Ble._internal();
   static final Ble _instance = Ble._internal();
-  factory Ble() {
-    return _instance;
-  }
+  factory Ble() => _instance;
+
+  BluetoothDevice? connectedDevice;
+
+  final StreamController<List<int>> _notifyController = StreamController<List<int>>.broadcast();
+
+  Stream<List<int>> get notifications => _notifyController.stream;
+
+  StreamSubscription? _notifySub;
 
   Stream<ScanResult> fetchDevices() {
     final controller = StreamController<ScanResult>.broadcast();
@@ -17,39 +23,80 @@ class Ble with WidgetsBindingObserver {
 
     controller.onListen = () {
       if (!FlutterBluePlus.isScanningNow) {
-        FlutterBluePlus.startScan(timeout: Duration(seconds: 15), androidUsesFineLocation: true);
+        FlutterBluePlus.startScan(timeout: const Duration(seconds: 15), androidUsesFineLocation: true);
       }
+
       scanSub = FlutterBluePlus.onScanResults.listen((res) {
         for (final r in res) {
           controller.add(r);
         }
       });
     };
+
     controller.onCancel = () {
       FlutterBluePlus.stopScan();
       scanSub?.cancel();
     };
+
     return controller.stream;
   }
 
-  void connect({BluetoothDevice? device}) async {
+  Future<void> connect({BluetoothDevice? device}) async {
+    await disconnectCurrent();
+
     bool autoConnect = false;
+
     if (device == null) {
       final id = StorageService().bleRemoteId;
-      if (id == "") return;
-      device = BluetoothDevice.fromId(StorageService().bleRemoteId);
+      if (id.isEmpty) return;
+
+      device = BluetoothDevice.fromId(id);
       autoConnect = true;
     }
 
-    var sub = device.connectionState.listen((a) {
-      print("$a");
-    });
-    device.cancelWhenDisconnected(sub, delayed: true, next: true);
-
     await device.connect(license: License.free);
+    await device.connectionState.firstWhere((s) => s == BluetoothConnectionState.connected);
+
+    connectedDevice = device;
 
     if (!autoConnect) {
       StorageService().setBleRemoteId(device.remoteId.toString());
     }
+
+    _startNotifications(device);
+  }
+
+  void _startNotifications(BluetoothDevice device) async {
+    await _notifySub?.cancel();
+    _notifySub = null;
+
+    final services = await device.discoverServices();
+
+    for (final s in services) {
+      for (final c in s.characteristics) {
+        if (c.properties.notify || c.properties.indicate) {
+          await c.setNotifyValue(true);
+
+          _notifySub = c.lastValueStream.listen((value) {
+            _notifyController.add(value);
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> disconnectCurrent() async {
+    await _notifySub?.cancel();
+    _notifySub = null;
+
+    if (connectedDevice != null) {
+      try {
+        await connectedDevice!.disconnect();
+      } catch (_) {}
+    }
+
+    connectedDevice = null;
+
+    await FlutterBluePlus.stopScan();
   }
 }
