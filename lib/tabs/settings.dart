@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/utils/parse_note.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -249,6 +253,11 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
+              InfoCard(
+                title: "Bluetooth",
+                icon: Icons.bluetooth,
+                more: Setting(title: "Bluetooth", widgets: BluetoothScan()),
+              ),
               if (false)
                 InfoCard(
                   title: "Beta Features",
@@ -284,7 +293,7 @@ class _SettingsState extends State<Settings> {
 class Setting extends StatefulWidget {
   const Setting({super.key, required this.title, required this.widgets});
   final String title;
-  final List<Widget> widgets;
+  final Object widgets;
 
   @override
   State<Setting> createState() => SettingState();
@@ -297,8 +306,61 @@ class SettingState extends State<Setting> {
       appBar: AppBar(title: Text(widget.title)),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: Column(spacing: 10, crossAxisAlignment: CrossAxisAlignment.start, children: widget.widgets),
+        child: widget.widgets is List<Widget>
+            ? Column(spacing: 10, crossAxisAlignment: CrossAxisAlignment.start, children: widget.widgets as List<Widget>)
+            : widget.widgets is Widget
+            ? widget.widgets as Widget
+            : null,
       ),
+    );
+  }
+}
+
+class BluetoothScan extends StatefulWidget {
+  const BluetoothScan({super.key});
+
+  @override
+  State<BluetoothScan> createState() => _BluetoothScanState();
+}
+
+class _BluetoothScanState extends State<BluetoothScan> {
+  List<BluetoothDevice> devices = [];
+  late final StreamSubscription sub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    sub = Ble().fetchDevices().listen((res) {
+      if (!mounted) return;
+
+      setState(() {
+        devices.addOrUpdate(res.device);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    sub.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        for (BluetoothDevice device in devices) ...[
+          if (device.advName != "")
+            InfoCard(
+              title: device.advName,
+              icon: Icons.bluetooth,
+              onTap: () {
+                Ble().connect(device: device);
+              },
+            ),
+        ],
+      ],
     );
   }
 }

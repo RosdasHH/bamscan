@@ -1,9 +1,9 @@
-import 'package:bamscan/bletest.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
@@ -38,7 +38,7 @@ void main() {
                 : ThemeMode.light,
             theme: AppTheme().light,
             darkTheme: AppTheme().dark,
-            home: const BLE(),
+            home: const MyApp(),
           );
         },
       ),
@@ -83,6 +83,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       storageLoaded = true;
     });
+
     if (StorageService().firstLaunchAfterUpdate && StorageService().version == "Version: 1.1.5+17") {
       if (!mounted) return;
       return showDialog(
@@ -106,6 +107,13 @@ class _MyAppState extends State<MyApp> {
         },
       );
     }
+    Ble().connect();
+
+    //await Ble().startAutoConnect();
+    //final stream = Ble().fetchData();
+    //stream.listen((Scale scale) {
+    //  print(scale.weight);
+    //});
   }
 
   @override

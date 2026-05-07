@@ -19,6 +19,7 @@ class StorageService extends ChangeNotifier {
   bool _showicons = true;
   String? _lastVersion;
   bool _firstLaunchAfterUpdate = false;
+  String _bleRemoteId = "";
 
   String get bambuddyUrl => _bambuddyUrl;
   String get xapitoken => _xapitoken;
@@ -28,6 +29,7 @@ class StorageService extends ChangeNotifier {
   String get darkMode => _darkMode;
   bool get showicons => _showicons;
   bool get firstLaunchAfterUpdate => _firstLaunchAfterUpdate;
+  String get bleRemoteId => _bleRemoteId;
 
   Future<void> loadFromStorage() async {
     _bambuddyUrl = await getBambuddyUrl();
@@ -38,6 +40,7 @@ class StorageService extends ChangeNotifier {
     _darkMode = await getDarkMode();
     _showicons = await getShowIcons();
     _lastVersion = await getLastVersion();
+    _bleRemoteId = await getBleRemoteId();
 
     if (_lastVersion != _version && firstUse == false) {
       _firstLaunchAfterUpdate = true;
@@ -101,6 +104,12 @@ class StorageService extends ChangeNotifier {
     await loadFromStorage();
   }
 
+  Future<void> setBleRemoteId(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("bleRemoteId", value);
+    await loadFromStorage();
+  }
+
   static Future<String> getBambuddyUrl() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("bambuddyUrl") ?? "";
@@ -124,6 +133,11 @@ class StorageService extends ChangeNotifier {
   static Future<String?> getLastVersion() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("lastVersion");
+  }
+
+  static Future<String> getBleRemoteId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("bleRemoteId") ?? "";
   }
 
   static Future<bool> getShowIcons() async {
