@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bamscan/animation/ble_animation.dart';
+import 'package:bamscan/classes/scale.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
+import 'package:bamscan/services/scale_service.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/ams_number_letter.dart';
 import 'package:bamscan/utils/color.dart';
@@ -28,6 +34,11 @@ class FilamentView extends StatefulWidget {
 }
 
 class FilamentViewState extends State<FilamentView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final spools = context.watch<AvailableFilaments>();
@@ -81,6 +92,7 @@ class FilamentViewState extends State<FilamentView> {
               title: "Weight",
               value: "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
               progress: (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
+              more: WeightMeasure(),
             ),
             Divider(height: 5, indent: 20, endIndent: 20),
             InfoCard(
@@ -152,6 +164,67 @@ class FilamentViewState extends State<FilamentView> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class WeightMeasure extends StatefulWidget {
+  const WeightMeasure({super.key});
+
+  @override
+  State<WeightMeasure> createState() => _WeightMeasureState();
+}
+
+class _WeightMeasureState extends State<WeightMeasure> {
+  StreamSubscription? sub;
+  Scale? scale;
+  @override
+  void initState() {
+    super.initState();
+    Ble().connect();
+    sub = ScaleService().stream.listen((value) {
+      setState(() {
+        scale = value;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    sub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ble = context.watch<Ble>();
+    return Scaffold(
+      appBar: AppBar(title: Text("Scale")),
+      body: ble.isConnecting
+          ? ScaleLoading()
+          : Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Current Weight", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Text(scale?.weight.toString() ?? ""),
+                Button(onPressed: () {}, child: Text("Update Spool")),
+              ],
+            ),
+    );
+  }
+}
+
+class ScaleLoading extends StatelessWidget {
+  const ScaleLoading({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [Text("Connecting Scale"), BleAnimation(), Text("Please turn on your scale and let it connect.")],
     );
   }
 }

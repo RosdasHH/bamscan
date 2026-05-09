@@ -26,6 +26,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AvailableFilaments()),
         ChangeNotifierProvider(create: (_) => ApiService()),
         ChangeNotifierProvider(create: (_) => DeviceCapabilities()),
+        ChangeNotifierProvider(create: (_) => Ble()),
       ],
       child: Consumer<StorageService>(
         builder: (context, storage, _) {
@@ -108,7 +109,6 @@ class _MyAppState extends State<MyApp> {
         },
       );
     }
-    await Ble().connect();
     ScaleService().start();
 
     //await Ble().startAutoConnect();
@@ -121,6 +121,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final storage = context.watch<StorageService>();
+
     List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(

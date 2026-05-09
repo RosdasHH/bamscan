@@ -4,18 +4,20 @@ import 'package:bamscan/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-class Ble with WidgetsBindingObserver {
+class Ble extends ChangeNotifier with WidgetsBindingObserver {
   Ble._internal();
   static final Ble _instance = Ble._internal();
   factory Ble() => _instance;
 
   BluetoothDevice? connectedDevice;
+  bool isConnecting = false;
 
   final StreamController<List<int>> _notifyController = StreamController<List<int>>.broadcast();
 
   Stream<List<int>> get notifications => _notifyController.stream;
 
   StreamSubscription? _notifySub;
+  StreamSubscription? _connectionSub;
 
   Stream<ScanResult> fetchDevices() {
     final controller = StreamController<ScanResult>.broadcast();
@@ -54,14 +56,32 @@ class Ble with WidgetsBindingObserver {
       autoConnect = true;
     }
 
-    await device.connect(license: License.free);
-    await device.connectionState.firstWhere((s) => s == BluetoothConnectionState.connected);
+    await _connectionSub?.cancel();
 
-    connectedDevice = device;
+    _connectionSub = device.connectionState.listen((state) {
+      if (state == BluetoothConnectionState.disconnected) {
+        connectedDevice = null;
+        notifyListeners();
+      } else if (state == BluetoothConnectionState.connected) {
+        connectedDevice = device;
+        notifyListeners();
+      }
+    });
 
     if (!autoConnect) {
       StorageService().setBleRemoteId(device.remoteId.toString());
     }
+    isConnecting = true;
+    try {
+      await device.connect(license: License.free);
+    } catch (e) {
+      connect();
+      return;
+    }
+    isConnecting = false;
+
+    connectedDevice = device;
+    notifyListeners();
 
     _startNotifications(device);
   }
