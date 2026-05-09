@@ -1,4 +1,5 @@
 import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/listener/ble_state_listener.dart';
 import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
@@ -40,7 +41,7 @@ void main() {
                 : ThemeMode.light,
             theme: AppTheme().light,
             darkTheme: AppTheme().dark,
-            home: const MyApp(),
+            home: const Blestatelistener(child: MyApp()),
           );
         },
       ),

@@ -10,6 +10,7 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
   factory Ble() => _instance;
 
   BluetoothDevice? connectedDevice;
+  BluetoothConnectionState connectionState = BluetoothConnectionState.disconnected;
   bool isConnecting = false;
 
   final StreamController<List<int>> _notifyController = StreamController<List<int>>.broadcast();
@@ -59,6 +60,7 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
     await _connectionSub?.cancel();
 
     _connectionSub = device.connectionState.listen((state) {
+      connectionState = state;
       if (state == BluetoothConnectionState.disconnected) {
         connectedDevice = null;
         notifyListeners();
