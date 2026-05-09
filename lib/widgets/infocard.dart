@@ -15,6 +15,7 @@ class InfoCard extends StatefulWidget {
     this.spool,
     this.height = 70,
     this.subtitle,
+    this.disabled = false,
   });
   final IconData icon;
   final String title;
@@ -26,6 +27,7 @@ class InfoCard extends StatefulWidget {
   final String? apiname;
   final Spool? spool;
   final int height;
+  final bool disabled;
 
   @override
   State<InfoCard> createState() => _InfoCardState();
@@ -191,6 +193,16 @@ class _InfoCardState extends State<InfoCard> {
                       ),
                     ),
                   ),
+                  if (widget.disabled)
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: SizedBox(child: Container(color: context.appColor.primaryText.withValues(alpha: 0.5))),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

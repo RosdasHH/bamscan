@@ -26,7 +26,7 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
 
     controller.onListen = () {
       if (!FlutterBluePlus.isScanningNow) {
-        FlutterBluePlus.startScan(timeout: const Duration(seconds: 15), androidUsesFineLocation: true);
+        FlutterBluePlus.startScan(timeout: const Duration(seconds: 15), androidUsesFineLocation: true, withServices: [Guid("ffb0")]);
       }
 
       scanSub = FlutterBluePlus.onScanResults.listen((res) {

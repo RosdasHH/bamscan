@@ -266,9 +266,11 @@ class _SettingsState extends State<Settings> {
               InfoCard(
                 title: "Bluetooth",
                 icon: Icons.bluetooth,
-                more: Setting(title: "Bluetooth", widgets: BluetoothScan()),
+                more: Setting(
+                  title: "Bluetooth",
+                  widgets: [InfoCard(title: "Scale", icon: Icons.scale, value: storageService.bleRemoteId == "" ? "None" : "Paired", more: BluetoothScan())],
+                ),
               ),
-              InfoCard(title: "Scale", icon: Icons.scale, value: weight),
               if (false)
                 InfoCard(
                   title: "Beta Features",
@@ -335,7 +337,7 @@ class BluetoothScan extends StatefulWidget {
 }
 
 class _BluetoothScanState extends State<BluetoothScan> {
-  List<BluetoothDevice> devices = [];
+  List<ScanResult> scanRes = [];
   late final StreamSubscription sub;
 
   @override
@@ -346,7 +348,7 @@ class _BluetoothScanState extends State<BluetoothScan> {
       if (!mounted) return;
 
       setState(() {
-        devices.addOrUpdate(res.device);
+        scanRes.addOrUpdate(res);
       });
     });
   }
@@ -359,19 +361,24 @@ class _BluetoothScanState extends State<BluetoothScan> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        for (BluetoothDevice device in devices) ...[
-          if (device.advName != "")
-            InfoCard(
-              title: device.advName,
-              icon: Icons.bluetooth,
-              onTap: () {
-                Ble().connect(device: device);
-              },
-            ),
+    return Scaffold(
+      appBar: AppBar(title: Text("Connect device")),
+      body: ListView(
+        children: [
+          for (ScanResult res in scanRes) ...[
+            if (res.device.advName != "") ...[
+              InfoCard(
+                title: res.device.advName,
+                icon: Icons.bluetooth,
+                onTap: () {
+                  Ble().connect(device: res.device);
+                },
+                value: res.rssi.toString(),
+              ),
+            ],
+          ],
         ],
-      ],
+      ),
     );
   }
 }

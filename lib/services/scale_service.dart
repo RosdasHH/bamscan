@@ -18,13 +18,15 @@ class ScaleService {
     _sub?.cancel();
 
     _sub = Ble().notifications.listen((value) {
-      if (value.length < 7) return;
+      try {
+        if (value.length < 7) return;
 
-      final raw = (value[4] << 16) | (value[5] << 8) | value[6];
+        final raw = (value[4] << 16) | (value[5] << 8) | value[6];
 
-      final weight = raw / 1000;
+        final weight = raw / 1000;
 
-      _controller.add(Scale(weight: weight, isStable: value[2] == 1));
+        _controller.add(Scale(weight: weight, isStable: value[2] == 1));
+      } catch (_) {}
     });
   }
 
