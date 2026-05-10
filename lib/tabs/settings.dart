@@ -1,6 +1,8 @@
 import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/storage.dart';
+import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/parse_note.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/textinput.dart';
@@ -164,88 +166,8 @@ class _SettingsState extends State<Settings> {
                         );
                       },
                     ),
-                    InfoCard(
-                      title: "Reset QR-Codes",
-                      value: "",
-                      icon: MdiIcons.qrcodeRemove,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Are you sure?"),
-                              content: Text("This will delete all QR-Code mappings Bambuddy."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("No"),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-                                    await availableFilaments.getAllSpools();
-                                    for (Spool spool in availableFilaments.spools) {
-                                      if (!context.mounted) {
-                                        return;
-                                      }
-                                      await deleteQrCodeReq(context, spool);
-                                    }
-                                    if (!context.mounted) {
-                                      return;
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Yes"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    InfoCard(
-                      title: "Reset NFC-Tags",
-                      value: "",
-                      icon: MdiIcons.nfcVariantOff,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Are you sure?"),
-                              content: Text("This will delete all NFC-Tag mappings in Bambuddy."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("No"),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-                                    await availableFilaments.getAllSpools();
-                                    for (Spool spool in availableFilaments.spools) {
-                                      if (!context.mounted) {
-                                        return;
-                                      }
-                                      await deleteNfcReq(context, spool);
-                                    }
-                                    if (!context.mounted) {
-                                      return;
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Yes"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
+                    InfoCard(title: "Reset QR-Codes", value: "", icon: MdiIcons.qrcodeRemove, onTap: () => deleteAllMappings(context, "qr")),
+                    InfoCard(title: "Reset NFC-Tags", value: "", icon: MdiIcons.nfcVariantOff, onTap: () => deleteAllMappings(context, "nfc")),
                   ],
                 ),
               ),
@@ -279,6 +201,79 @@ class _SettingsState extends State<Settings> {
       ),
     );
   }
+}
+
+void deleteAllMappings(BuildContext context, String kind) {
+  showDialog(
+    context: context,
+    builder: (dialogcontext) {
+      int tasksDone = 0;
+      int taskcount = 1;
+      bool started = false;
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text("Are you sure?"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 10,
+              children: [
+                Text(
+                  "This will delete all ${kind == "nfc"
+                      ? "NFC-Tag"
+                      : kind == "qr"
+                      ? "QR-Code"
+                      : null} mappings in Bambuddy.",
+                ),
+                if (started) LinearProgressIndicator(value: tasksDone / taskcount),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogcontext);
+                },
+                child: Text("No"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+                  await availableFilaments.getAllSpools();
+                  setState(() {
+                    started = true;
+                    taskcount = availableFilaments.spools.length;
+                  });
+                  for (Spool spool in availableFilaments.spools) {
+                    if (!context.mounted) {
+                      return;
+                    }
+                    if (kind == "nfc") {
+                      await deleteNfcReq(context, spool);
+                      tasksDone++;
+                    }
+                    if (!context.mounted) {
+                      return;
+                    }
+                    if (kind == "qr") {
+                      await deleteQrCodeReq(context, spool);
+                      tasksDone++;
+                    }
+                    setState(() {});
+                  }
+                  if (!context.mounted) {
+                    return;
+                  }
+                  showSnackbar(context, "Successfully resetted ${kind.toUpperCase()} mappings.", context.appColor.success);
+                  Navigator.pop(dialogcontext);
+                },
+                child: Text("Yes"),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
 }
 
 class Setting extends StatefulWidget {

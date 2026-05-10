@@ -63,7 +63,7 @@ class AppTheme {
           return IconThemeData(color: color.primaryText);
         }),
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(color: color.primary, circularTrackColor: color.base1, strokeCap: StrokeCap.round),
+      progressIndicatorTheme: ProgressIndicatorThemeData(color: color.primary, circularTrackColor: color.base1, linearTrackColor: color.base1, strokeCap: StrokeCap.round),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
