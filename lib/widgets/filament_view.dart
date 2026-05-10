@@ -80,7 +80,7 @@ class FilamentViewState extends State<FilamentView> {
             InfoCard(
               icon: MdiIcons.weight,
               title: "Weight",
-              value: "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
+              value: "${(spool.labelWeight - spool.weightUsed).toStringAsFixed(2)}/${spool.labelWeight}",
               progress: (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
               more: WeightMeasure(spool: spool),
             ),

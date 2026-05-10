@@ -25,7 +25,7 @@ class ScaleService {
 
         final weight = raw / 1000;
 
-        _controller.add(Scale(weight: weight, isStable: value[2] == 1));
+        _controller.add(Scale(weight: weight, isStable: value[2] == 1, isGram: value[3] == 0));
       } catch (_) {}
     });
   }

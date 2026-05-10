@@ -45,20 +45,24 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> connect({BluetoothDevice? device}) async {
+    isConnecting = true;
+    notifyListeners();
     await disconnectCurrent();
 
     bool autoConnect = false;
 
     if (device == null) {
       final id = StorageService().bleRemoteId;
-      if (id.isEmpty) return;
+      if (id.isEmpty) {
+        isConnecting = false;
+        notifyListeners();
+        return;
+      }
 
       device = BluetoothDevice.fromId(id);
       autoConnect = true;
     }
-
     await _connectionSub?.cancel();
-
     _connectionSub = device.connectionState.listen((state) {
       connectionState = state;
       if (state == BluetoothConnectionState.disconnected) {
@@ -76,11 +80,11 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
     isConnecting = true;
     try {
       await device.connect(license: License.free);
+      isConnecting = false;
     } catch (e) {
-      connect();
+      isConnecting = false;
       return;
     }
-    isConnecting = false;
 
     connectedDevice = device;
     notifyListeners();
@@ -98,7 +102,6 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
       for (final c in s.characteristics) {
         if (c.properties.notify || c.properties.indicate) {
           await c.setNotifyValue(true);
-
           _notifySub = c.lastValueStream.listen((value) {
             _notifyController.add(value);
           });

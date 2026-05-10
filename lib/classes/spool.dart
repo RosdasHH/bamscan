@@ -8,10 +8,10 @@ class Spool {
   final String colorName;
   final Color color;
   final String brand;
-  final int labelWeight;
-  final int coreWeight;
+  final double labelWeight;
+  final double coreWeight;
   final int? coreWeightCatalogId;
-  final int weightUsed;
+  final double weightUsed;
   final String slicerFilament;
   final String slicerFilamentName;
   final int? nozzleTempMin;
@@ -81,10 +81,10 @@ class Spool {
         colorName: json['color_name'] as String? ?? "",
         color: toFlutterColor(json['rgba']),
         brand: json['brand'] as String? ?? "",
-        labelWeight: (json['label_weight'] as num?)?.toInt() ?? 0,
-        coreWeight: (json['core_weight'] as num?)?.toInt() ?? 0,
+        labelWeight: (json['label_weight'] as num?)?.toDouble() ?? 0,
+        coreWeight: (json['core_weight'] as num?)?.toDouble() ?? 0,
         coreWeightCatalogId: json['core_weight_catalog_id'] != null ? (json['core_weight_catalog_id'] as num).toInt() : null,
-        weightUsed: (json['weight_used'] as num?)?.toInt() ?? 0,
+        weightUsed: (json['weight_used'] as num?)?.toDouble() ?? 0,
         slicerFilament: json['slicer_filament'] as String? ?? "",
         slicerFilamentName: json['slicer_filament_name'] as String? ?? "",
         nozzleTempMin: (json['nozzle_temp_min'] as num?)?.toInt() ?? 0,
