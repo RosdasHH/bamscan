@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/ble.dart';
+import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/scale_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/utils/parse_note.dart';
+import 'package:bamscan/widgets/ble_not_enabled.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
@@ -338,24 +340,11 @@ class BluetoothScan extends StatefulWidget {
 
 class _BluetoothScanState extends State<BluetoothScan> {
   List<ScanResult> scanRes = [];
-  late final StreamSubscription sub;
-
-  @override
-  void initState() {
-    super.initState();
-
-    sub = Ble().fetchDevices().listen((res) {
-      if (!mounted) return;
-
-      setState(() {
-        scanRes.addOrUpdate(res);
-      });
-    });
-  }
+  StreamSubscription? sub;
 
   @override
   void dispose() {
-    sub.cancel();
+    sub?.cancel();
     super.dispose();
   }
 
@@ -363,21 +352,41 @@ class _BluetoothScanState extends State<BluetoothScan> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Connect device")),
-      body: ListView(
-        children: [
-          for (ScanResult res in scanRes) ...[
-            if (res.device.advName != "") ...[
-              InfoCard(
-                title: res.device.advName,
-                icon: Icons.bluetooth,
-                onTap: () {
-                  Ble().connect(device: res.device);
-                },
-                value: res.rssi.toString(),
-              ),
-            ],
-          ],
-        ],
+      body: Consumer<DeviceCapabilities>(
+        builder: (context, deviceCapabilities, child) {
+          if (!deviceCapabilities.isBluetoothAvailable) {
+            return BleNotEnabled();
+          } else {
+            if (!FlutterBluePlus.isScanningNow && DeviceCapabilities().isBluetoothAvailable) {
+              sub = Ble().fetchDevices().listen((res) {
+                if (!mounted) return;
+
+                setState(() {
+                  scanRes.addOrUpdate(res);
+                });
+              });
+            }
+
+            return ListView(
+              children: [
+                for (ScanResult res in scanRes) ...[
+                  if (res.device.advName != "") ...[
+                    InfoCard(
+                      title: res.device.advName,
+                      icon: Icons.bluetooth,
+                      onTap: () async {
+                        await Ble().connect(device: res.device);
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      },
+                      value: res.rssi.toString(),
+                    ),
+                  ],
+                ],
+              ],
+            );
+          }
+        },
       ),
     );
   }

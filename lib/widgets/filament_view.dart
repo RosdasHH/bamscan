@@ -30,11 +30,16 @@ class FilamentView extends StatefulWidget {
 
 class FilamentViewState extends State<FilamentView> {
   @override
+  void initState() {
+    super.initState();
+    DeviceCapabilities().checkDevicesCapabilities();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final spools = context.watch<AvailableFilaments>();
     final spool = spools.spools.firstWhere((s) => s.id == widget.spool.id, orElse: () => widget.spool);
     DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
-    deviceCapabilities.checkDevicesCapabilities();
     final Color filamentColor = spool.color;
     final Color filamentConformTextColor = getContrastColor(filamentColor);
 
