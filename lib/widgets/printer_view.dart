@@ -2,6 +2,7 @@ import 'package:bamscan/classes/ams.dart';
 import 'package:bamscan/classes/printer.dart';
 import 'package:bamscan/classes/printer_status.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/globals.dart';
 import 'package:bamscan/services/storage.dart';
@@ -14,8 +15,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class PrinterView extends StatefulWidget {
-  const PrinterView({super.key, required this.printer});
-  final Printer printer;
+  const PrinterView({super.key, required this.printerid});
+  final int printerid;
 
   @override
   State<PrinterView> createState() => _PrinterViewState();
@@ -40,7 +41,7 @@ class _PrinterViewState extends State<PrinterView> {
     final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
     DeviceCapabilities().checkDevicesCapabilities();
     availableFilaments.getAllSpools();
-    allAms = await availableFilaments.getAllAms(widget.printer.id);
+    allAms = await availableFilaments.getAllAms(widget.printerid);
     if (!mounted) return;
     setState(() {
       allAms = allAms;
@@ -49,7 +50,8 @@ class _PrinterViewState extends State<PrinterView> {
 
   @override
   Widget build(BuildContext context) {
-    final Printer printer = widget.printer;
+    final AvailablePrinters availablePrinters = context.watch<AvailablePrinters>();
+    final Printer printer = availablePrinters.printers.where((printer) => printer.id == widget.printerid).first;
     final PrinterStatus? pStatus = printer.status;
     List<Map<String, String>> statusbar = [
       {"Status": pStatus?.state ?? ""},
@@ -74,9 +76,9 @@ class _PrinterViewState extends State<PrinterView> {
         : context.appColor.error;
     final rssiDisplay = "${rssi.toString()}dBm";
     StorageService storageService = context.read<StorageService>();
-    String mjpegUrl = "${storageService.getString(StorageService.kBambuddyUrl)}${Globals.apinamespace}/printers/${widget.printer.id}/camera/stream";
+    String mjpegUrl = "${storageService.getString(StorageService.kBambuddyUrl)}${Globals.apinamespace}/printers/${printer.id}/camera/stream";
     return Scaffold(
-      appBar: AppBar(title: Text(widget.printer.name)),
+      appBar: AppBar(title: Text(printer.name)),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: ListView(

@@ -36,7 +36,7 @@ class _AmsSelectionState extends State<AmsSelection> {
     void assignSpoolToSlot(Ams ams, TraySlot slot, String spoolId) async {
       AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
       bool configured = await availableFilaments.setSlotToSpoolId(printerid, ams.id.toString(), ams.isExternalSpool ? "0" : slot.id.toString(), spoolId);
-      if (!mounted) return;
+      if (!context.mounted) return;
       SnackbarService.custom(configured ? "Spool assigned" : "Spool NOT assigned", configured ? context.appColor.success : context.appColor.error);
       Navigator.popUntil(context, (route) => route.settings.name == "ams");
     }

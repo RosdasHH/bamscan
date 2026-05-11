@@ -46,7 +46,7 @@ class _PrinterListState extends State<PrinterList> {
   void refresh() async {
     while (mounted) {
       await fetch();
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(Duration(seconds: 3));
     }
   }
 
@@ -121,7 +121,7 @@ class _PrinterListState extends State<PrinterList> {
                           context,
                           MaterialPageRoute(
                             settings: const RouteSettings(name: "ams"),
-                            builder: (context) => PrinterView(printer: printer),
+                            builder: (context) => PrinterView(printerid: printer.id),
                           ),
                         );
                       },
@@ -172,7 +172,6 @@ class _PrinterListState extends State<PrinterList> {
                   );
                 },
               ),
-
             SizedBox(height: 30),
           ],
         ),
