@@ -79,11 +79,11 @@ class _OnboardingState extends State<Onboarding> {
               return;
             }
             StorageService storageService = StorageService();
-            storageService.setBambuddyUrl(stripUrl(_bambuddyUrlController.text));
-            storageService.saveToken(_bambuddyAPIKeyController.text);
-            storageService.setFirstUse(false);
-            StorageService().loadFromStorage();
-            storageService = StorageService();
+            storageService.setString(StorageService.kBambuddyUrl, (stripUrl(_bambuddyUrlController.text)));
+            storageService.setSecureString(StorageService.kXApiToken,_bambuddyAPIKeyController.text);
+            storageService.setBool(StorageService.kFirstUse,false);
+            //StorageService().loadFromStorage();
+            //storageService = StorageService();
           },
           nextStyle: ButtonStyle(foregroundColor: WidgetStateProperty.all(context.appColor.primary)),
           doneStyle: ButtonStyle(foregroundColor: WidgetStateProperty.all(context.appColor.primary)),

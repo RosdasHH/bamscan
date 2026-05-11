@@ -121,7 +121,7 @@ class FilamentListState extends State<FilamentList> {
       });
     }
 
-    if (storage.bambuddyUrl == "") {
+    if (storage.getString(StorageService.kBambuddyUrl) == "") {
       configerror = "Please enter the Bambuddy Url in the Settings tab.";
     }
     if (configerror != null) return Center(child: Text(configerror));
@@ -268,9 +268,9 @@ class FilamentCardState extends State<FilamentCard> {
                   text:
                       "${widget.filament.slicerFilamentName.startsWith(widget.filament.brand) ? "" : "${widget.filament.brand} "}${widget.filament.slicerFilamentName} ${widget.filament.slicerFilamentName.contains(widget.filament.subtype) ? "" : widget.filament.subtype} ",
                 ),
-                if (storageService.showicons && widget.filament.qrcode != null && widget.selection == false)
+                if (storageService.getBool(StorageService.kShowIcons) && widget.filament.qrcode != null && widget.selection == false)
                   WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(Icons.qr_code_2_rounded, size: 18)),
-                if (storageService.showicons && widget.filament.nfcid != null && widget.selection == false)
+                if (storageService.getBool(StorageService.kShowIcons) && widget.filament.nfcid != null && widget.selection == false)
                   WidgetSpan(alignment: PlaceholderAlignment.middle, child: Icon(MdiIcons.contactlessPayment, size: 18)),
               ],
             ),

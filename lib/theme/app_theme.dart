@@ -107,5 +107,10 @@ class AppTheme {
 }
 
 extension AppColorBuildContext on BuildContext {
-  AppColor get appColor => Theme.of(this).extension<AppColor>()!;
+  AppColor get appColor {
+    final ext = Theme.of(this).extension<AppColor>();
+    if (ext != null) return ext;
+
+    return LightColor();
+  }
 }

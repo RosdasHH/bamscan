@@ -1,5 +1,4 @@
 import 'package:bamscan/classes/printer.dart';
-import 'package:bamscan/modals/amsselection.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
 import 'package:bamscan/services/globals.dart';
@@ -7,6 +6,7 @@ import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/offline.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/badge_card.dart';
+import 'package:bamscan/widgets/printer_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,7 +40,6 @@ class _PrinterListState extends State<PrinterList> {
   @override
   void initState() {
     super.initState();
-    storageservice.loadFromStorage();
     if (!mounted) return;
     refresh();
   }
@@ -78,7 +77,7 @@ class _PrinterListState extends State<PrinterList> {
     String? configerror;
     if (!apiService.reachable) return Offline();
 
-    if (storage.bambuddyUrl == "") {
+    if (storage.getString(StorageService.kBambuddyUrl) == "") {
       configerror = "Please enter the Bambuddy Url in the Settings tab.";
     }
     if (configerror != null) return Center(child: Text(configerror));
@@ -123,7 +122,7 @@ class _PrinterListState extends State<PrinterList> {
                           context,
                           MaterialPageRoute(
                             settings: const RouteSettings(name: "ams"),
-                            builder: (context) => AmsSelection(printer: printer),
+                            builder: (context) => PrinterView(printer: printer),
                           ),
                         );
                       },
@@ -137,7 +136,7 @@ class _PrinterListState extends State<PrinterList> {
                               child: SizedBox.square(
                                 dimension: 75,
                                 child: Image.network(
-                                  "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
+                                  "${storage.getString(StorageService.kBambuddyUrl)}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
                                   errorBuilder: (context, error, stackTrace) => SizedBox.expand(),
                                 ),
                               ),
@@ -180,6 +179,7 @@ class _PrinterListState extends State<PrinterList> {
                   );
                 },
               ),
+
             SizedBox(height: 30),
           ],
         ),

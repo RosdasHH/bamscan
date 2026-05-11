@@ -1,6 +1,7 @@
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/parse_note.dart';
@@ -31,10 +32,11 @@ class _SettingsState extends State<Settings> {
   }
 
   void loadData() async {
-    setState(() {
-      _bambuddyUrlController.text = StorageService().bambuddyUrl;
-      _xapiTokenController.text = StorageService().xapitoken;
-    });
+    StorageService storageService = context.read<StorageService>();
+
+    _bambuddyUrlController.text = storageService.getString(StorageService.kBambuddyUrl);
+    _xapiTokenController.text = await storageService.getSecureString(StorageService.kXApiToken);
+    setState(() {});
   }
 
   @override
@@ -67,9 +69,9 @@ class _SettingsState extends State<Settings> {
                       icon: Icons.qr_code_scanner,
                       value: Consumer<StorageService>(
                         builder: (context, storageService, _) => Switch(
-                          value: storageService.showicons,
+                          value: storageService.getBool(StorageService.kShowIcons),
                           onChanged: (value) {
-                            storageService.setShowIcons(value);
+                            storageService.setBool(StorageService.kShowIcons, value);
                           },
                         ),
                       ),
@@ -86,13 +88,13 @@ class _SettingsState extends State<Settings> {
                   widgets: [
                     TextInput(
                       controller: _bambuddyUrlController,
-                      onTapOutside: () => storageService.setBambuddyUrl(_bambuddyUrlController.text),
+                      onTapOutside: () => storageService.setString(StorageService.kBambuddyUrl, _bambuddyUrlController.text),
                       labeltext: "Bambuddy URL:PORT",
                       hinttext: "e.g. http://127.0.0.1:8000",
                     ),
                     TextInput(
                       controller: _xapiTokenController,
-                      onTapOutside: () => storageService.saveToken(_xapiTokenController.text),
+                      onTapOutside: () => storageService.setSecureString(StorageService.kXApiToken, _xapiTokenController.text),
                       obscure: true,
                       labeltext: "Bambuddy API Key",
                       hinttext: "Bambuddy Website -> Settings -> API Keys",
@@ -113,11 +115,11 @@ class _SettingsState extends State<Settings> {
                       value: Consumer<StorageService>(
                         builder: (context, storageService, _) {
                           return DropdownMenu<String>(
-                            initialSelection: storageService.darkMode,
+                            initialSelection: storageService.getString(StorageService.kDarkMode),
                             dropdownMenuEntries: ["System", "Light", "Dark"].map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
                             onSelected: (value) async {
                               if (value != null) {
-                                await storageService.setDarkMode(value);
+                                await storageService.setString(StorageService.kDarkMode, value);
                               }
                             },
                           );
@@ -183,9 +185,9 @@ class _SettingsState extends State<Settings> {
                         title: "External Spool",
                         value: Consumer<StorageService>(
                           builder: (context, storageService, _) => Switch(
-                            value: storageService.externalSpool,
+                            value: storageService.getBool(StorageService.kExternalSpool),
                             onChanged: (value) {
-                              storageService.setExternalSpool(value);
+                              storageService.setBool(StorageService.kExternalSpool, value);
                             },
                           ),
                         ),
@@ -194,7 +196,7 @@ class _SettingsState extends State<Settings> {
                     ],
                   ),
                 ),
-              Text(storageService.version, style: TextStyle(color: Colors.grey)),
+              Text(AppStateService().version, style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),

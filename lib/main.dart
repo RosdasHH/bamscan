@@ -3,6 +3,7 @@ import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
@@ -14,31 +15,31 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  //debugPaintSizeEnabled = true;
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final storage = StorageService();
+  await storage.init();
+
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(value: storage),
         ChangeNotifierProvider(create: (_) => AvailablePrinters()),
-        ChangeNotifierProvider(create: (_) => StorageService()),
         ChangeNotifierProvider(create: (_) => AvailableFilaments()),
         ChangeNotifierProvider(create: (_) => ApiService()),
         ChangeNotifierProvider(create: (_) => DeviceCapabilities()),
+        ChangeNotifierProvider(create: (_) => AppStateService()),
       ],
       child: Consumer<StorageService>(
-        builder: (context, storage, _) {
-          return MaterialApp(
-            //showPerformanceOverlay: true,
-            title: "BamScan",
-            themeMode: storage.darkMode == "System"
-                ? ThemeMode.system
-                : storage.darkMode == "Dark"
-                ? ThemeMode.dark
-                : ThemeMode.light,
-            theme: AppTheme().light,
-            darkTheme: AppTheme().dark,
-            home: const MyApp(),
-          );
+        builder: (context, storageService, child) {
+          String themeRaw = storage.getString(StorageService.kDarkMode);
+          ThemeMode theme = themeRaw == "System"
+              ? ThemeMode.system
+              : themeRaw == "Dark"
+              ? ThemeMode.dark
+              : ThemeMode.light;
+          return MaterialApp(debugShowCheckedModeBanner: false, themeMode: theme, theme: AppTheme().light, darkTheme: AppTheme().dark, home: const MyApp());
         },
       ),
     ),
@@ -61,14 +62,6 @@ class _MyAppState extends State<MyApp> {
 
   final PersistentTabController _controller = PersistentTabController(initialIndex: 1);
 
-  List<Widget> _buildScreens() {
-    return [
-      Scaffold(backgroundColor: context.appColor.base1, body: const FilamentTab()),
-      Scaffold(backgroundColor: context.appColor.base1, body: const Printers()),
-      Scaffold(backgroundColor: context.appColor.base1, body: const Settings()),
-    ];
-  }
-
   @override
   void initState() {
     super.initState();
@@ -76,13 +69,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void getStorage() async {
-    final StorageService storageService = StorageService();
-    await storageService.loadFromStorage();
-    DeviceCapabilities().checkDevicesCapabilities();
+    context.read<DeviceCapabilities>().checkDevicesCapabilities();
+    final appState = context.read<AppStateService>();
     setState(() {
       storageLoaded = true;
     });
-    if (StorageService().firstLaunchAfterUpdate && StorageService().version == "Version: 1.1.5+17") {
+    if (appState.firstLaunchAfterUpdate && appState.version == "1.1.5+17") {
       if (!mounted) return;
       return showDialog(
         context: context,
@@ -109,6 +101,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> buildScreens() {
+      return [Scaffold(body: const FilamentTab()), Scaffold(body: const Printers()), Scaffold(body: const Settings())];
+    }
+
     final storage = context.watch<StorageService>();
     List<PersistentBottomNavBarItem> navBarsItems() {
       return [
@@ -136,14 +132,14 @@ class _MyAppState extends State<MyApp> {
     if (storageLoaded == false) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (storage.firstUse == true) {
+    if (storage.getBool(StorageService.kFirstUse) == true) {
       return Onboarding();
     } else {
       return Scaffold(
         body: PersistentTabView(
           context,
           controller: _controller,
-          screens: _buildScreens(),
+          screens: buildScreens(),
           items: navBarsItems(),
           handleAndroidBackButtonPress: true,
           resizeToAvoidBottomInset: true,

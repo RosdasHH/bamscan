@@ -165,7 +165,7 @@ class AvailableFilaments extends ChangeNotifier {
     final List<dynamic> vtrayList = jsonDecode(res.body)["vt_tray"] as List;
 
     final List<Ams> ams = amsList.map((e) => Ams.fromJson(e as Map<String, dynamic>)).toList();
-    if (StorageService().externalSpool) {
+    if (StorageService().getBool(StorageService.kExternalSpool)) {
       final List<TraySlot> vtTray = vtrayList.map((e) => TraySlot.fromJson(e as Map<String, dynamic>)).toList();
       final Ams vttrayams = Ams(id: 255, tray: vtTray, isExternalSpool: true);
       ams.add(vttrayams);
