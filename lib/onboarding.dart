@@ -1,5 +1,5 @@
-import 'package:bamscan/helper/showSnackbar.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/theme/app_color.dart';
 import 'package:bamscan/theme/app_theme.dart';
@@ -80,8 +80,8 @@ class _OnboardingState extends State<Onboarding> {
             }
             StorageService storageService = StorageService();
             storageService.setString(StorageService.kBambuddyUrl, (stripUrl(_bambuddyUrlController.text)));
-            storageService.setSecureString(StorageService.kXApiToken,_bambuddyAPIKeyController.text);
-            storageService.setBool(StorageService.kFirstUse,false);
+            storageService.setSecureString(StorageService.kXApiToken, _bambuddyAPIKeyController.text);
+            storageService.setBool(StorageService.kFirstUse, false);
             //StorageService().loadFromStorage();
             //storageService = StorageService();
           },
@@ -100,7 +100,7 @@ class _OnboardingState extends State<Onboarding> {
       return true;
     } else {
       if (!mounted) return false;
-      showSnackbar(context, apikeystate == false ? "API Key is invalid!" : "Error while checking API Key!", apikeystate == true ? appColor.success : appColor.error);
+      SnackbarService.custom(apikeystate == false ? "API Key is invalid!" : "Error while checking API Key!", apikeystate == true ? appColor.success : appColor.error);
       return false;
     }
   }
@@ -113,7 +113,7 @@ class _OnboardingState extends State<Onboarding> {
       return true;
     } else {
       if (!mounted) return false;
-      showSnackbar(context, "No Bambuddy Server found!", health == true ? appColor.success : appColor.error);
+      SnackbarService.custom("No Bambuddy Server found!", health == true ? appColor.success : appColor.error);
       return false;
     }
   }

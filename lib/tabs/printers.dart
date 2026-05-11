@@ -1,7 +1,6 @@
 import 'package:bamscan/classes/printer.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
-import 'package:bamscan/services/globals.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/offline.dart';
 import 'package:bamscan/theme/app_theme.dart';
@@ -133,13 +132,7 @@ class _PrinterListState extends State<PrinterList> {
                           children: [
                             Padding(
                               padding: EdgeInsets.all(5),
-                              child: SizedBox.square(
-                                dimension: 75,
-                                child: Image.network(
-                                  "${storage.getString(StorageService.kBambuddyUrl)}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
-                                  errorBuilder: (context, error, stackTrace) => SizedBox.expand(),
-                                ),
-                              ),
+                              child: SizedBox.square(dimension: 75, child: Image.network(printer.getImgUrl(), errorBuilder: (context, error, stackTrace) => SizedBox.expand())),
                             ),
                             Expanded(
                               child: Column(

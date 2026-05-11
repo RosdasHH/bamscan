@@ -15,6 +15,7 @@ class AppColor extends ThemeExtension<AppColor> {
   final Color warning;
   final Color assignment;
   final Color white;
+  final Color secondaryText;
 
   AppColor({
     required this.primary,
@@ -31,6 +32,7 @@ class AppColor extends ThemeExtension<AppColor> {
     required this.popup,
     required this.assignment,
     required this.white,
+    required this.secondaryText,
   });
 
   @override
@@ -57,6 +59,7 @@ class DarkColor extends AppColor {
         warning: Colors.orange,
         assignment: Colors.purple,
         white: Colors.grey[100]!,
+        secondaryText: Colors.grey,
       );
 }
 
@@ -77,5 +80,6 @@ class LightColor extends AppColor {
         warning: Colors.orange,
         assignment: const Color.fromARGB(255, 210, 89, 231),
         white: Colors.grey[100]!,
+        secondaryText: Colors.grey[600]!,
       );
 }

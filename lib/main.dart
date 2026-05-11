@@ -5,6 +5,7 @@ import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
 import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/device_capabilities.dart';
+import 'package:bamscan/services/globals.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
 import 'package:bamscan/tabs/printers.dart';
@@ -17,6 +18,7 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //debugPaintSizeEnabled = true;
 
   final storage = StorageService();
   await storage.init();
@@ -33,13 +35,21 @@ Future<void> main() async {
       ],
       child: Consumer<StorageService>(
         builder: (context, storageService, child) {
-          String themeRaw = storage.getString(StorageService.kDarkMode);
+          String themeRaw = storage.getString(StorageService.kDarkMode, defaultValue: "System");
           ThemeMode theme = themeRaw == "System"
               ? ThemeMode.system
               : themeRaw == "Dark"
               ? ThemeMode.dark
               : ThemeMode.light;
-          return MaterialApp(debugShowCheckedModeBanner: false, themeMode: theme, theme: AppTheme().light, darkTheme: AppTheme().dark, home: const MyApp());
+          return MaterialApp(
+            navigatorKey: Globals.navigatorKey,
+            scaffoldMessengerKey: Globals.scaffoldMessengerKey,
+            debugShowCheckedModeBanner: false,
+            themeMode: theme,
+            theme: AppTheme().light,
+            darkTheme: AppTheme().dark,
+            home: const MyApp(),
+          );
         },
       ),
     ),

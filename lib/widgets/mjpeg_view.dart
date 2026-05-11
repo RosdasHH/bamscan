@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_printers.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/services/storage.dart';
-import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +18,7 @@ class MjpegView extends StatefulWidget {
 class _MjpegViewState extends State<MjpegView> {
   Uint8List? frame;
   HttpClient? client;
+  int tries = 0;
 
   @override
   void initState() {
@@ -30,13 +30,13 @@ class _MjpegViewState extends State<MjpegView> {
     client = HttpClient();
     AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
     await availablePrinters.updateStreamToken();
-    print(Uri.parse("${widget.url}?token=${StorageService().getSecureString(StorageService.kCamToken)}"));
     final request = await client!.getUrl(Uri.parse("${widget.url}?token=${await StorageService().getSecureString(StorageService.kCamToken)}"));
     final response = await request.close();
+    tries++;
 
     if (response.statusCode == 401) {
       //Auth failed
-      if (!mounted) return;
+      if (!mounted || tries > 3) return;
       AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
       await availablePrinters.updateStreamToken();
       _start();
@@ -65,7 +65,7 @@ class _MjpegViewState extends State<MjpegView> {
         }
       },
       onError: (e) {
-        showSnackbar(context, e, context.appColor.error);
+        SnackbarService.error(e);
       },
     );
   }
@@ -92,6 +92,13 @@ class _MjpegViewState extends State<MjpegView> {
 
   @override
   Widget build(BuildContext context) {
-    return frame == null ? const Center(child: CircularProgressIndicator()) : Image.memory(frame!, gaplessPlayback: true);
+    return SizedBox(
+      width: double.infinity,
+      height: MediaQuery.sizeOf(context).width * 9 / 16,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: Colors.black),
+        child: frame == null ? Center(child: CircularProgressIndicator()) : Image.memory(frame!, gaplessPlayback: true, fit: BoxFit.cover),
+      ),
+    );
   }
 }

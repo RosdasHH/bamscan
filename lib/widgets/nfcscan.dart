@@ -1,8 +1,7 @@
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/helper/showSnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/device_capabilities.dart';
-import 'package:bamscan/theme/app_theme.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +22,7 @@ class _NfcscanState extends State<Nfcscan> {
       if (!mounted) {
         return;
       }
-      showSnackbar(context, "NFC is not enabled!", context.appColor.error);
+      SnackbarService.error("NFC is not enabled!");
       return;
     }
     NfcManager.instance.startSession(
@@ -31,7 +30,7 @@ class _NfcscanState extends State<Nfcscan> {
         String? id = getUid(tag);
         print(id);
         if (id == null) {
-          showSnackbar(context, "Could not read tag!", context.appColor.error);
+          SnackbarService.error("Could not read tag!");
           return;
         } else {
           id = id.replaceAll("[", "").replaceAll("]", "");
@@ -48,7 +47,7 @@ class _NfcscanState extends State<Nfcscan> {
             spool = spools[0];
           } catch (_) {
             if (mounted) {
-              showSnackbar(context, "No Spool found!", context.appColor.error);
+              SnackbarService.error("No Spool found!");
             }
             spool = null;
           }

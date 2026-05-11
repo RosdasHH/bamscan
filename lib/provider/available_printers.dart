@@ -54,10 +54,7 @@ class AvailablePrinters extends ChangeNotifier {
 
   Future<void> updateStreamToken() async {
     final http.Response res = await ApiService().apiPost("/printers/camera/stream-token", {});
-    print(res.body);
     final String token = jsonDecode(res.body)["token"];
     await StorageService().setSecureString(StorageService.kCamToken, token);
-    print("Stream token updated!");
-    print(StorageService().getSecureString(StorageService.kCamToken));
   }
 }

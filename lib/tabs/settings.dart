@@ -1,9 +1,8 @@
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/app_state.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/services/storage.dart';
-import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/parse_note.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/textinput.dart';
@@ -265,7 +264,7 @@ void deleteAllMappings(BuildContext context, String kind) {
                   if (!context.mounted) {
                     return;
                   }
-                  showSnackbar(context, "Successfully resetted ${kind.toUpperCase()} mappings.", context.appColor.success);
+                  SnackbarService.success("Successfully resetted ${kind.toUpperCase()} mappings.");
                   Navigator.pop(dialogcontext);
                 },
                 child: Text("Yes"),

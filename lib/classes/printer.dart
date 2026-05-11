@@ -1,4 +1,6 @@
 import 'package:bamscan/classes/printer_status.dart';
+import 'package:bamscan/services/globals.dart';
+import 'package:bamscan/services/storage.dart';
 
 class Printer {
   final String name;
@@ -75,5 +77,8 @@ class Printer {
     } catch (e) {
       throw FormatException('Failed to parse printer JSON: $e');
     }
+  }
+  String getImgUrl() {
+    return "${StorageService().getString(StorageService.kBambuddyUrl)}${Globals.imagesnamespace}${model.replaceAll(" ", "").toLowerCase()}.png";
   }
 }
