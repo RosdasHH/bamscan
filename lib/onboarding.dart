@@ -75,9 +75,9 @@ class _OnboardingState extends State<Onboarding> {
               return;
             }
             if (!context.mounted) return;
-            if (!await checkapikey(context.appColor)) {
-              return;
-            }
+            //if (!await checkapikey(context.appColor)) {
+            //  return;
+            //}
             StorageService storageService = StorageService();
             storageService.setBambuddyUrl(stripUrl(_bambuddyUrlController.text));
             storageService.saveToken(_bambuddyAPIKeyController.text);
