@@ -1,4 +1,5 @@
 import 'package:bamscan/services/snackbar_service.dart';
+import 'package:bamscan/services/storage.dart';
 
 class PrinterStatus {
   final int id;
@@ -38,7 +39,7 @@ class PrinterStatus {
     required this.firmwareVersion,
   });
 
-  factory PrinterStatus.fromJson(Map<String, dynamic> json) {
+  static Future<PrinterStatus> fromJson(Map<String, dynamic> json) async {
     try {
       return PrinterStatus(
         id: (json['id'] as num?)?.toInt() ?? 0,
@@ -57,8 +58,9 @@ class PrinterStatus {
         ipCam: json["ipcam"] ?? false,
         sdcard: json["sdcard"] ?? false,
         firmwareVersion: json["firmware_version"] ?? "",
-
-        coverUrl: json['cover_url'],
+        coverUrl: json["cover_url"] != null
+            ? "${StorageService().getString(StorageService.kBambuddyUrl)}${json['cover_url']}?token=${await StorageService().getSecureString(StorageService.kCamToken)}"
+            : null,
       );
     } catch (e) {
       SnackbarService.error(e.toString());

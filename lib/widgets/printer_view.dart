@@ -64,8 +64,8 @@ class _PrinterViewState extends State<PrinterView> {
     final targetNozzleTemp = pStatus?.temperatures.nozzleTarget.toStringAsFixed(1) ?? "";
     final nozzleTempsDisplay = "$currentNozzleTemp°C/$targetNozzleTemp°C";
     //Bed
-    final currentBedTemp = pStatus?.temperatures.nozzle.toStringAsFixed(1) ?? "";
-    final targetbedTemp = pStatus?.temperatures.nozzleTarget.toStringAsFixed(1) ?? "";
+    final currentBedTemp = pStatus?.temperatures.bed.toStringAsFixed(1) ?? "";
+    final targetbedTemp = pStatus?.temperatures.bedTarget.toStringAsFixed(1) ?? "";
     final bedTempsDisplay = "$currentBedTemp°C/$targetbedTemp°C";
 
     final int rssi = pStatus?.rssi ?? 0;
@@ -92,7 +92,7 @@ class _PrinterViewState extends State<PrinterView> {
                 SizedBox(height: 10),
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(15),
                     child: IntrinsicHeight(
                       child: Row(
                         children: [
@@ -112,6 +112,12 @@ class _PrinterViewState extends State<PrinterView> {
                         ],
                       ),
                     ),
+                  ),
+                ),
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: IntrinsicHeight(child: Row(children: [if (printer.status?.coverUrl != null) Image.network(printer.status!.coverUrl!, height: 64, width: 64)])),
                   ),
                 ),
                 SizedBox(height: 5),
