@@ -98,7 +98,6 @@ class _AmsSelectionState extends State<AmsSelection> {
                       TrayType traytype = TrayType.noFilament;
                       Color traycolor = toFlutterColor(tray.trayColor);
                       String traytext;
-                      Color bordercolor = Colors.grey;
 
                       if (spool != null) {
                         traytype = TrayType.spoolLoaded;
@@ -112,12 +111,11 @@ class _AmsSelectionState extends State<AmsSelection> {
 
                       switch (traytype) {
                         case TrayType.spoolLoaded:
-                          traytext = ams.isExternalSpool ? "" : (tray.id + 1).toString();
+                          traytext = tray.trayType;
                           break;
                         case TrayType.noSpool:
                           traytext = "No Spool!";
                           fontcolor = context.appColor.error;
-                          bordercolor = context.appColor.error;
                           break;
                         case TrayType.noFilament:
                           traytext = "X";
@@ -177,7 +175,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                   ],
                                                 ),
                                                 AutoSizeText(
-                                                  tray.trayType,
+                                                  traytext,
                                                   maxLines: 1,
                                                   maxFontSize: 18,
                                                   minFontSize: 14,

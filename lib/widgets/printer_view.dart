@@ -203,7 +203,7 @@ class _PrinterViewState extends State<PrinterView> {
                           Text("Firmware", style: TextStyle(color: context.appColor.secondaryText, fontSize: 12)),
                           Text((pStatus?.firmwareVersion) ?? ""),
                           Text("Print hours", style: TextStyle(color: context.appColor.secondaryText, fontSize: 12)),
-                          Text("${printer.printHoursOffset.toString()}h"),
+                          Text("${printer.maintenance.currentHours.toStringAsFixed(0)}h"),
                         ],
                       ),
                     ];

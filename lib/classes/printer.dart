@@ -27,6 +27,7 @@ class Printer {
   final DateTime createdAt;
   final DateTime updatedAt;
   final Map<String, dynamic>? amsLabels;
+  final Maintenance maintenance;
   PrinterStatus? status;
 
   Printer({
@@ -51,6 +52,7 @@ class Printer {
     required this.updatedAt,
     this.status,
     this.amsLabels,
+    required this.maintenance,
   });
 
   static Future<Printer> fromJson(Map<String, dynamic> json) async {
@@ -83,6 +85,7 @@ class Printer {
         createdAt: DateTime.parse(json['created_at'] as String? ?? ""),
         updatedAt: DateTime.parse(json['updated_at'] as String? ?? ""),
         amsLabels: await getAmsLabels(id),
+        maintenance: await Maintenance.get(id.toString()),
       );
     } catch (e) {
       SnackbarService.error(e.toString());
@@ -92,5 +95,15 @@ class Printer {
 
   String getImgUrl() {
     return "${StorageService().getString(StorageService.kBambuddyUrl)}${Globals.imagesnamespace}${model.replaceAll(" ", "").toLowerCase()}.png";
+  }
+}
+
+class Maintenance {
+  final double currentHours;
+  Maintenance({required this.currentHours});
+  static Future<Maintenance> get(String printerid) async {
+    final res = await ApiService().apiReq("/maintenance/printers/$printerid");
+    final json = jsonDecode(res.body);
+    return Maintenance(currentHours: json["total_print_hours"] as double? ?? 0);
   }
 }
