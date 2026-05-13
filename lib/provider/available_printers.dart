@@ -28,7 +28,7 @@ class AvailablePrinters extends ChangeNotifier {
     try {
       final http.Response res = await ApiService().apiReq("/printers/");
       final List<dynamic> jsonList = jsonDecode(res.body) as List<dynamic>;
-      final List<Printer> printers = jsonList.map((e) => Printer.fromJson(e as Map<String, dynamic>)).toList();
+      final List<Printer> printers = await Future.wait(jsonList.map((e) => Printer.fromJson(e as Map<String, dynamic>)));
       for (Printer printer in printers) {
         printer.status = await getPrinterStatus(printer.id);
       }

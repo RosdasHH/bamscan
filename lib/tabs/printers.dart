@@ -121,7 +121,7 @@ class _PrinterListState extends State<PrinterList> {
                           context,
                           MaterialPageRoute(
                             settings: const RouteSettings(name: "ams"),
-                            builder: (context) => PrinterView(printerid: printer.id),
+                            builder: (context) => PrinterView(printer: printer),
                           ),
                         );
                       },

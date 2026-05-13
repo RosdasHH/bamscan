@@ -83,7 +83,7 @@ class _AmsSelectionState extends State<AmsSelection> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(width: 5),
-                Text(ams.isExternalSpool ? "External Spool" : "AMS ${ams.id + 1}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(ams.amsLabel, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
             SizedBox(height: 10),

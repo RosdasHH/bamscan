@@ -15,8 +15,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class PrinterView extends StatefulWidget {
-  const PrinterView({super.key, required this.printerid});
-  final int printerid;
+  const PrinterView({super.key, required this.printer});
+  final Printer printer;
 
   @override
   State<PrinterView> createState() => _PrinterViewState();
@@ -41,7 +41,7 @@ class _PrinterViewState extends State<PrinterView> {
     final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
     DeviceCapabilities().checkDevicesCapabilities();
     availableFilaments.getAllSpools();
-    allAms = await availableFilaments.getAllAms(widget.printerid);
+    allAms = await availableFilaments.getAllAms(widget.printer);
     if (!mounted) return;
     setState(() {
       allAms = allAms;
@@ -51,7 +51,7 @@ class _PrinterViewState extends State<PrinterView> {
   @override
   Widget build(BuildContext context) {
     final AvailablePrinters availablePrinters = context.watch<AvailablePrinters>();
-    final Printer printer = availablePrinters.printers.where((printer) => printer.id == widget.printerid).first;
+    final Printer printer = availablePrinters.printers.where((printer) => printer.id == widget.printer.id).first;
     final PrinterStatus? pStatus = printer.status;
     List<Map<String, String>> statusbar = [
       {"Status": pStatus?.state ?? ""},
