@@ -2,7 +2,6 @@ import 'package:bamscan/classes/ams_spool.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/snackbar_service.dart';
-import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/filament_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -103,14 +102,13 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                         spoolLoaded = false;
                       });
                     }
-                    bool configured = await availableFilaments.setSlotToSpoolId(
+                    await availableFilaments.setSlotToSpoolId(
                       widget.printerid,
                       widget.amsid,
                       widget.isExternalSpool ? "0" : widget.trayid,
                       widget.scannedSpool.id.toString(),
                     );
                     if (!context.mounted) return;
-                    SnackbarService.custom(configured ? "Spool assigned" : "Spool NOT assigned", configured ? context.appColor.success : context.appColor.error);
                     Navigator.popUntil(context, (route) => route.settings.name == "ams");
                   },
                   shape: const CircleBorder(),

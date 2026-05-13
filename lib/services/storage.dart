@@ -24,6 +24,7 @@ class StorageService extends ChangeNotifier {
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    StorageService().setBool(StorageService.kExternalSpool, false);
   }
 
   Future<void> setString(String key, String value) async {

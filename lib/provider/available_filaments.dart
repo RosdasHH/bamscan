@@ -6,6 +6,7 @@ import 'package:bamscan/classes/slot_preset.dart';
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/classes/trayslot.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -48,6 +49,12 @@ class AvailableFilaments extends ChangeNotifier {
     });
     final Map<String, dynamic> json = jsonDecode(res.body);
     bool configured = json["configured"];
+    String reason = res.reasonPhrase != "OK" && res.reasonPhrase != null ? res.reasonPhrase! : "";
+    if (configured) {
+      SnackbarService.success("Successfully assigned Spool!");
+    } else {
+      SnackbarService.error("Failed to assign Spool! $reason");
+    }
     return configured;
   }
 

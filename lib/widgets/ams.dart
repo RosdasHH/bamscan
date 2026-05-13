@@ -35,9 +35,8 @@ class _AmsSelectionState extends State<AmsSelection> {
 
     void assignSpoolToSlot(Ams ams, TraySlot slot, String spoolId) async {
       AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-      bool configured = await availableFilaments.setSlotToSpoolId(printerid, ams.id.toString(), ams.isExternalSpool ? "0" : slot.id.toString(), spoolId);
+      await availableFilaments.setSlotToSpoolId(printerid, ams.id.toString(), ams.isExternalSpool ? "0" : slot.id.toString(), spoolId);
       if (!context.mounted) return;
-      SnackbarService.custom(configured ? "Spool assigned" : "Spool NOT assigned", configured ? context.appColor.success : context.appColor.error);
       Navigator.popUntil(context, (route) => route.settings.name == "ams");
     }
 
@@ -129,32 +128,70 @@ class _AmsSelectionState extends State<AmsSelection> {
                           padding: EdgeInsets.all(5),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(15),
-                            child: SizedBox(
-                              height: 100,
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 1, color: bordercolor),
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: traycolor,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Center(
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        if (traytype == TrayType.spoolLoaded)
-                                          CircularProgressIndicator(color: fontcolor, value: usage, backgroundColor: fontcolor.withValues(alpha: 0.1)),
-                                        AutoSizeText(
-                                          traytext,
-                                          maxLines: 1,
-                                          style: TextStyle(color: fontcolor, fontSize: 20, fontWeight: FontWeight.bold),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SizedBox(
+                                  height: constraints.maxWidth * 1.3,
+                                  child: Ink(
+                                    decoration: BoxDecoration(
+                                      //border: Border.all(width: 1, color: bordercolor),
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: context.appColor.base15,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(5),
+                                      child: Center(
+                                        child: LayoutBuilder(
+                                          builder: (context, constraints) {
+                                            final width = constraints.maxWidth / 1.8;
+                                            return Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              spacing: 5,
+                                              children: [
+                                                Stack(
+                                                  alignment: Alignment.center,
+                                                  children: [
+                                                    if (traytype == TrayType.spoolLoaded) ...[
+                                                      SizedBox.square(
+                                                        dimension: width,
+                                                        child: DecoratedBox(
+                                                          decoration: BoxDecoration(shape: BoxShape.circle, color: traycolor),
+                                                        ),
+                                                      ),
+                                                      SizedBox.square(
+                                                        dimension: width + width / 20,
+                                                        child: CircularProgressIndicator(
+                                                          color: fontcolor,
+                                                          value: usage,
+                                                          backgroundColor: fontcolor.withValues(alpha: 0.1),
+                                                          strokeWidth: width / 10,
+                                                        ),
+                                                      ),
+                                                      AutoSizeText(
+                                                        (tray.id + 1).toString(),
+                                                        maxLines: 1,
+                                                        style: TextStyle(color: fontcolor, fontSize: 18, fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
+                                                AutoSizeText(
+                                                  tray.trayType,
+                                                  maxLines: 1,
+                                                  maxFontSize: 18,
+                                                  minFontSize: 14,
+                                                  style: TextStyle(color: context.appColor.primaryText, fontSize: 16, fontWeight: FontWeight.bold),
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
                             onTap: () {
                               showDialog(

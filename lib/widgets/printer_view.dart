@@ -114,12 +114,13 @@ class _PrinterViewState extends State<PrinterView> {
                     ),
                   ),
                 ),
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: IntrinsicHeight(child: Row(children: [if (printer.status?.coverUrl != null) Image.network(printer.status!.coverUrl!, height: 64, width: 64)])),
+                if (printer.status?.coverUrl != null)
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: IntrinsicHeight(child: Row(children: [if (printer.status?.coverUrl != null) Image.network(printer.status!.coverUrl!, height: 64, width: 64)])),
+                    ),
                   ),
-                ),
                 SizedBox(height: 5),
                 MasonryGridView.extent(
                   shrinkWrap: true,
