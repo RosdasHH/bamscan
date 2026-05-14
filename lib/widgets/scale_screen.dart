@@ -73,6 +73,7 @@ class _WeightMeasureState extends State<WeightMeasure> {
     late double weightDifference = 0.0;
     late double baseCircle = 0.0;
     late double differenceCircle = 0.0;
+    final double circleSize = 180;
     if (scale != null) {
       filamentWeight = double.parse((scale!.weight - widget.spool.coreWeight).toString());
       weightDifference = double.parse((filamentWeight - (widget.spool.labelWeight - widget.spool.weightUsed)).toString());
@@ -93,79 +94,88 @@ class _WeightMeasureState extends State<WeightMeasure> {
             return Center(child: Text("Please pair a scale. Settings -> Bluetooth -> Scale"));
           }
           return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Current Weight", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                Column(
+            child: Padding(
+              padding: EdgeInsets.all(15),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
+                    Text("Current Weight", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                    SizedBox(height: 20),
+                    Column(
                       children: [
-                        SizedBox.square(
-                          dimension: MediaQuery.of(context).size.width * 0.5,
-                          child: CircularProgressIndicator(
-                            value: (scale?.weight ?? 0) / widget.spool.coreWeight,
-                            color: context.appColor.base3,
-                            backgroundColor: context.appColor.base2,
-                            strokeWidth: 10,
-                          ),
-                        ),
-                        SizedBox.square(
-                          dimension: MediaQuery.of(context).size.width * 0.5,
-                          child: CircularProgressIndicator(
-                            value: baseCircle,
-                            color: context.appColor.info,
-                            backgroundColor: 0 < baseCircle && baseCircle <= 1 ? context.appColor.error : Colors.transparent,
-                            strokeWidth: 10,
-                          ),
-                        ),
-                        SizedBox.square(
-                          dimension: MediaQuery.of(context).size.width * 0.5,
-                          child: CircularProgressIndicator(value: differenceCircle, color: context.appColor.success, backgroundColor: Colors.transparent, strokeWidth: 10),
-                        ),
-                        Column(
+                        Stack(
+                          alignment: Alignment.center,
                           children: [
-                            Text("${scale?.weight.toStringAsFixed(2) ?? ""}g", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-                            Text("${weightDifference.toStringAsFixed(2)}g", style: TextStyle(color: weightDifference >= 0 ? context.appColor.success : context.appColor.error)),
+                            SizedBox.square(
+                              dimension: circleSize,
+                              child: CircularProgressIndicator(
+                                value: (scale?.weight ?? 0) / widget.spool.coreWeight,
+                                color: context.appColor.base3,
+                                backgroundColor: context.appColor.base2,
+                                strokeWidth: 10,
+                              ),
+                            ),
+                            SizedBox.square(
+                              dimension: circleSize,
+                              child: CircularProgressIndicator(
+                                value: baseCircle,
+                                color: context.appColor.info,
+                                backgroundColor: 0 < baseCircle && baseCircle <= 1 ? context.appColor.error : Colors.transparent,
+                                strokeWidth: 10,
+                              ),
+                            ),
+                            SizedBox.square(
+                              dimension: circleSize,
+                              child: CircularProgressIndicator(value: differenceCircle, color: context.appColor.success, backgroundColor: Colors.transparent, strokeWidth: 10),
+                            ),
+                            Column(
+                              children: [
+                                Text("${scale?.weight.toStringAsFixed(2) ?? ""}g", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                                Text("${weightDifference.toStringAsFixed(2)}g", style: TextStyle(color: weightDifference >= 0 ? context.appColor.success : context.appColor.error)),
+                              ],
+                            ),
                           ],
                         ),
+                        if (!(scale?.isGram ?? true)) ...[
+                          SizedBox(height: 20),
+                          Text(
+                            "Your scale is not set to gram. Please press the UNIT button on your Scale until this message is gone.",
+                            style: TextStyle(color: context.appColor.error),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                        if ((filamentWeight <= 0 || filamentWeight > widget.spool.labelWeight) && scale?.weight != 0.0 && scale?.isStable == true) ...[
+                          SizedBox(height: 20),
+                          Text(
+                            "The measured weight has to be between ${widget.spool.coreWeight}g and ${widget.spool.coreWeight + widget.spool.labelWeight}g",
+                            style: TextStyle(color: context.appColor.error),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ],
                     ),
-                    if (!(scale?.isGram ?? true)) ...[
-                      SizedBox(height: 20),
-                      Text(
-                        "Your scale is not set to gram. Please press the UNIT button on your Scale until this message is gone.",
-                        style: TextStyle(color: context.appColor.error),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    if ((filamentWeight <= 0 || filamentWeight > widget.spool.labelWeight) && scale?.weight != 0.0 && scale?.isStable == true) ...[
-                      SizedBox(height: 20),
-                      Text(
-                        "The measured weight has to be between ${widget.spool.coreWeight}g and ${widget.spool.coreWeight + widget.spool.labelWeight}g",
-                        style: TextStyle(color: context.appColor.error),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                    SizedBox(height: 30),
+                    InfoCard(
+                      title: "Update Weight",
+                      icon: Icons.scale_outlined,
+                      disabled: !(scale?.isStable ?? false) || !(scale?.isGram ?? false) || filamentWeight <= 0 || filamentWeight > widget.spool.labelWeight,
+                      value: "${filamentWeight.toStringAsFixed(2)}/${widget.spool.labelWeight}",
+                      onTap: () async {
+                        if (scale?.weight == null) return;
+                        AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
+                        await availableFilaments.patchSpool(widget.spool.id.toString(), {
+                          "weight_used": double.parse((widget.spool.labelWeight - filamentWeight).toStringAsFixed(2)),
+                        });
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      },
+                    ),
                   ],
                 ),
-                InfoCard(
-                  title: "Update Weight",
-                  icon: Icons.scale_outlined,
-                  disabled: !(scale?.isStable ?? false) || !(scale?.isGram ?? false) || filamentWeight <= 0 || filamentWeight > widget.spool.labelWeight,
-                  value: "${filamentWeight.toStringAsFixed(2)}/${widget.spool.labelWeight}",
-                  onTap: () async {
-                    if (scale?.weight == null) return;
-                    AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
-                    await availableFilaments.patchSpool(widget.spool.id.toString(), {"weight_used": double.parse((widget.spool.labelWeight - filamentWeight).toStringAsFixed(2))});
-                    if (!context.mounted) return;
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+              ),
             ),
           );
         },
@@ -187,7 +197,11 @@ class _ScaleLoadingState extends State<ScaleLoading> {
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text("Connecting Scale"), BleAnimation(), Text("Please turn on your scale and let it connect.")],
+      children: [
+        BleAnimation(),
+        Text("Connecting Scale", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text("Please turn on your scale and let it connect.", style: TextStyle(fontSize: 16)),
+      ],
     );
   }
 }
