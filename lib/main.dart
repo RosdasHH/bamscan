@@ -111,9 +111,6 @@ class _MyAppState extends State<MyApp> {
       );
     }
     ScaleService().start();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<Ble>().connect();
-    });
 
     //await Ble().startAutoConnect();
     //final stream = Ble().fetchData();

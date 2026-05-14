@@ -68,6 +68,7 @@ class _WeightMeasureState extends State<WeightMeasure> {
 
   @override
   Widget build(BuildContext context) {
+    final ble = context.watch<Ble>();
     late double filamentWeight = 0.0;
     late double weightDifference = 0.0;
     late double baseCircle = 0.0;
@@ -85,7 +86,7 @@ class _WeightMeasureState extends State<WeightMeasure> {
           if (!deviceCapabilities.isBluetoothAvailable) {
             return BleNotEnabled();
           }
-          if (isConnecting) {
+          if (isConnecting || ble.isConnecting) {
             return ScaleLoading();
           }
           if (StorageService().bleRemoteId == "") {
@@ -137,6 +138,14 @@ class _WeightMeasureState extends State<WeightMeasure> {
                       SizedBox(height: 20),
                       Text(
                         "Your scale is not set to gram. Please press the UNIT button on your Scale until this message is gone.",
+                        style: TextStyle(color: context.appColor.error),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    if ((filamentWeight <= 0 || filamentWeight > widget.spool.labelWeight) && scale?.weight != 0.0 && scale?.isStable == true) ...[
+                      SizedBox(height: 20),
+                      Text(
+                        "The measured weight has to be between ${widget.spool.coreWeight}g and ${widget.spool.coreWeight + widget.spool.labelWeight}g",
                         style: TextStyle(color: context.appColor.error),
                         textAlign: TextAlign.center,
                       ),
