@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/device_capabilities.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/utils/ams_number_letter.dart';
 import 'package:bamscan/utils/color.dart';
@@ -103,7 +103,7 @@ class FilamentViewState extends State<FilamentView> {
               more: deviceCapabilities.isNfcAvailable ? NfcMore(spool: spool) : null,
               onTap: !deviceCapabilities.isNfcAvailable
                   ? () {
-                      showSnackbar(context, "NFC is not available on this device", context.appColor.error);
+                      SnackbarService.error("NFC is not available on this device");
                     }
                   : null,
             ),
@@ -149,9 +149,9 @@ class FilamentViewState extends State<FilamentView> {
                           );
                         }
                       }
-                    : () => showSnackbar(context, "The spool is still inserted into an AMS Slot.", context.appColor.error),
+                    : () => SnackbarService.error("The spool is still inserted into an AMS Slot."),
                 expanded: true,
-                backgroundColor: context.appColor.base3.withValues(alpha: 0.3),
+                color: context.appColor.base3.withValues(alpha: 0.3),
                 borderColor: context.appColor.error,
                 child: Text("Archive Spool", style: TextStyle(color: spool.assignment != null ? context.appColor.error.withValues(alpha: 0.5) : context.appColor.error)),
               ),
@@ -249,9 +249,9 @@ class _NfcMoreState extends State<NfcMore> {
       return;
     }
     if (res) {
-      showSnackbar(context, "Unassigned NFC-Code", context.appColor.success);
+      SnackbarService.success("Unassigned NFC-Code");
     } else {
-      showSnackbar(context, "There was a problem unassigning the NFC-Tag", context.appColor.error);
+      SnackbarService.error("There was a problem unassigning the NFC-Tag");
     }
     if (!mounted) return;
     Navigator.pop(context);
@@ -271,13 +271,12 @@ class _NfcMoreState extends State<NfcMore> {
     final AvailableFilaments availableFilaments = context.read<AvailableFilaments>();
     final List alreadyAssigned = await availableFilaments.getSpoolsByNfc(res);
     if (alreadyAssigned.isNotEmpty && mounted) {
-      showSnackbar(context, "NFC-Tag already assigned to Spool ${alreadyAssigned[0].id}", context.appColor.error);
+      SnackbarService.error("NFC-Tag already assigned to Spool ${alreadyAssigned[0].id}");
     } else {
       if (!mounted) return;
       final bool success = await addNfcIdReq(context, widget.spool, res);
       if (!mounted) return;
-      showSnackbar(
-        context,
+      SnackbarService.custom(
         success ? "Successfully assigned NFC-Tag to this Spool!" : "Could NOT assign this NFC-Tag to the spool!",
         success == true ? context.appColor.success : context.appColor.error,
       );
@@ -376,9 +375,9 @@ class _QRCodeMoreState extends State<QRCodeMore> {
       return;
     }
     if (res) {
-      showSnackbar(context, "Unassigned QR-Code", context.appColor.success);
+      SnackbarService.success("Unassigned QR-Code");
     } else {
-      showSnackbar(context, "There was a problem unassigning the QR-Code", context.appColor.error);
+      SnackbarService.error("There was a problem unassigning the QR-Code");
     }
     if (!mounted) return;
     Navigator.pop(context);
@@ -399,14 +398,13 @@ class _QRCodeMoreState extends State<QRCodeMore> {
     final List alreadyAssigned = await availableFilaments.getSpoolsByQrCode(res);
     if (!mounted) return;
     if (alreadyAssigned.isNotEmpty) {
-      showSnackbar(context, "The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}", context.appColor.error);
+      SnackbarService.error("The following spools are assigned to this qrcode: ${alreadyAssigned.map((s) => s.id)}");
       return;
     }
     if (!mounted) return;
     final bool success = await addQrCodeReq(context, widget.spool, res);
     if (!mounted) return;
-    showSnackbar(
-      context,
+    SnackbarService.custom(
       success ? "Successfully assigned QR-Code to this Spool!" : "Could NOT assign this QR-Code to the spool!",
       success == true ? context.appColor.success : context.appColor.error,
     );
