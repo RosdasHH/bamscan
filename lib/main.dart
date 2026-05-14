@@ -4,11 +4,11 @@ import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
-import 'package:bamscan/services/scale_service.dart';
-import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/globals.dart';
+import 'package:bamscan/services/scale_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
 import 'package:bamscan/tabs/printers.dart';
@@ -84,33 +84,9 @@ class _MyAppState extends State<MyApp> {
 
   void getStorage() async {
     context.read<DeviceCapabilities>().checkDevicesCapabilities();
-    final appState = context.read<AppStateService>();
     setState(() {
       storageLoaded = true;
     });
-    if (appState.firstLaunchAfterUpdate && appState.version == "1.1.5+17") {
-      if (!mounted) return;
-      return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Changes"),
-            content: const Text(
-              "This version changes the way NFC tags are stored and read. Please go to: Settings → Reset → Reset NFC Tags, and reset all mappings. After that, please reassign all your NFC tags to your spools. This step is required to use the NFC feature.",
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("I understand"),
-              ),
-            ],
-          );
-        },
-      );
-    }
     ScaleService().start();
 
     //await Ble().startAutoConnect();
@@ -154,7 +130,7 @@ class _MyAppState extends State<MyApp> {
     if (storageLoaded == false) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (storage.getBool(StorageService.kFirstUse) == true) {
+    if (storage.getBool(StorageService.kFirstUse, defaultValue: true) == true) {
       return Onboarding();
     } else {
       return Scaffold(
