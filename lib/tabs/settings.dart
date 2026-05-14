@@ -193,7 +193,9 @@ class _SettingsState extends State<Settings> {
                 icon: Icons.bluetooth,
                 more: Setting(
                   title: "Bluetooth",
-                  widgets: [InfoCard(title: "Scale", icon: Icons.scale, value: StorageService().getString(StorageService.kBleRemoteId) == "" ? "None" : "Paired", more: BluetoothScan())],
+                  widgets: [
+                    InfoCard(title: "Scale", icon: Icons.scale, value: StorageService().getString(StorageService.kBleRemoteId) == "" ? "None" : "Paired", more: BluetoothScan()),
+                  ],
                 ),
               ),
               if (false)
@@ -379,6 +381,7 @@ class _BluetoothScanState extends State<BluetoothScan> {
                     ),
                   ],
                 ],
+                if (scanRes.isEmpty) Center(child: Text("No scales found!")),
               ],
             );
           }

@@ -28,7 +28,6 @@ class _NfcscanState extends State<Nfcscan> {
     NfcManager.instance.startSession(
       onDiscovered: (NfcTag tag) async {
         String? id = getUid(tag);
-        print(id);
         if (id == null) {
           SnackbarService.error("Could not read tag!");
           return;

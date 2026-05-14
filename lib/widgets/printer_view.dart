@@ -168,7 +168,36 @@ class _PrinterViewState extends State<PrinterView> {
                                   Button(onPressed: () => printer.resumePrint(), color: context.appColor.info, child: Text("Resume"))
                                 else
                                   Button(onPressed: () => printer.pausePrint(), color: context.appColor.warning, child: Text("Pause")),
-                                Button(onPressed: () => printer.stopPrint(), color: context.appColor.error, child: Text("Stop")),
+                                Button(
+                                  onPressed: () => {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text("Are you sure?"),
+                                          content: Text("Do you really want to cancel the printing job?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("No"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                printer.stopPrint();
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Yes"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  },
+                                  color: context.appColor.error,
+                                  child: Text("Stop"),
+                                ),
                               ],
                             ),
                         ],
@@ -268,6 +297,7 @@ class _PrinterViewState extends State<PrinterView> {
                 SizedBox(height: 5),
                 if (allAms != null)
                   for (Ams ams in allAms!) AmsSelection(printer: printer, ams: ams),
+                SizedBox(height: 40),
               ],
             ),
           ],
