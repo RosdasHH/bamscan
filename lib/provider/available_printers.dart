@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bamscan/classes/printer.dart';
 import 'package:bamscan/classes/printer_status.dart';
 import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,7 +28,7 @@ class AvailablePrinters extends ChangeNotifier {
     try {
       final http.Response res = await ApiService().apiReq("/printers/");
       final List<dynamic> jsonList = jsonDecode(res.body) as List<dynamic>;
-      final List<Printer> printers = jsonList.map((e) => Printer.fromJson(e as Map<String, dynamic>)).toList();
+      final List<Printer> printers = await Future.wait(jsonList.map((e) => Printer.fromJson(e as Map<String, dynamic>)));
       for (Printer printer in printers) {
         printer.status = await getPrinterStatus(printer.id);
       }
@@ -49,5 +50,11 @@ class AvailablePrinters extends ChangeNotifier {
     } catch (_) {
       return false;
     }
+  }
+
+  Future<void> updateStreamToken() async {
+    final http.Response res = await ApiService().apiPost("/printers/camera/stream-token", {});
+    final String token = jsonDecode(res.body)["token"];
+    await StorageService().setSecureString(StorageService.kCamToken, token);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/helper/showsnackbar.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -56,12 +56,12 @@ class _QrscanState extends State<Qrscan> {
           final List<Spool> spools = widget.spools!.where((x) => x.qrcode == qr).toList();
           if (spools.length > 1) {
             Navigator.pop(context);
-            showSnackbar(context, "Multiple Assignments: ${spools.where((x) => x.qrcode == qr).map((x) => x.id)}", context.appColor.error);
+            SnackbarService.error("Multiple Assignments: ${spools.where((x) => x.qrcode == qr).map((x) => x.id)}");
           }
           if (spools.length == 1) {
             Navigator.pop(context, spools.first);
           } else {
-            showSnackbar(context, "No Spool found!", context.appColor.error);
+            SnackbarService.error("No Spool found!");
             Navigator.pop(context, null);
           }
         }

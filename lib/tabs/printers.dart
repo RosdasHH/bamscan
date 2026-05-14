@@ -1,12 +1,11 @@
 import 'package:bamscan/classes/printer.dart';
-import 'package:bamscan/modals/amsselection.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
-import 'package:bamscan/services/globals.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/offline.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/badge_card.dart';
+import 'package:bamscan/widgets/printer_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,15 +39,15 @@ class _PrinterListState extends State<PrinterList> {
   @override
   void initState() {
     super.initState();
-    storageservice.loadFromStorage();
     if (!mounted) return;
+    AvailablePrinters().updateStreamToken();
     refresh();
   }
 
   void refresh() async {
     while (mounted) {
       await fetch();
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(Duration(seconds: 3));
     }
   }
 
@@ -78,7 +77,7 @@ class _PrinterListState extends State<PrinterList> {
     String? configerror;
     if (!apiService.reachable) return Offline();
 
-    if (storage.bambuddyUrl == "") {
+    if (storage.getString(StorageService.kBambuddyUrl) == "") {
       configerror = "Please enter the Bambuddy Url in the Settings tab.";
     }
     if (configerror != null) return Center(child: Text(configerror));
@@ -102,7 +101,6 @@ class _PrinterListState extends State<PrinterList> {
                   if (status == null) return SizedBox.shrink();
                   final String connected = status.connected ? "Connected" : "Not connected";
                   final Color connectedColor = status.connected ? context.appColor.success : context.appColor.error;
-                  final double progress = status.progress / 100;
                   final String state = status.state;
                   final stateColor = state == "FAILED"
                       ? context.appColor.error
@@ -123,7 +121,7 @@ class _PrinterListState extends State<PrinterList> {
                           context,
                           MaterialPageRoute(
                             settings: const RouteSettings(name: "ams"),
-                            builder: (context) => AmsSelection(printer: printer),
+                            builder: (context) => PrinterView(printer: printer),
                           ),
                         );
                       },
@@ -134,13 +132,7 @@ class _PrinterListState extends State<PrinterList> {
                           children: [
                             Padding(
                               padding: EdgeInsets.all(5),
-                              child: SizedBox.square(
-                                dimension: 75,
-                                child: Image.network(
-                                  "${storage.bambuddyUrl}${Globals.imagesnamespace}${printer.model.replaceAll(" ", "").toLowerCase()}.png",
-                                  errorBuilder: (context, error, stackTrace) => SizedBox.expand(),
-                                ),
-                              ),
+                              child: SizedBox.square(dimension: 75, child: Image.network(printer.getImgUrl(), errorBuilder: (context, error, stackTrace) => SizedBox.expand())),
                             ),
                             Expanded(
                               child: Column(
@@ -152,6 +144,7 @@ class _PrinterListState extends State<PrinterList> {
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                   ),
                                   Text(printer.model, style: TextStyle(fontSize: 15)),
+                                  SizedBox(height: 5),
                                   Wrap(
                                     spacing: 10,
                                     runSpacing: 5,
@@ -163,16 +156,7 @@ class _PrinterListState extends State<PrinterList> {
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 15),
-                              child: Stack(
-                                alignment: AlignmentGeometry.center,
-                                children: [
-                                  SizedBox.square(dimension: 50, child: CircularProgressIndicator(strokeWidth: 7, value: progress)),
-                                  Text("${(progress * 100).toInt()}%", style: TextStyle(fontSize: 15)),
-                                ],
-                              ),
-                            ),
+                            CoverUrlWithProgress(printer: printer),
                           ],
                         ),
                       ),

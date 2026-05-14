@@ -68,7 +68,7 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20)),
       ),
-      dialogTheme: DialogThemeData(backgroundColor: color.popup, insetPadding: EdgeInsets.all(20)),
+      dialogTheme: DialogThemeData(backgroundColor: color.base15, insetPadding: EdgeInsets.all(20)),
       textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: color.primary)),
       floatingActionButtonTheme: FloatingActionButtonThemeData(shape: CircleBorder(), backgroundColor: color.base3, foregroundColor: color.primary),
       switchTheme: SwitchThemeData(
@@ -107,5 +107,10 @@ class AppTheme {
 }
 
 extension AppColorBuildContext on BuildContext {
-  AppColor get appColor => Theme.of(this).extension<AppColor>()!;
+  AppColor get appColor {
+    final ext = Theme.of(this).extension<AppColor>();
+    if (ext != null) return ext;
+
+    return LightColor();
+  }
 }

@@ -1,8 +1,7 @@
 import 'package:bamscan/classes/ams_spool.dart';
 import 'package:bamscan/classes/spool.dart';
-import 'package:bamscan/helper/showsnackbar.dart';
 import 'package:bamscan/provider/available_filaments.dart';
-import 'package:bamscan/theme/app_theme.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/widgets/filament_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +44,7 @@ class _FilamentScannedModal extends State<FilamentScanned> {
 
     if (!mounted) return;
     if (spoolAssignment != null) {
-      showSnackbar(context, "This spool is already assigned to a slot.", context.appColor.error);
+      SnackbarService.error("This spool is already assigned to a slot.");
     }
 
     setState(() {
@@ -103,14 +102,13 @@ class _FilamentScannedModal extends State<FilamentScanned> {
                         spoolLoaded = false;
                       });
                     }
-                    bool configured = await availableFilaments.setSlotToSpoolId(
+                    await availableFilaments.setSlotToSpoolId(
                       widget.printerid,
                       widget.amsid,
                       widget.isExternalSpool ? "0" : widget.trayid,
                       widget.scannedSpool.id.toString(),
                     );
                     if (!context.mounted) return;
-                    showSnackbar(context, configured ? "Spool assigned" : "Spool NOT assigned", null);
                     Navigator.popUntil(context, (route) => route.settings.name == "ams");
                   },
                   shape: const CircleBorder(),

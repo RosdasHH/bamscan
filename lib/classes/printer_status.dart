@@ -1,3 +1,6 @@
+import 'package:bamscan/services/snackbar_service.dart';
+import 'package:bamscan/services/storage.dart';
+
 class PrinterStatus {
   final int id;
   final String name;
@@ -10,8 +13,15 @@ class PrinterStatus {
   final int remainingTime;
   final int layerNum;
   final int totalLayers;
-  final String? coverUrl;
-  const PrinterStatus({
+  final String? coverEndpoint;
+  final Temperatures temperatures;
+  final int rssi;
+  final bool ipCam;
+  final bool sdcard;
+  final String firmwareVersion;
+  final String? currentTask;
+  String? coverUrl;
+  PrinterStatus({
     required this.id,
     required this.name,
     required this.connected,
@@ -23,24 +33,85 @@ class PrinterStatus {
     required this.remainingTime,
     required this.layerNum,
     required this.totalLayers,
+    this.coverEndpoint,
+    required this.temperatures,
+    required this.rssi,
+    required this.ipCam,
+    required this.sdcard,
+    required this.firmwareVersion,
+    required this.currentTask,
     this.coverUrl,
   });
+  Future<String> getCoverUrl() async {
+    late String url;
+    if (coverEndpoint != null) {
+      url = "${StorageService().getString(StorageService.kBambuddyUrl)}$coverEndpoint?token=${await StorageService().getSecureString(StorageService.kCamToken)}";
+    }
+    return url;
+  }
 
-  factory PrinterStatus.fromJson(Map<String, dynamic> json) {
-    return PrinterStatus(
-      id: (json['id'] as num?)?.toInt() ?? 0,
-      name: json['name'] ?? '',
-      connected: json['connected'] ?? false,
-      state: json['state'] ?? '',
-      currentPrint: json['current_print'] ?? '',
-      subtaskName: json['subtask_name'] ?? '',
-      gcodeFile: json['gcode_file'] ?? '',
-      progress: (json['progress'] as num?)?.toInt() ?? 0,
-      remainingTime: (json['remaining_time'] as num?)?.toInt() ?? 0,
-      layerNum: (json['layer_num'] as num?)?.toInt() ?? 0,
-      totalLayers: (json['total_layers'] as num?)?.toInt() ?? 0,
+  static Future<PrinterStatus> fromJson(Map<String, dynamic> json) async {
+    final coverEndpoint = json["cover_url"];
 
-      coverUrl: json['cover_url'],
+    Future<String?> getCoverUrl() async {
+      String? url;
+      if (coverEndpoint != null) {
+        url = "${StorageService().getString(StorageService.kBambuddyUrl)}$coverEndpoint?token=${await StorageService().getSecureString(StorageService.kCamToken)}";
+      }
+      return url;
+    }
+
+    try {
+      return PrinterStatus(
+        id: (json['id'] as num?)?.toInt() ?? 0,
+        name: json['name'] ?? '',
+        connected: json['connected'] ?? false,
+        state: json['state'] ?? '',
+        currentPrint: json['current_print'] ?? '',
+        subtaskName: json['subtask_name'] ?? '',
+        gcodeFile: json['gcode_file'] ?? '',
+        progress: (json['progress'] as num?)?.toInt() ?? 0,
+        remainingTime: (json['remaining_time'] as num?)?.toInt() ?? 0,
+        layerNum: (json['layer_num'] as num?)?.toInt() ?? 0,
+        totalLayers: (json['total_layers'] as num?)?.toInt() ?? 0,
+        temperatures: Temperatures.fromJson(json["temperatures"]),
+        rssi: (json["wifi_signal"] as num?)?.toInt() ?? 0,
+        ipCam: json["ipcam"] ?? false,
+        sdcard: json["sdcard"] ?? false,
+        firmwareVersion: json["firmware_version"] ?? "",
+        coverEndpoint: coverEndpoint,
+        coverUrl: await getCoverUrl(),
+        currentTask: json["stg_cur_name"],
+      );
+    } catch (e) {
+      SnackbarService.error(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> updateCoverUrl() async {
+    late String url;
+    if (coverEndpoint != null) {
+      url = "${StorageService().getString(StorageService.kBambuddyUrl)}$coverEndpoint?token=${await StorageService().getSecureString(StorageService.kCamToken)}";
+    }
+    coverUrl = url;
+  }
+}
+
+class Temperatures {
+  final double bed;
+  final double bedTarget;
+  final double nozzle;
+  final double nozzleTarget;
+  final bool nozzleHeating;
+  const Temperatures({required this.bed, required this.bedTarget, required this.nozzle, required this.nozzleTarget, required this.nozzleHeating});
+  factory Temperatures.fromJson(Map<String, dynamic> json) {
+    return Temperatures(
+      bed: json["bed"] ?? 0,
+      bedTarget: json["bed_target"] ?? 0,
+      nozzle: json["nozzle"] ?? 0,
+      nozzleTarget: json["nozzle_target"] ?? 0,
+      nozzleHeating: json["nozzle_heating"] ?? false,
     );
   }
 }

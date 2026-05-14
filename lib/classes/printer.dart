@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:bamscan/classes/printer_status.dart';
+import 'package:bamscan/services/api.dart';
+import 'package:bamscan/services/globals.dart';
+import 'package:bamscan/services/snackbar_service.dart';
+import 'package:bamscan/services/storage.dart';
 
 class Printer {
   final String name;
@@ -20,6 +26,8 @@ class Printer {
   final String? plateDetectionRoi;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final Map<String, dynamic>? amsLabels;
+  final Maintenance maintenance;
   PrinterStatus? status;
 
   Printer({
@@ -43,10 +51,19 @@ class Printer {
     required this.createdAt,
     required this.updatedAt,
     this.status,
+    this.amsLabels,
+    required this.maintenance,
   });
 
-  factory Printer.fromJson(Map<String, dynamic> json) {
+  static Future<Printer> fromJson(Map<String, dynamic> json) async {
+    Future<Map<String, dynamic>> getAmsLabels(int printerid) async {
+      final res = await ApiService().apiReq("/printers/${printerid.toString()}/ams-labels");
+      final json = jsonDecode(res.body);
+      return json;
+    }
+
     try {
+      int id = json['id'] as int;
       return Printer(
         name: json['name'] as String? ?? "",
         serialNumber: json['serial_number'] as String? ?? "",
@@ -59,7 +76,7 @@ class Printer {
         externalCameraType: json['external_camera_type'] as String?,
         externalCameraEnabled: json['external_camera_enabled'] as bool,
         cameraRotation: json['camera_rotation'] as int? ?? 0,
-        id: json['id'] as int,
+        id: id,
         isActive: json['is_active'] as bool,
         nozzleCount: json['nozzle_count'] as int? ?? 0,
         printHoursOffset: (json['print_hours_offset'] as num).toInt(),
@@ -67,13 +84,48 @@ class Printer {
         plateDetectionRoi: json['plate_detection_roi'] as String?,
         createdAt: DateTime.parse(json['created_at'] as String? ?? ""),
         updatedAt: DateTime.parse(json['updated_at'] as String? ?? ""),
+        amsLabels: await getAmsLabels(id),
+        maintenance: await Maintenance.get(id.toString()),
       );
-    } on FormatException {
-      rethrow;
-    } on TypeError {
-      throw FormatException('Invalid type in printer JSON data');
     } catch (e) {
-      throw FormatException('Failed to parse printer JSON: $e');
+      SnackbarService.error(e.toString());
+      rethrow;
     }
+  }
+
+  String getImgUrl() {
+    return "${StorageService().getString(StorageService.kBambuddyUrl)}${Globals.imagesnamespace}${model.replaceAll(" ", "").toLowerCase()}.png";
+  }
+
+  void pausePrint() async {
+    printController("pause");
+  }
+
+  void stopPrint() async {
+    printController("stop");
+  }
+
+  void resumePrint() async {
+    printController("resume");
+  }
+
+  void printController(String task) async {
+    final res = await ApiService().apiPost("/printers/$id/print/$task", {});
+    final json = jsonDecode(res.body);
+    if (json["success"] == true) {
+      SnackbarService.success(json["message"]);
+    } else {
+      SnackbarService.error(json["message"]);
+    }
+  }
+}
+
+class Maintenance {
+  final double currentHours;
+  Maintenance({required this.currentHours});
+  static Future<Maintenance> get(String printerid) async {
+    final res = await ApiService().apiReq("/maintenance/printers/$printerid");
+    final json = jsonDecode(res.body);
+    return Maintenance(currentHours: json["total_print_hours"] as double? ?? 0);
   }
 }

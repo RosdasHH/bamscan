@@ -1,143 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService extends ChangeNotifier {
-  static final _secureStorage = FlutterSecureStorage();
-
   static final StorageService _instance = StorageService._internal();
+
   factory StorageService() => _instance;
+
   StorageService._internal();
 
-  String _bambuddyUrl = "";
-  String _xapitoken = "";
-  bool _firstUse = true;
-  final bool _externalSpool = false;
-  String _version = "0.0.0";
-  String _darkMode = "System";
-  bool _showicons = true;
-  String? _lastVersion;
-  bool _firstLaunchAfterUpdate = false;
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
-  String get bambuddyUrl => _bambuddyUrl;
-  String get xapitoken => _xapitoken;
-  bool get firstUse => _firstUse;
-  bool get externalSpool => _externalSpool;
-  String get version => _version;
-  String get darkMode => _darkMode;
-  bool get showicons => _showicons;
-  bool get firstLaunchAfterUpdate => _firstLaunchAfterUpdate;
+  late SharedPreferences _prefs;
 
-  Future<void> loadFromStorage() async {
-    _bambuddyUrl = await getBambuddyUrl();
-    _xapitoken = await getToken();
-    _firstUse = await getFirseUse();
-    //_externalSpool = await getExternalSpool();
-    _version = await getVersion();
-    _darkMode = await getDarkMode();
-    _showicons = await getShowIcons();
-    _lastVersion = await getLastVersion();
+  static const kBambuddyUrl = 'bambuddyUrl';
+  static const kFirstUse = 'firstuse';
+  static const kDarkMode = 'darkmode';
+  static const kShowIcons = 'showicons';
+  static const kLastVersion = 'lastVersion';
+  static const kXApiToken = 'token';
+  static const kCamToken = 'camToken';
+  static const kExternalSpool = 'externalSpool';
 
-    if (_lastVersion != _version && firstUse == false) {
-      _firstLaunchAfterUpdate = true;
-      setLastVersion(_version);
-    }
+  Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+    StorageService().setBool(StorageService.kExternalSpool, false);
+  }
+
+  Future<void> setString(String key, String value) async {
+    await _prefs.setString(key, value);
+    notifyListeners();
+  }
+
+  String getString(String key, {String defaultValue = ""}) {
+    return _prefs.getString(key) ?? defaultValue;
+  }
+
+  Future<void> setBool(String key, bool value) async {
+    await _prefs.setBool(key, value);
+    notifyListeners();
+  }
+
+  bool getBool(String key, {bool defaultValue = false}) {
+    return _prefs.getBool(key) ?? defaultValue;
+  }
+
+  Future<void> setSecureString(String key, String value) async {
+    await _secureStorage.write(key: key, value: value);
 
     notifyListeners();
   }
 
-  Future<String> getVersion() async {
-    final info = await PackageInfo.fromPlatform();
-    return ("Version: ${info.version}+${info.buildNumber}");
-  }
-
-  Future<void> saveToken(String token) async {
-    await _secureStorage.write(key: 'token', value: token);
-    await loadFromStorage();
-  }
-
-  static Future<String> getToken() async {
-    return await _secureStorage.read(key: 'token') ?? "";
-  }
-
-  //static Future<void> deleteToken() async {
-  //  await _secureStorage.delete(key: 'token');
-  //}
-
-  Future<void> setBambuddyUrl(String url) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("bambuddyUrl", url);
-    await loadFromStorage();
-  }
-
-  Future<void> setFirstUse(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool("firstuse", value);
-    await loadFromStorage();
-  }
-
-  Future<void> setExternalSpool(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool("externalSpool", value);
-    await loadFromStorage();
-  }
-
-  Future<void> setDarkMode(String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("darkmode", value);
-    await loadFromStorage();
-  }
-
-  Future<void> setShowIcons(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool("showicons", value);
-    await loadFromStorage();
-  }
-
-  Future<void> setLastVersion(String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("lastVersion", value);
-    await loadFromStorage();
-  }
-
-  static Future<String> getBambuddyUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("bambuddyUrl") ?? "";
-  }
-
-  static Future<bool> getFirseUse() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool("firstuse") ?? true;
-  }
-
-  static Future<bool> getExternalSpool() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool("externalSpool") ?? false;
-  }
-
-  static Future<String> getDarkMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("darkmode") ?? "System";
-  }
-
-  static Future<String?> getLastVersion() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("lastVersion");
-  }
-
-  static Future<bool> getShowIcons() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool("showicons") ?? true;
+  Future<String> getSecureString(String key) async {
+    return await _secureStorage.read(key: key) ?? "";
   }
 
   Future<void> deleteAllData() async {
-    final storage = FlutterSecureStorage();
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.clear();
-    await storage.deleteAll();
-    loadFromStorage();
+    await _prefs.clear();
+    await _secureStorage.deleteAll();
     notifyListeners();
   }
 }

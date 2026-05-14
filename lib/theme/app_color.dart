@@ -8,13 +8,14 @@ class AppColor extends ThemeExtension<AppColor> {
   final Color base1;
   final Color base2;
   final Color base3;
-  final Color popup;
+  final Color base15;
   final Color error;
   final Color success;
   final Color info;
   final Color warning;
   final Color assignment;
   final Color white;
+  final Color secondaryText;
 
   AppColor({
     required this.primary,
@@ -28,9 +29,10 @@ class AppColor extends ThemeExtension<AppColor> {
     required this.success,
     required this.info,
     required this.warning,
-    required this.popup,
+    required this.base15,
     required this.assignment,
     required this.white,
+    required this.secondaryText,
   });
 
   @override
@@ -48,7 +50,7 @@ class DarkColor extends AppColor {
         accent: Colors.green,
         primaryText: const Color.fromARGB(255, 222, 222, 222),
         base1: Colors.grey[900]!,
-        popup: const Color.fromRGBO(50, 50, 50, 1),
+        base15: const Color.fromRGBO(50, 50, 50, 1),
         base2: Colors.grey[800]!,
         base3: Colors.grey[700]!,
         error: Colors.red,
@@ -57,6 +59,7 @@ class DarkColor extends AppColor {
         warning: Colors.orange,
         assignment: Colors.purple,
         white: Colors.grey[100]!,
+        secondaryText: Colors.grey,
       );
 }
 
@@ -68,7 +71,7 @@ class LightColor extends AppColor {
         accent: Colors.green,
         primaryText: Colors.grey[800]!,
         base1: Colors.grey[300]!,
-        popup: const Color.fromRGBO(231, 231, 231, 1),
+        base15: const Color.fromRGBO(231, 231, 231, 1),
         base2: Colors.grey[200]!,
         base3: Colors.grey[100]!,
         error: Colors.red,
@@ -77,5 +80,6 @@ class LightColor extends AppColor {
         warning: Colors.orange,
         assignment: const Color.fromARGB(255, 210, 89, 231),
         white: Colors.grey[100]!,
+        secondaryText: Colors.grey[600]!,
       );
 }

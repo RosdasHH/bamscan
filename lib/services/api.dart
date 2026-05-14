@@ -26,7 +26,7 @@ class ApiService extends ChangeNotifier {
   }
 
   Future<bool?> checkHealth([String? url]) async {
-    url ??= StorageService().bambuddyUrl;
+    url ??= StorageService().getString(StorageService.kBambuddyUrl);
     try {
       http.Response res = await http.get(Uri.parse(url));
       if (res.statusCode == 200) {
@@ -59,16 +59,23 @@ class ApiService extends ChangeNotifier {
     return null;
   }
 
-  Future<http.Response> apiReq(String apiEndpoint) async {
+  Future<http.Response> apiReq(String apiEndpoint, {catchError = true}) async {
     try {
       http.Response res = await http
-          .get(Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint), headers: {"x-api-key": StorageService().xapitoken})
+          .get(
+            Uri.parse(StorageService().getString(StorageService.kBambuddyUrl) + Globals.apinamespace + apiEndpoint),
+            headers: {"x-api-key": await StorageService().getSecureString(StorageService.kXApiToken)},
+          )
           .timeout(Duration(seconds: 3));
-      setError(res);
-      _setReachable(true);
+      if (catchError) {
+        setError(res);
+        _setReachable(true);
+      }
       return res;
     } catch (e) {
-      _setReachable(false);
+      if (catchError) {
+        _setReachable(false);
+      }
       rethrow;
     }
   }
@@ -76,7 +83,10 @@ class ApiService extends ChangeNotifier {
   Future<http.Response> apiDel(String apiEndpoint) async {
     try {
       http.Response res = await http
-          .delete(Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint), headers: {"x-api-key": StorageService().xapitoken})
+          .delete(
+            Uri.parse(StorageService().getString(StorageService.kBambuddyUrl) + Globals.apinamespace + apiEndpoint),
+            headers: {"x-api-key": await StorageService().getSecureString(StorageService.kXApiToken)},
+          )
           .timeout(Duration(seconds: 3));
       setError(res);
       _setReachable(true);
@@ -91,8 +101,8 @@ class ApiService extends ChangeNotifier {
     try {
       http.Response res = await http
           .post(
-            Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint),
-            headers: {"x-api-key": StorageService().xapitoken, 'Content-Type': 'application/json'},
+            Uri.parse(StorageService().getString(StorageService.kBambuddyUrl) + Globals.apinamespace + apiEndpoint),
+            headers: {"x-api-key": await StorageService().getSecureString(StorageService.kXApiToken), 'Content-Type': 'application/json'},
             body: jsonEncode(data),
           )
           .timeout(Duration(seconds: 3));
@@ -123,8 +133,8 @@ class ApiService extends ChangeNotifier {
     try {
       http.Response res = await http
           .patch(
-            Uri.parse(StorageService().bambuddyUrl + Globals.apinamespace + apiEndpoint),
-            headers: {"x-api-key": StorageService().xapitoken, 'Content-Type': 'application/json'},
+            Uri.parse(StorageService().getString(StorageService.kBambuddyUrl) + Globals.apinamespace + apiEndpoint),
+            headers: {"x-api-key": await StorageService().getSecureString(StorageService.kXApiToken), 'Content-Type': 'application/json'},
             body: jsonEncode(data),
           )
           .timeout(Duration(seconds: 3));
