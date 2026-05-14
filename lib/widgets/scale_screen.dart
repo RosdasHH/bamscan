@@ -7,6 +7,7 @@ import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/scale_service.dart';
+import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/ble_not_enabled.dart';
 import 'package:bamscan/widgets/infocard.dart';
@@ -24,6 +25,7 @@ class WeightMeasure extends StatefulWidget {
 class _WeightMeasureState extends State<WeightMeasure> {
   StreamSubscription? sub;
   Scale? scale;
+  bool isConnecting = false;
 
   @override
   void initState() {
@@ -33,6 +35,29 @@ class _WeightMeasureState extends State<WeightMeasure> {
         scale = value;
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      connectLoop();
+    });
+  }
+
+  void connectLoop() async {
+    while (mounted) {
+      if (!mounted) return;
+      final ble = context.read<Ble>();
+      if (StorageService().bleRemoteId != "" && !ble.isConnecting && ble.connectedDevice == null) {
+        if (!mounted) return;
+        setState(() {
+          isConnecting = true;
+        });
+        await ble.connect();
+      }
+      if (ble.connectedDevice != null) {
+        setState(() {
+          isConnecting = false;
+        });
+      }
+      await Future.delayed(const Duration(seconds: 1));
+    }
   }
 
   @override
@@ -43,7 +68,6 @@ class _WeightMeasureState extends State<WeightMeasure> {
 
   @override
   Widget build(BuildContext context) {
-    final ble = context.watch<Ble>();
     late double filamentWeight = 0.0;
     late double weightDifference = 0.0;
     late double baseCircle = 0.0;
@@ -58,18 +82,14 @@ class _WeightMeasureState extends State<WeightMeasure> {
       appBar: AppBar(title: Text("Scale")),
       body: Consumer<DeviceCapabilities>(
         builder: (context, deviceCapabilities, child) {
-          if (deviceCapabilities.isBluetoothAvailable) {
-            if (!ble.isConnecting && ble.connectedDevice == null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (!mounted) return;
-                ble.connect();
-              });
-            }
-          } else {
+          if (!deviceCapabilities.isBluetoothAvailable) {
             return BleNotEnabled();
           }
-          if (ble.isConnecting) {
+          if (isConnecting) {
             return ScaleLoading();
+          }
+          if (StorageService().bleRemoteId == "") {
+            return Center(child: Text("Please pair a scale. Settings -> Bluetooth -> Scale"));
           }
           return Center(
             child: Column(
@@ -145,9 +165,14 @@ class _WeightMeasureState extends State<WeightMeasure> {
   }
 }
 
-class ScaleLoading extends StatelessWidget {
+class ScaleLoading extends StatefulWidget {
   const ScaleLoading({super.key});
 
+  @override
+  State<ScaleLoading> createState() => _ScaleLoadingState();
+}
+
+class _ScaleLoadingState extends State<ScaleLoading> {
   @override
   Widget build(BuildContext context) {
     return Column(
