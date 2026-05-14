@@ -1,10 +1,13 @@
 import 'package:bamscan/classes/spool.dart';
+import 'package:bamscan/listener/ble_state_listener.dart';
 import 'package:bamscan/onboarding.dart';
 import 'package:bamscan/provider/available_filaments.dart';
 import 'package:bamscan/provider/available_printers.dart';
 import 'package:bamscan/services/api.dart';
-import 'package:bamscan/services/app_state.dart';
+import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
+import 'package:bamscan/services/scale_service.dart';
+import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/globals.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/tabs/filaments.dart';
@@ -31,6 +34,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AvailableFilaments()),
         ChangeNotifierProvider(create: (_) => ApiService()),
         ChangeNotifierProvider(create: (_) => DeviceCapabilities()),
+        ChangeNotifierProvider(create: (_) => Ble()),
         ChangeNotifierProvider(create: (_) => AppStateService()),
       ],
       child: Consumer<StorageService>(
@@ -48,7 +52,7 @@ Future<void> main() async {
             themeMode: theme,
             theme: AppTheme().light,
             darkTheme: AppTheme().dark,
-            home: const MyApp(),
+            home: const Blestatelistener(child: MyApp()),
           );
         },
       ),
@@ -107,6 +111,13 @@ class _MyAppState extends State<MyApp> {
         },
       );
     }
+    ScaleService().start();
+
+    //await Ble().startAutoConnect();
+    //final stream = Ble().fetchData();
+    //stream.listen((Scale scale) {
+    //  print(scale.weight);
+    //});
   }
 
   @override
@@ -116,6 +127,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     final storage = context.watch<StorageService>();
+
     List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(

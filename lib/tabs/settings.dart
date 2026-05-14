@@ -1,12 +1,19 @@
+import 'dart:async';
+
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/ble.dart';
+import 'package:bamscan/services/device_capabilities.dart';
+import 'package:bamscan/services/scale_service.dart';
 import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/utils/parse_note.dart';
+import 'package:bamscan/widgets/ble_not_enabled.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -21,11 +28,20 @@ class _SettingsState extends State<Settings> {
   late TextEditingController _bambuddyUrlController;
   late TextEditingController _xapiTokenController;
 
+  String weight = "";
+
   @override
   void initState() {
     super.initState();
     _bambuddyUrlController = TextEditingController();
     _xapiTokenController = TextEditingController();
+
+    ScaleService().stream.listen((scale) {
+      if (!mounted) return;
+      setState(() {
+        weight = scale.weight.toString();
+      });
+    });
 
     loadData();
   }
@@ -172,6 +188,14 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
+              InfoCard(
+                title: "Bluetooth",
+                icon: Icons.bluetooth,
+                more: Setting(
+                  title: "Bluetooth",
+                  widgets: [InfoCard(title: "Scale", icon: Icons.scale, value: storageService.bleRemoteId == "" ? "None" : "Paired", more: BluetoothScan())],
+                ),
+              ),
               if (false)
                 InfoCard(
                   title: "Beta Features",
@@ -280,7 +304,7 @@ void deleteAllMappings(BuildContext context, String kind) {
 class Setting extends StatefulWidget {
   const Setting({super.key, required this.title, required this.widgets});
   final String title;
-  final List<Widget> widgets;
+  final Object widgets;
 
   @override
   State<Setting> createState() => SettingState();
@@ -293,7 +317,72 @@ class SettingState extends State<Setting> {
       appBar: AppBar(title: Text(widget.title)),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: Column(spacing: 10, crossAxisAlignment: CrossAxisAlignment.start, children: widget.widgets),
+        child: widget.widgets is List<Widget>
+            ? Column(spacing: 10, crossAxisAlignment: CrossAxisAlignment.start, children: widget.widgets as List<Widget>)
+            : widget.widgets is Widget
+            ? widget.widgets as Widget
+            : null,
+      ),
+    );
+  }
+}
+
+class BluetoothScan extends StatefulWidget {
+  const BluetoothScan({super.key});
+
+  @override
+  State<BluetoothScan> createState() => _BluetoothScanState();
+}
+
+class _BluetoothScanState extends State<BluetoothScan> {
+  List<ScanResult> scanRes = [];
+  StreamSubscription? sub;
+
+  @override
+  void dispose() {
+    sub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Connect device")),
+      body: Consumer<DeviceCapabilities>(
+        builder: (context, deviceCapabilities, child) {
+          if (!deviceCapabilities.isBluetoothAvailable) {
+            return BleNotEnabled();
+          } else {
+            if (!FlutterBluePlus.isScanningNow && DeviceCapabilities().isBluetoothAvailable) {
+              sub = Ble().fetchDevices().listen((res) {
+                if (!mounted) return;
+
+                setState(() {
+                  scanRes.addOrUpdate(res);
+                });
+              });
+            }
+
+            return ListView(
+              children: [
+                for (ScanResult res in scanRes) ...[
+                  if (res.device.advName != "") ...[
+                    InfoCard(
+                      title: res.device.advName,
+                      icon: Icons.bluetooth,
+                      onTap: () async {
+                        await Ble().connect(device: res.device);
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      },
+                      value: res.rssi.toString(),
+                    ),
+                  ],
+                ],
+              ],
+            );
+          }
+        },
       ),
     );
   }

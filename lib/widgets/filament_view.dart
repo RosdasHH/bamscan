@@ -12,6 +12,7 @@ import 'package:bamscan/widgets/button.dart';
 import 'package:bamscan/widgets/infocard.dart';
 import 'package:bamscan/widgets/nfc_read_page.dart';
 import 'package:bamscan/widgets/qrscan.dart';
+import 'package:bamscan/widgets/scale_screen.dart';
 import 'package:bamscan/widgets/textinput.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -29,11 +30,16 @@ class FilamentView extends StatefulWidget {
 
 class FilamentViewState extends State<FilamentView> {
   @override
+  void initState() {
+    super.initState();
+    DeviceCapabilities().checkDevicesCapabilities();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final spools = context.watch<AvailableFilaments>();
     final spool = spools.spools.firstWhere((s) => s.id == widget.spool.id, orElse: () => widget.spool);
     DeviceCapabilities deviceCapabilities = context.watch<DeviceCapabilities>();
-    deviceCapabilities.checkDevicesCapabilities();
     final Color filamentColor = spool.color;
     final Color filamentConformTextColor = getContrastColor(filamentColor);
 
@@ -79,8 +85,9 @@ class FilamentViewState extends State<FilamentView> {
             InfoCard(
               icon: MdiIcons.weight,
               title: "Weight",
-              value: "${spool.labelWeight - spool.weightUsed}/${spool.labelWeight}",
+              value: "${(spool.labelWeight - spool.weightUsed).toStringAsFixed(2)}/${spool.labelWeight}",
               progress: (spool.labelWeight - spool.weightUsed) / spool.labelWeight,
+              more: WeightMeasure(spool: spool),
             ),
             Divider(height: 5, indent: 20, endIndent: 20),
             InfoCard(
