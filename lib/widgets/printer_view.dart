@@ -363,7 +363,7 @@ class _CoverUrlWithProgressState extends State<CoverUrlWithProgress> {
         child: SizedBox.square(
           dimension: 64,
           child: DecoratedBox(
-            decoration: BoxDecoration(color: context.appColor.base15, borderRadius: BorderRadius.circular(15)),
+            decoration: BoxDecoration(color: context.appColor.base1, borderRadius: BorderRadius.circular(15)),
             child: Center(
               child: widget.printer.status?.coverUrl != null
                   ? Image.network(

@@ -1,6 +1,5 @@
-import 'package:bamscan/helper/showSnackbar.dart';
 import 'package:bamscan/services/device_capabilities.dart';
-import 'package:bamscan/theme/app_theme.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:flutter/material.dart';
 
 class BleNotEnabled extends StatefulWidget {
@@ -24,7 +23,7 @@ class _BleNotEnabledState extends State<BleNotEnabled> {
       turningOnBluetooth = true;
     });
     final error = await DeviceCapabilities().turnOnBluetooth();
-    if (error != null && mounted) showSnackbar(context, error, context.appColor.error);
+    if (error != null && mounted) SnackbarService.error(error);
     if (!mounted) return;
     setState(() {
       turningOnBluetooth = false;

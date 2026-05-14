@@ -44,7 +44,7 @@ class _WeightMeasureState extends State<WeightMeasure> {
     while (mounted) {
       if (!mounted) return;
       final ble = context.read<Ble>();
-      if (StorageService().bleRemoteId != "" && !ble.isConnecting && ble.connectedDevice == null) {
+      if (StorageService().getString(StorageService.kBleRemoteId) != "" && !ble.isConnecting && ble.connectedDevice == null) {
         if (!mounted) return;
         setState(() {
           isConnecting = true;
@@ -90,7 +90,7 @@ class _WeightMeasureState extends State<WeightMeasure> {
           if (isConnecting || ble.isConnecting) {
             return ScaleLoading();
           }
-          if (StorageService().bleRemoteId == "") {
+          if (StorageService().getString(StorageService.kBleRemoteId) == "") {
             return Center(child: Text("Please pair a scale. Settings -> Bluetooth -> Scale"));
           }
           return Center(
@@ -200,7 +200,7 @@ class _ScaleLoadingState extends State<ScaleLoading> {
       children: [
         BleAnimation(),
         Text("Connecting Scale", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        Text("Please turn on your scale and let it connect.", style: TextStyle(fontSize: 16)),
+        Text("Please turn on your scale and let it connect.", style: TextStyle(fontSize: 16, color: context.appColor.secondaryText)),
       ],
     );
   }

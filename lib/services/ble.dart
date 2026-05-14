@@ -52,7 +52,7 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
     bool autoConnect = false;
 
     if (device == null) {
-      final id = StorageService().bleRemoteId;
+      final id = StorageService().getString(StorageService.kBleRemoteId);
       if (id.isEmpty) {
         isConnecting = false;
         notifyListeners();
@@ -75,7 +75,7 @@ class Ble extends ChangeNotifier with WidgetsBindingObserver {
     });
 
     if (!autoConnect) {
-      StorageService().setBleRemoteId(device.remoteId.toString());
+      StorageService().setString(StorageService.kBleRemoteId, device.remoteId.toString());
     }
     isConnecting = true;
     try {

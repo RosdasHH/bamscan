@@ -158,7 +158,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                         ),
                                                       ),
                                                       SizedBox.square(
-                                                        dimension: width + width / 20,
+                                                        dimension: width + width / 10,
                                                         child: CircularProgressIndicator(
                                                           color: fontcolor,
                                                           value: usage,

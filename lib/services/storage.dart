@@ -21,6 +21,7 @@ class StorageService extends ChangeNotifier {
   static const kXApiToken = 'token';
   static const kCamToken = 'camToken';
   static const kExternalSpool = 'externalSpool';
+  static const kBleRemoteId = 'bleRemoteId';
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();

@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bamscan/classes/spool.dart';
 import 'package:bamscan/provider/available_filaments.dart';
+import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/ble.dart';
 import 'package:bamscan/services/device_capabilities.dart';
 import 'package:bamscan/services/scale_service.dart';
-import 'package:bamscan/services/app_state.dart';
 import 'package:bamscan/services/snackbar_service.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/utils/parse_note.dart';
@@ -193,7 +193,7 @@ class _SettingsState extends State<Settings> {
                 icon: Icons.bluetooth,
                 more: Setting(
                   title: "Bluetooth",
-                  widgets: [InfoCard(title: "Scale", icon: Icons.scale, value: storageService.bleRemoteId == "" ? "None" : "Paired", more: BluetoothScan())],
+                  widgets: [InfoCard(title: "Scale", icon: Icons.scale, value: StorageService().getString(StorageService.kBleRemoteId) == "" ? "None" : "Paired", more: BluetoothScan())],
                 ),
               ),
               if (false)

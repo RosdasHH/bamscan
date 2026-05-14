@@ -1,6 +1,5 @@
-import 'package:bamscan/helper/showSnackbar.dart';
 import 'package:bamscan/services/ble.dart';
-import 'package:bamscan/theme/app_theme.dart';
+import 'package:bamscan/services/snackbar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +23,10 @@ class _BlestatelistenerState extends State<Blestatelistener> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
             if (state == BluetoothConnectionState.connected) {
-              showSnackbar(context, "Bluetooth-Scale connected.", context.appColor.success);
+              SnackbarService.success("Bluetooth-Scale connected.");
             }
             if (state == BluetoothConnectionState.disconnected) {
-              showSnackbar(context, "Bluetooth-Scale disconnected.", context.appColor.warning);
+              SnackbarService.warning("Bluetooth-Scale disconnected.");
             }
             lastState = state;
           });

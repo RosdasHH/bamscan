@@ -54,7 +54,7 @@ class _MjpegViewState extends State<MjpegView> {
         }
       },
       onError: (e) {
-        SnackbarService.error(e);
+        SnackbarService.error(e.toString());
       },
     );
   }
