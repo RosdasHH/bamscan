@@ -124,6 +124,7 @@ class _PrinterViewState extends State<PrinterView> {
                     ),
                   ),
                 ),
+                SizedBox(height: 5),
                 Card(
                   child: Padding(
                     padding: EdgeInsets.all(15),
