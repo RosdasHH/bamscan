@@ -18,7 +18,6 @@ class MjpegView extends StatefulWidget {
 class _MjpegViewState extends State<MjpegView> {
   Uint8List? frame;
   HttpClient? client;
-  int tries = 0;
 
   @override
   void initState() {
@@ -32,16 +31,6 @@ class _MjpegViewState extends State<MjpegView> {
     await availablePrinters.updateStreamToken();
     final request = await client!.getUrl(Uri.parse("${widget.url}?token=${await StorageService().getSecureString(StorageService.kCamToken)}"));
     final response = await request.close();
-    tries++;
-
-    if (response.statusCode == 401) {
-      //Auth failed
-      if (!mounted || tries > 3) return;
-      AvailablePrinters availablePrinters = context.read<AvailablePrinters>();
-      await availablePrinters.updateStreamToken();
-      _start();
-      return;
-    }
 
     List<int> buffer = [];
 
