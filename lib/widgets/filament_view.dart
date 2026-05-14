@@ -144,7 +144,7 @@ class FilamentViewState extends State<FilamentView> {
                       }
                     : () => SnackbarService.error("The spool is still inserted into an AMS Slot."),
                 expanded: true,
-                backgroundColor: context.appColor.base3.withValues(alpha: 0.3),
+                color: context.appColor.base3.withValues(alpha: 0.3),
                 borderColor: context.appColor.error,
                 child: Text("Archive Spool", style: TextStyle(color: spool.assignment != null ? context.appColor.error.withValues(alpha: 0.5) : context.appColor.error)),
               ),

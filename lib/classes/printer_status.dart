@@ -19,6 +19,7 @@ class PrinterStatus {
   final bool ipCam;
   final bool sdcard;
   final String firmwareVersion;
+  final String? currentTask;
   const PrinterStatus({
     required this.id,
     required this.name,
@@ -37,6 +38,7 @@ class PrinterStatus {
     required this.ipCam,
     required this.sdcard,
     required this.firmwareVersion,
+    required this.currentTask,
   });
 
   static Future<PrinterStatus> fromJson(Map<String, dynamic> json) async {
@@ -61,6 +63,7 @@ class PrinterStatus {
         coverUrl: json["cover_url"] != null
             ? "${StorageService().getString(StorageService.kBambuddyUrl)}${json['cover_url']}?token=${await StorageService().getSecureString(StorageService.kCamToken)}"
             : null,
+        currentTask: json["stg_cur_name"],
       );
     } catch (e) {
       SnackbarService.error(e.toString());

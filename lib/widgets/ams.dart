@@ -111,7 +111,7 @@ class _AmsSelectionState extends State<AmsSelection> {
 
                       switch (traytype) {
                         case TrayType.spoolLoaded:
-                          traytext = tray.trayType;
+                          traytext = tray.trayType != "" ? tray.trayType : "Not configured!";
                           break;
                         case TrayType.noSpool:
                           traytext = "No Spool!";
@@ -178,7 +178,7 @@ class _AmsSelectionState extends State<AmsSelection> {
                                                   traytext,
                                                   maxLines: 1,
                                                   maxFontSize: 18,
-                                                  minFontSize: 14,
+                                                  minFontSize: 5,
                                                   style: TextStyle(color: context.appColor.primaryText, fontSize: 16, fontWeight: FontWeight.bold),
                                                 ),
                                               ],

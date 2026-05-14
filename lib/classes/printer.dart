@@ -96,6 +96,28 @@ class Printer {
   String getImgUrl() {
     return "${StorageService().getString(StorageService.kBambuddyUrl)}${Globals.imagesnamespace}${model.replaceAll(" ", "").toLowerCase()}.png";
   }
+
+  void pausePrint() async {
+    printController("pause");
+  }
+
+  void stopPrint() async {
+    printController("stop");
+  }
+
+  void resumePrint() async {
+    printController("resume");
+  }
+
+  void printController(String task) async {
+    final res = await ApiService().apiPost("/printers/$id/print/$task", {});
+    final json = jsonDecode(res.body);
+    if (json["success"] == true) {
+      SnackbarService.success(json["message"]);
+    } else {
+      SnackbarService.error(json["message"]);
+    }
+  }
 }
 
 class Maintenance {

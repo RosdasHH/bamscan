@@ -8,6 +8,7 @@ import 'package:bamscan/services/globals.dart';
 import 'package:bamscan/services/storage.dart';
 import 'package:bamscan/theme/app_theme.dart';
 import 'package:bamscan/widgets/ams.dart';
+import 'package:bamscan/widgets/button.dart';
 import 'package:bamscan/widgets/mjpeg_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -57,8 +58,15 @@ class _PrinterViewState extends State<PrinterView> {
       {"Status": pStatus?.state ?? ""},
       {"Progress": "${pStatus?.progress ?? 0}%"},
       {"Layer": "${pStatus?.layerNum}/${pStatus?.totalLayers}"},
-      {"Time": pStatus?.remainingTime == 0 ? "--:--" : (pStatus?.remainingTime).toString()},
+      {"Time": pStatus?.remainingTime == 0 ? "--:--" : "${pStatus?.remainingTime}m"},
     ];
+    final progress = (pStatus?.progress ?? 0) / 100;
+    final printerState = printer.status?.state ?? "";
+    final isPrinting = !(printerState == "IDLE" || printerState == "FINISH");
+
+    final currentPrintName = printer.status?.currentPrint != "" ? printer.status?.currentPrint ?? "Ready to print" : "Ready to print";
+    final currentTask = printer.status?.currentTask != "" ? printer.status?.currentTask ?? printerState : "ERROR";
+
     //Nozzle
     final currentNozzleTemp = pStatus?.temperatures.nozzle.toStringAsFixed(1) ?? "";
     final targetNozzleTemp = pStatus?.temperatures.nozzleTarget.toStringAsFixed(1) ?? "";
@@ -114,13 +122,64 @@ class _PrinterViewState extends State<PrinterView> {
                     ),
                   ),
                 ),
-                if (printer.status?.coverUrl != null)
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(15),
-                      child: IntrinsicHeight(child: Row(children: [if (printer.status?.coverUrl != null) Image.network(printer.status!.coverUrl!, height: 64, width: 64)])),
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            spacing: 10,
+                            children: [
+                              CustomPaint(
+                                foregroundPainter: PartialBorderPainter(progress: progress, radius: 15, color: context.appColor.primary),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadiusGeometry.circular(15),
+                                  child: SizedBox.square(
+                                    dimension: 64,
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(color: context.appColor.base15, borderRadius: BorderRadius.circular(15)),
+                                      child: Center(
+                                        child: printer.status?.coverUrl != null
+                                            ? Image.network(printer.status!.coverUrl!, height: 64, width: 64)
+                                            : Icon(MdiIcons.cubeOutline, color: context.appColor.base3),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(currentPrintName, style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Text(currentTask),
+                                ],
+                              ),
+                            ],
+                          ),
+                          //if (!isPrinting)
+                          //  Row(
+                          //    children: [Button(onPressed: () {}, color: context.appColor.success, child: Text("Start"))],
+                          //  )
+                          if (isPrinting)
+                            Row(
+                              spacing: 5,
+                              children: [
+                                if (printerState == "PAUSE")
+                                  Button(onPressed: () => printer.resumePrint(), color: context.appColor.info, child: Text("Resume"))
+                                else
+                                  Button(onPressed: () => printer.pausePrint(), color: context.appColor.warning, child: Text("Pause")),
+                                Button(onPressed: () => printer.stopPrint(), color: context.appColor.error, child: Text("Stop")),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ),
+                ),
                 SizedBox(height: 5),
                 MasonryGridView.extent(
                   shrinkWrap: true,
@@ -244,5 +303,46 @@ class VerticalCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class PartialBorderPainter extends CustomPainter {
+  final double progress;
+  final double radius;
+  final Color color;
+
+  PartialBorderPainter({required this.progress, this.radius = 20, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    const strokeWidth = 4.0;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    final w = size.width;
+    final h = size.height;
+    final r = radius;
+    final path = Path();
+    path.moveTo(w / 2, strokeWidth / 2);
+    path.lineTo(w - r, strokeWidth / 2);
+    path.arcToPoint(Offset(w - strokeWidth / 2, r), radius: Radius.circular(r), clockwise: true);
+    path.lineTo(w - strokeWidth / 2, h - r);
+    path.arcToPoint(Offset(w - r, h - strokeWidth / 2), radius: Radius.circular(r), clockwise: true);
+    path.lineTo(r, h - strokeWidth / 2);
+    path.arcToPoint(Offset(strokeWidth / 2, h - r), radius: Radius.circular(r), clockwise: true);
+    path.lineTo(strokeWidth / 2, r);
+    path.arcToPoint(Offset(r, strokeWidth / 2), radius: Radius.circular(r), clockwise: true);
+    path.lineTo(w / 2, strokeWidth / 2);
+    final metric = path.computeMetrics().first;
+    final partialPath = metric.extractPath(0, metric.length * progress);
+    canvas.drawPath(partialPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant PartialBorderPainter oldDelegate) {
+    return oldDelegate.progress != progress || oldDelegate.radius != radius;
   }
 }
