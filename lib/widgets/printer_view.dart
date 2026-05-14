@@ -60,9 +60,8 @@ class _PrinterViewState extends State<PrinterView> {
       {"Layer": "${pStatus?.layerNum}/${pStatus?.totalLayers}"},
       {"Time": pStatus?.remainingTime == 0 ? "--:--" : "${pStatus?.remainingTime}m"},
     ];
-    final progress = (pStatus?.progress ?? 0) / 100;
     final printerState = printer.status?.state ?? "";
-    final isPrinting = !(printerState == "IDLE" || printerState == "FINISH");
+    final isPrinting = !(printerState == "IDLE" || printerState == "FINISH" || printerState == "FAILED");
 
     final currentPrintName = printer.status?.currentPrint != "" ? printer.status?.currentPrint ?? "Ready to print" : "Ready to print";
     final currentTask = printer.status?.currentTask != "" ? printer.status?.currentTask ?? printerState : "ERROR";
@@ -110,8 +109,11 @@ class _PrinterViewState extends State<PrinterView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(status.keys.first, style: TextStyle(color: context.appColor.secondaryText, fontSize: 12)),
-                                  Text(status.values.first),
+                                  Text(
+                                    status.keys.first,
+                                    style: TextStyle(color: context.appColor.secondaryText, fontSize: 12, overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Text(status.values.first, style: TextStyle(overflow: TextOverflow.ellipsis)),
                                 ],
                               ),
                             ),
@@ -129,43 +131,36 @@ class _PrinterViewState extends State<PrinterView> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            spacing: 10,
-                            children: [
-                              CustomPaint(
-                                foregroundPainter: PartialBorderPainter(progress: progress, radius: 15, color: context.appColor.primary),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadiusGeometry.circular(15),
-                                  child: SizedBox.square(
-                                    dimension: 64,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(color: context.appColor.base15, borderRadius: BorderRadius.circular(15)),
-                                      child: Center(
-                                        child: printer.status?.coverUrl != null
-                                            ? Image.network(printer.status!.coverUrl!, height: 64, width: 64)
-                                            : Icon(MdiIcons.cubeOutline, color: context.appColor.base3),
+                          Expanded(
+                            child: Row(
+                              spacing: 10,
+                              children: [
+                                CoverUrlWithProgress(printer: printer),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        currentPrintName,
+                                        style: TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
                                       ),
-                                    ),
+                                      Text(currentTask, overflow: TextOverflow.ellipsis),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(currentPrintName, style: TextStyle(fontWeight: FontWeight.bold)),
-                                  Text(currentTask),
-                                ],
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           //if (!isPrinting)
                           //  Row(
                           //    children: [Button(onPressed: () {}, color: context.appColor.success, child: Text("Start"))],
                           //  )
+                          SizedBox(width: 5),
                           if (isPrinting)
                             Row(
+                              mainAxisSize: MainAxisSize.min,
                               spacing: 5,
                               children: [
                                 if (printerState == "PAUSE")
@@ -344,5 +339,58 @@ class PartialBorderPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant PartialBorderPainter oldDelegate) {
     return oldDelegate.progress != progress || oldDelegate.radius != radius;
+  }
+}
+
+class CoverUrlWithProgress extends StatefulWidget {
+  const CoverUrlWithProgress({super.key, required this.printer});
+  final Printer printer;
+
+  @override
+  State<CoverUrlWithProgress> createState() => _CoverUrlWithProgressState();
+}
+
+class _CoverUrlWithProgressState extends State<CoverUrlWithProgress> {
+  @override
+  Widget build(BuildContext context) {
+    final progress = (widget.printer.status?.progress ?? 0) / 100;
+
+    return CustomPaint(
+      foregroundPainter: PartialBorderPainter(progress: progress, radius: 15, color: context.appColor.primary),
+      child: ClipRRect(
+        borderRadius: BorderRadiusGeometry.circular(15),
+        child: SizedBox.square(
+          dimension: 64,
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: context.appColor.base15, borderRadius: BorderRadius.circular(15)),
+            child: Center(
+              child: widget.printer.status?.coverUrl != null
+                  ? Image.network(
+                      widget.printer.status!.coverUrl!,
+                      height: 64,
+                      width: 64,
+                      errorBuilder: (context, error, stackTrace) {
+                        return GenericPrintJobIcon();
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return GenericPrintJobIcon();
+                      },
+                    )
+                  : GenericPrintJobIcon(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GenericPrintJobIcon extends StatelessWidget {
+  const GenericPrintJobIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(MdiIcons.cubeOutline, color: context.appColor.base3);
   }
 }

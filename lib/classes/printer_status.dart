@@ -13,14 +13,15 @@ class PrinterStatus {
   final int remainingTime;
   final int layerNum;
   final int totalLayers;
-  final String? coverUrl;
+  final String? coverEndpoint;
   final Temperatures temperatures;
   final int rssi;
   final bool ipCam;
   final bool sdcard;
   final String firmwareVersion;
   final String? currentTask;
-  const PrinterStatus({
+  String? coverUrl;
+  PrinterStatus({
     required this.id,
     required this.name,
     required this.connected,
@@ -32,16 +33,34 @@ class PrinterStatus {
     required this.remainingTime,
     required this.layerNum,
     required this.totalLayers,
-    this.coverUrl,
+    this.coverEndpoint,
     required this.temperatures,
     required this.rssi,
     required this.ipCam,
     required this.sdcard,
     required this.firmwareVersion,
     required this.currentTask,
+    this.coverUrl,
   });
+  Future<String> getCoverUrl() async {
+    late String url;
+    if (coverEndpoint != null) {
+      url = "${StorageService().getString(StorageService.kBambuddyUrl)}$coverEndpoint?token=${await StorageService().getSecureString(StorageService.kCamToken)}";
+    }
+    return url;
+  }
 
   static Future<PrinterStatus> fromJson(Map<String, dynamic> json) async {
+    final coverEndpoint = json["cover_url"];
+
+    Future<String?> getCoverUrl() async {
+      String? url;
+      if (coverEndpoint != null) {
+        url = "${StorageService().getString(StorageService.kBambuddyUrl)}$coverEndpoint?token=${await StorageService().getSecureString(StorageService.kCamToken)}";
+      }
+      return url;
+    }
+
     try {
       return PrinterStatus(
         id: (json['id'] as num?)?.toInt() ?? 0,
@@ -60,15 +79,22 @@ class PrinterStatus {
         ipCam: json["ipcam"] ?? false,
         sdcard: json["sdcard"] ?? false,
         firmwareVersion: json["firmware_version"] ?? "",
-        coverUrl: json["cover_url"] != null
-            ? "${StorageService().getString(StorageService.kBambuddyUrl)}${json['cover_url']}?token=${await StorageService().getSecureString(StorageService.kCamToken)}"
-            : null,
+        coverEndpoint: coverEndpoint,
+        coverUrl: await getCoverUrl(),
         currentTask: json["stg_cur_name"],
       );
     } catch (e) {
       SnackbarService.error(e.toString());
       rethrow;
     }
+  }
+
+  Future<void> updateCoverUrl() async {
+    late String url;
+    if (coverEndpoint != null) {
+      url = "${StorageService().getString(StorageService.kBambuddyUrl)}$coverEndpoint?token=${await StorageService().getSecureString(StorageService.kCamToken)}";
+    }
+    coverUrl = url;
   }
 }
 

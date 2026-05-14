@@ -40,6 +40,7 @@ class _PrinterListState extends State<PrinterList> {
   void initState() {
     super.initState();
     if (!mounted) return;
+    AvailablePrinters().updateStreamToken();
     refresh();
   }
 
@@ -100,7 +101,6 @@ class _PrinterListState extends State<PrinterList> {
                   if (status == null) return SizedBox.shrink();
                   final String connected = status.connected ? "Connected" : "Not connected";
                   final Color connectedColor = status.connected ? context.appColor.success : context.appColor.error;
-                  final double progress = status.progress / 100;
                   final String state = status.state;
                   final stateColor = state == "FAILED"
                       ? context.appColor.error
@@ -144,6 +144,7 @@ class _PrinterListState extends State<PrinterList> {
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                                   ),
                                   Text(printer.model, style: TextStyle(fontSize: 15)),
+                                  SizedBox(height: 5),
                                   Wrap(
                                     spacing: 10,
                                     runSpacing: 5,
@@ -155,16 +156,7 @@ class _PrinterListState extends State<PrinterList> {
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 15),
-                              child: Stack(
-                                alignment: AlignmentGeometry.center,
-                                children: [
-                                  SizedBox.square(dimension: 50, child: CircularProgressIndicator(strokeWidth: 7, value: progress)),
-                                  Text("${(progress * 100).toInt()}%", style: TextStyle(fontSize: 15)),
-                                ],
-                              ),
-                            ),
+                            CoverUrlWithProgress(printer: printer),
                           ],
                         ),
                       ),

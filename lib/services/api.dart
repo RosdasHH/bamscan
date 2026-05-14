@@ -59,7 +59,7 @@ class ApiService extends ChangeNotifier {
     return null;
   }
 
-  Future<http.Response> apiReq(String apiEndpoint) async {
+  Future<http.Response> apiReq(String apiEndpoint, {catchError = true}) async {
     try {
       http.Response res = await http
           .get(
@@ -67,11 +67,15 @@ class ApiService extends ChangeNotifier {
             headers: {"x-api-key": await StorageService().getSecureString(StorageService.kXApiToken)},
           )
           .timeout(Duration(seconds: 3));
-      setError(res);
-      _setReachable(true);
+      if (catchError) {
+        setError(res);
+        _setReachable(true);
+      }
       return res;
     } catch (e) {
-      _setReachable(false);
+      if (catchError) {
+        _setReachable(false);
+      }
       rethrow;
     }
   }
