@@ -98,23 +98,29 @@ class _SettingsState extends State<Settings> {
                 title: "Connection",
                 value: "",
                 icon: MdiIcons.connection,
-                more: Setting(
-                  title: "Connection",
-                  widgets: [
-                    TextInput(
-                      controller: _bambuddyUrlController,
-                      onTapOutside: () => storageService.setString(StorageService.kBambuddyUrl, _bambuddyUrlController.text),
-                      labeltext: "Bambuddy URL:PORT",
-                      hinttext: "e.g. http://127.0.0.1:8000",
-                    ),
-                    TextInput(
-                      controller: _xapiTokenController,
-                      onTapOutside: () => storageService.setSecureString(StorageService.kXApiToken, _xapiTokenController.text),
-                      obscure: true,
-                      labeltext: "Bambuddy API Key",
-                      hinttext: "Bambuddy Website -> Settings -> API Keys",
-                    ),
-                  ],
+                more: PopScope(
+                  onPopInvokedWithResult: (didPop, result) {
+                    storageService.setString(StorageService.kBambuddyUrl, _bambuddyUrlController.text);
+                    storageService.setSecureString(StorageService.kXApiToken, _xapiTokenController.text);
+                  },
+                  child: Setting(
+                    title: "Connection",
+                    widgets: [
+                      TextInput(
+                        controller: _bambuddyUrlController,
+                        onTapOutside: () => storageService.setString(StorageService.kBambuddyUrl, _bambuddyUrlController.text),
+                        labeltext: "Bambuddy URL:PORT",
+                        hinttext: "e.g. http://127.0.0.1:8000",
+                      ),
+                      TextInput(
+                        controller: _xapiTokenController,
+                        onTapOutside: () => storageService.setSecureString(StorageService.kXApiToken, _xapiTokenController.text),
+                        obscure: true,
+                        labeltext: "Bambuddy API Key",
+                        hinttext: "Bambuddy Website -> Settings -> API Keys",
+                      ),
+                    ],
+                  ),
                 ),
               ),
               InfoCard(
